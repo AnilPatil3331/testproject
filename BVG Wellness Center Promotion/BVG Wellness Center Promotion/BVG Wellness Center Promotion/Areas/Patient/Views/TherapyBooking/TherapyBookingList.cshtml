@@ -1,0 +1,1023 @@
+﻿@model List<BVG_Wellness_Center_Promotion.Areas.Patient.Models.TherapyBookingListVM>
+
+@{
+    ViewBag.Title = "Therapy Bookings List";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    // Debug: Check if Model has data
+    var hasData = Model != null && Model.Any();
+    var dataCount = hasData ? Model.Count() : 0;
+}
+
+<!-- Debug Info - Remove after fixing -->
+<div style="display:none;" id="debugInfo">
+    Has Data: @hasData<br />
+    Count: @dataCount
+</div>
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+
+<style>
+
+    /* Add to existing style section */
+.badge-primary {
+    /*background-color: #007bff;*/
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.badge-outline-primary {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.badge-outline-primary:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+
+
+    input[type="file"] {
+        display: none;
+    }
+
+    #fileNameText {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .footer__navigation__page-btn:hover {
+        cursor: pointer !important;
+    }
+
+    .toggle-btn {
+        transition: all 0.3s ease;
+    }
+
+        .toggle-btn.active i {
+            transform: rotate(180deg);
+        }
+
+        .toggle-btn i {
+            transition: transform 0.3s ease;
+        }
+
+    .child-row-container {
+        background-color: #fafafa;
+    }
+
+    .slot-card {
+        transition: all 0.2s ease;
+    }
+
+        .slot-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .badge-success {
+        background-color: #28a745;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .badge-danger {
+        background-color: #dc3545;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    .badge-info {
+        background-color: #17a2b8;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    /* Full Page Loader */
+    #ehrLoaderOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+        background-color: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        z-index: 90;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .ehr-pro-spinner {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-top-color: #1497de;
+        border-bottom-color: #1497de;
+        animation: pro-spin 1.5s ease infinite;
+        position: relative;
+    }
+
+        .ehr-pro-spinner::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-left-color: #25b09b;
+            border-right-color: #25b09b;
+            animation: pro-spin-reverse 1s linear infinite;
+        }
+
+    @@keyframes pro-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @@keyframes pro-spin-reverse {
+        0% { transform: rotate(360deg); }
+        100% { transform: rotate(0deg); }
+    }
+</style>
+
+<div id="ehrLoaderOverlay">
+    <div class="ehr-pro-spinner"></div>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        var loader = document.getElementById('ehrLoaderOverlay');
+        if (loader) loader.style.display = 'none';
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(function () {
+            var loader = document.getElementById('ehrLoaderOverlay');
+            if (loader) loader.style.display = 'none';
+        }, 3000);
+    });
+</script>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                window.onload = function () {
+                    var message = '@TempData["Message"]';
+                    var alertType = '@TempData["Icon"]';
+                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                    showCustomAlert(message, alertType, imageUrl);
+                };
+            </script>
+        }
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+
+                    <header class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <h3 class="text-primary mb-2">Therapy Booking</h3>
+                                <div class="d-flex gap-2 flex-wrap" id="FilterButtons">
+                                    <span class="badge mr-2 cursor-pointer badge-outline-primary" data-filter="all">All</span>
+                                    <span class="badge mr-2 cursor-pointer badge-outline-primary" data-filter="today">Today</span>
+                                    <span class="badge mr-2 cursor-pointer badge-outline-primary" data-filter="upcoming">Upcoming</span>
+                                    <span class="badge mr-2 cursor-pointer badge-outline-primary" data-filter="past">Past</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-sm-12 col-md-12 col-lg-12 mt-2">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary" id="AddBooking">
+                                        <i class="fa fa-plus"></i> Add Booking
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+
+
+
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background" style="backdrop-filter: blur(2px);"></div>
+                                            <div class="vld-icon">
+                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                     height="64" stroke="var(--primary)">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18"></circle>
+                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite"></animateTransform>
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-0 table-fixed-height">
+                                    <div class="vgt-wrap">
+                                        <div class="vgt-inner-wrap">
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-712560173043">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                <div class="magnifying-glass"></div>
+                                                            </span>
+                                                            <span class="sr-only">Search</span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search booking by ID, patient, therapist, service, or status"
+                                                               class="vgt-input vgt-pull-left">
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div></div>
+                                                </div>
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="tblTherapyList" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" class="vgt-left-align" style="min-width: auto; width: auto;">
+                                                                <span>Action</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>ID</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Patient Name</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Service / Room</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Therapist</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Booking Period</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Total Amount</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Status</span>
+                                                            </th>
+                                                            <th scope="col" class="vgt-left-align sortable" style="min-width: auto; width: auto;">
+                                                                <span>Booking Source</span>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th class="filter-th"></th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-id" type="text" id="FilterById" placeholder="ID" class="vgt-input">
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-patient_name" id="FilterByPatient" type="text" placeholder="Filter by patient" class="vgt-input">
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-service" id="FilterByService" type="text" placeholder="Filter by service" class="vgt-input">
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-therapist" id="FilterByTherapist" type="text" placeholder="Filter by therapist" class="vgt-input">
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-period" id="FilterByPeriod" type="text" placeholder="Filter by period" class="vgt-input">
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div></div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                      <select name="vgt-status" id="FilterByStatus" class="vgt-select">
+                                                                          <option value="">Filter by status</option>
+                                                                          <option value="Pending">Pending</option>
+                                                                          <option value="Completed">Completed</option>
+                                                                          <option value="Cancelled">Cancelled</option>
+                                                                      </select>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="therapyTableBody">
+                                                        @if (Model != null && Model.Any())
+                                                        {
+                                                            foreach (var item in Model)
+                                                            {
+                                                                <tr class="master-row border-bottom">
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <button class="btn btn-sm btn-outline-primary toggle-btn"
+                                                                                    onclick="toggleDetails(@item.TherapyBookingId, this)"
+                                                                                    title="View Slots">
+                                                                                <i class="fa fa-chevron-down"></i>
+                                                                            </button>
+                                                                     <!-- Juna Code comment kela -->
+                                                                     @*@if (item.IsPaid)
+                                                                     {
+                                                                        <button class="btn btn-sm btn-outline-warning"
+                                                                                disabled title="Payment Done - Cannot Edit">
+                                                                            <i class="fa fa-lock"></i>
+                                                                        </button>
+                                                                     }
+                                                                     else
+                                                                     {
+                                                                        <a href="@Url.Action("TherapyBooking", "TherapyBooking",
+        new { id = item.TherapyBookingId, PatientFid = item.PatientFid })"
+                                                                           class="btn btn-sm btn-outline-primary" title="Edit">
+                                                                            <i class="fa fa-pen-alt"></i>
+                                                                        </a>
+                                                                     }*@
+                                                                     <!-- Naveen Code add kela -->
+                                                                      <a href="@Url.Action("TherapyBooking", "TherapyBooking", new { id = item.TherapyBookingId, PatientFid = item.PatientFid })"
+                                                                         class="btn btn-sm btn-outline-primary" title="Edit">
+                                                                          <i class="fa fa-pen-alt"></i>
+                                                                      </a>@if (item.Status == "Completed")
+                                                                      {
+                                                                          <button class="btn btn-sm btn-success" disabled title="Therapy Completed" style="padding: 2px 6px; font-size: 12px; line-height: 1.5;">
+                                                                              <i class="fa fa-check"></i>
+                                                                          </button>
+                                                                      }
+                                                                      else
+                                                                      {
+                                                                          <button class="btn btn-sm btn-outline-success" onclick="markTherapyComplete(@item.TherapyBookingId)" title="Mark as Complete" style="padding: 2px 6px; font-size: 12px; line-height: 1.5;">
+                                                                              <i class="fa fa-check"></i>
+                                                                          </button>
+                                                                      }
+                                                                            @*<button title="Delete" class="btn btn-sm btn-outline-danger"
+                                                                                    onclick="DeleteTherapyBooking(@item.TherapyBookingId)">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </button>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">@item.TherapyBookingId</div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            <div class="fw-bold text-dark mb-0">@item.PatientName</div>
+                                                                            @*<span class="x-small text-muted">#BK-@item.TherapyBookingId</span>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            <span class="badge bg-light text-primary border border-primary-subtle">@item.ServiceName</span>
+                                                                            <div><small class="text-muted">Room: @item.RoomName</small></div>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">@item.TherapistName</div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @Convert.ToDateTime(item.FromDate).ToString("dd/MM/yyyy") - @Convert.ToDateTime(item.ToDate).ToString("dd/MM/yyyy")
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center fw-bold text-primary">&#8377;@item.TotalAmount</div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @{
+                                                                                string statusClass = "badge-success";
+                                                                                if (item.Status == "Completed")
+                                                                                {
+                                                                                    statusClass = "badge-info";
+                                                                                }
+                                                                                else if (item.Status == "Cancelled")
+                                                                                {
+                                                                                    statusClass = "badge-danger";
+                                                                                }
+                                                                            }
+                                                                            <span class="badge @statusClass">@item.Status</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <!-- ✅ नवीन Booking Source कॉलम इथे ॲड करा -->
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            <span class="badge bg-info text-dark">@(string.IsNullOrEmpty(item.BookingSource) ? "N/A" : item.BookingSource)</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+
+                                                                <tr class="child-row-container" id="child-@item.TherapyBookingId" style="display:none; background-color: #fafafa;">
+                                                                    <td colspan="8" class="p-3">
+                                                                        @if (item.GroupedSlots != null && item.GroupedSlots.Any())
+                                                                        {
+                                                                            <div class="row g-2">
+                                                                                <div class="col-12">
+                                                                                    <h6 class="mb-3"><i class="fa fa-clock-o me-2"></i>Booking Slots</h6>
+                                                                                </div>
+                                                                                @foreach (var group in item.GroupedSlots)
+                                                                                {
+                                                                                    <div class="col-md-3 col-sm-4 col-6">
+                                                                                        <div class="card card-body p-2 border-0 shadow-sm slot-card" data-slot-date="@group.Date.ToString("yyyy-MM-dd")">
+                                                                                            <div class="text-center">
+                                                                                                <b class="text-primary">@group.Date.ToString("dd MMM yyyy")</b>
+                                                                                                <div class="small text-muted mt-1">
+                                                                                                    <i class="fa fa-hourglass-half"></i>
+                                                                                                    @group.StartTime to @group.EndTime
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <p class="text-muted text-center mb-0">No slots booked</p>
+                                                                        }
+                                                                    </td>
+                                                                </tr>
+
+
+                                                                                    }
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                <tr>
+                                                                                    <td colspan="8">
+                                                                                        <div class="text-center py-5">
+                                                                                            <i class="fa fa-calendar-times fa-3x text-muted mb-3 d-block"></i>
+                                                                                            <h5 class="text-muted">No bookings found</h5>
+                                                                                            <p class="text-muted">Click "Add Booking" to create your first therapy booking.</p>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Store slot data for each booking
+    var bookingSlotsData = {};
+
+    // Toggle details function with arrow rotation
+    function toggleDetails(bookingId, btnElement) {
+        var childRow = $('#child-' + bookingId);
+        var icon = $(btnElement).find('i');
+
+        if (childRow.is(':visible')) {
+            childRow.slideUp(300);
+            icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            $(btnElement).removeClass('active');
+        } else {
+            childRow.slideDown(300);
+            icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            $(btnElement).addClass('active');
+        }
+    }
+
+    // Delete function
+    function DeleteTherapyBooking(bookingId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This booking and all its slots will be deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '@Url.Action("DeleteTherapyBooking", "TherapyBooking")?id=' + bookingId;
+            }
+        });
+    }
+
+    // Add Booking button click
+    $('#AddBooking').click(function() {
+        window.location.href = '@Url.Action("TherapyBooking", "TherapyBooking")';
+    });
+
+    // Function to check if booking has slots on a specific date
+    function hasSlotOnDate(slots, targetDate) {
+        if (!slots || slots.length === 0) return false;
+        targetDate.setHours(0, 0, 0, 0);
+
+        for (var i = 0; i < slots.length; i++) {
+            var slotDate = new Date(slots[i].SlotDate);
+            slotDate.setHours(0, 0, 0, 0);
+            if (slotDate.getTime() === targetDate.getTime()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // AJAX call to Mark Therapy as Complete
+    function markTherapyComplete(bookingId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to mark this therapy as Completed?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Complete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("MarkTherapyAsComplete", "TherapyBooking")',
+                    type: 'POST',
+                    data: { id: bookingId },
+                    success: function (res) {
+                        if (res.success) {
+                            Swal.fire(
+                                'Completed!',
+                                res.message,
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                res.message,
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (err) {
+                        Swal.fire('Error!', 'Something went wrong.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    // Function to get all slot dates from a booking
+    function getAllSlotDates(slots) {
+        if (!slots || slots.length === 0) return [];
+        var dates = [];
+        for (var i = 0; i < slots.length; i++) {
+            var slotDate = new Date(slots[i].SlotDate);
+            slotDate.setHours(0, 0, 0, 0);
+            dates.push(slotDate);
+        }
+        return dates;
+    }
+
+    // Function to check if booking has any upcoming slots (after today)
+    function hasUpcomingSlots(slots) {
+        if (!slots || slots.length === 0) return false;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (var i = 0; i < slots.length; i++) {
+            var slotDate = new Date(slots[i].SlotDate);
+            slotDate.setHours(0, 0, 0, 0);
+            if (slotDate.getTime() > today.getTime()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Function to check if booking has any past slots (before today)
+    function hasPastSlots(slots) {
+        if (!slots || slots.length === 0) return false;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (var i = 0; i < slots.length; i++) {
+            var slotDate = new Date(slots[i].SlotDate);
+            slotDate.setHours(0, 0, 0, 0);
+            if (slotDate.getTime() < today.getTime()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Function to check if booking has any today slots
+    function hasTodaySlots(slots) {
+        if (!slots || slots.length === 0) return false;
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        for (var i = 0; i < slots.length; i++) {
+            var slotDate = new Date(slots[i].SlotDate);
+            slotDate.setHours(0, 0, 0, 0);
+            if (slotDate.getTime() === today.getTime()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Store slot data from the DOM
+    function storeSlotData() {
+        $('#therapyTableBody tr.master-row').each(function() {
+            var $row = $(this);
+            var bookingId = $row.find('td:eq(1)').text().trim();
+
+            // Extract slots from the child row
+            var $childRow = $('#child-' + bookingId);
+            var slots = [];
+
+            $childRow.find('.slot-card').each(function() {
+                var dateText = $(this).find('.text-primary').text().trim();
+                var timeText = $(this).find('.text-muted').text().trim();
+
+                // Parse date from "23 Apr 2026" format
+                var dateParts = dateText.split(' ');
+                if (dateParts.length === 3) {
+                    var monthNames = {
+                        'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+                        'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+                    };
+                    var day = parseInt(dateParts[0]);
+                    var month = monthNames[dateParts[1]];
+                    var year = parseInt(dateParts[2]);
+                    var slotDate = new Date(year, month, day);
+
+                    slots.push({
+                        SlotDate: slotDate,
+                        DisplayDate: dateText,
+                        TimeRange: timeText
+                    });
+                }
+            });
+
+            bookingSlotsData[bookingId] = slots;
+        });
+
+        console.log('Stored slot data for bookings:', Object.keys(bookingSlotsData).length);
+    }
+
+    // Apply date filter based on slots
+    function applyDateFilter(filterType) {
+        console.log('Applying filter:', filterType);
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        var visibleCount = 0;
+        var allRows = $('#therapyTableBody tr.master-row');
+
+        allRows.each(function() {
+            var $row = $(this);
+            var bookingId = $row.find('td:eq(1)').text().trim();
+            var slots = bookingSlotsData[bookingId] || [];
+            var showRow = false;
+
+            switch(filterType) {
+                case 'all':
+                    showRow = true;
+                    break;
+                case 'today':
+                    showRow = hasTodaySlots(slots);
+                    break;
+                case 'upcoming':
+                    showRow = hasUpcomingSlots(slots);
+                    break;
+                case 'past':
+                    showRow = hasPastSlots(slots);
+                    break;
+                default:
+                    showRow = true;
+            }
+
+            if (showRow) {
+                $row.show();
+                visibleCount++;
+                console.log('Showing booking:', bookingId, 'for filter:', filterType);
+            } else {
+                $row.hide();
+                $('#child-' + bookingId).hide();
+                $row.find('.toggle-btn').removeClass('active');
+                $row.find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+
+        console.log('Visible rows for', filterType + ':', visibleCount);
+        $('#InputPage').val(1);
+        updatePagination();
+    }
+
+    // Initialize filter buttons
+    function initFilterButtons() {
+        console.log('Initializing filter buttons');
+
+        $('#FilterButtons .badge').off('click');
+
+        $('#FilterButtons .badge').on('click', function() {
+            console.log('Filter button clicked');
+            var filterValue = $(this).data('filter');
+            console.log('Filter value:', filterValue);
+
+            $('#FilterButtons .badge').removeClass('badge-primary').addClass('badge-outline-primary');
+            $(this).removeClass('badge-outline-primary').addClass('badge-primary');
+
+            applyDateFilter(filterValue);
+        });
+    }
+
+    // Pagination logic
+    function updatePagination() {
+        var rowsPerPage = parseInt($('#PageOption').val());
+        if (isNaN(rowsPerPage) || rowsPerPage === -1) {
+            $('#therapyTableBody tr.master-row:visible').show();
+            $('#total-pages').text(1);
+            $('#InputPage').val(1);
+            $('#prev-btn').addClass('disabled');
+            $('#next-btn').addClass('disabled');
+            return;
+        }
+
+        var currentPage = parseInt($('#InputPage').val()) || 1;
+        var rows = $('#therapyTableBody tr.master-row:visible');
+        var totalRows = rows.length;
+        var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+        if (totalPages === 0) totalPages = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        $('#total-pages').text(totalPages);
+        $('#InputPage').val(currentPage);
+
+        var start = (currentPage - 1) * rowsPerPage;
+        var end = start + rowsPerPage;
+
+        $('#therapyTableBody tr.master-row').hide();
+        rows.slice(start, end).show();
+
+        $('[id^="child-"]').hide();
+        $('#therapyTableBody tr.master-row:visible').each(function() {
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).find('.toggle-btn.active').length > 0) {
+                $('#child-' + bookingId).show();
+            }
+        });
+
+        $('#prev-btn').toggleClass('disabled', currentPage === 1);
+        $('#next-btn').toggleClass('disabled', currentPage === totalPages);
+    }
+
+    // Global search functionality
+    $('#SearchInput').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    // Column filters
+    $('#FilterById').on('keyup', function() {
+        var value = $(this).val();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var id = $(this).find('td:eq(1)').text().trim();
+            $(this).toggle(id.indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    $('#FilterByPatient').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var patient = $(this).find('td:eq(2)').text().toLowerCase();
+            $(this).toggle(patient.indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    $('#FilterByService').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var service = $(this).find('td:eq(3)').text().toLowerCase();
+            $(this).toggle(service.indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    $('#FilterByTherapist').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var therapist = $(this).find('td:eq(4)').text().toLowerCase();
+            $(this).toggle(therapist.indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    $('#FilterByPeriod').on('keyup', function() {
+        var value = $(this).val().toLowerCase();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var period = $(this).find('td:eq(5)').text().toLowerCase();
+            $(this).toggle(period.indexOf(value) > -1);
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    $('#FilterByStatus').on('change', function() {
+        var value = $(this).val();
+        $('#therapyTableBody tr.master-row').filter(function() {
+            var status = $(this).find('td:eq(7) .badge').text().trim();
+            if (value === "") {
+                $(this).show();
+            } else {
+                $(this).toggle(status === value);
+            }
+            var bookingId = $(this).find('td:eq(1)').text().trim();
+            if ($(this).is(':hidden')) {
+                $('#child-' + bookingId).hide();
+                $(this).find('.toggle-btn').removeClass('active');
+                $(this).find('.toggle-btn i').removeClass('fa-chevron-up').addClass('fa-chevron-down');
+            }
+        });
+        updatePagination();
+    });
+
+    // Page navigation events
+    $('#PageOption').on('change', function() {
+        $('#InputPage').val(1);
+        updatePagination();
+    });
+
+    $('#prev-btn').click(function() {
+        if (!$(this).hasClass('disabled')) {
+            var currentPage = parseInt($('#InputPage').val()) || 1;
+            $('#InputPage').val(currentPage - 1);
+            updatePagination();
+        }
+    });
+
+    $('#next-btn').click(function() {
+        if (!$(this).hasClass('disabled')) {
+            var currentPage = parseInt($('#InputPage').val()) || 1;
+            $('#InputPage').val(currentPage + 1);
+            updatePagination();
+        }
+    });
+
+    $('#InputPage').on('change', function() {
+        var page = parseInt($(this).val());
+        var totalPages = parseInt($('#total-pages').text());
+        if (!isNaN(page) && page >= 1 && page <= totalPages) {
+            updatePagination();
+        } else {
+            $(this).val($('#total-pages').text());
+            updatePagination();
+        }
+    });
+
+    // Document ready
+    $(document).ready(function() {
+        console.log('Document ready - Initializing');
+        var rowCount = $('#therapyTableBody tr.master-row').length;
+        console.log('Rows found:', rowCount);
+
+        // Store slot data from the DOM
+        storeSlotData();
+
+        // Initialize filter buttons
+        initFilterButtons();
+
+        // Initialize pagination
+        updatePagination();
+
+        // Set default active state for "Today" button and apply filter
+        var todayBadge = $('#FilterButtons .badge[data-filter="today"]');
+        if (todayBadge.length) {
+            todayBadge.removeClass('badge-outline-primary').addClass('badge-primary');
+            applyDateFilter('today');
+        }
+        $(document).on('click', '.revenue-card-trigger', function (e) {
+            $('#revenueBreakdown').slideToggle(350, function () {
+                if ($('#revenueBreakdown').is(':visible')) {
+                    $('#chevronIcon').removeClass('fa-chevron-down').addClass('fa-chevron-up text-primary');
+                } else {
+                    $('#chevronIcon').removeClass('fa-chevron-up text-primary').addClass('fa-chevron-down');
+                }
+            });
+        });
+
+    });
+
+   
+</script>

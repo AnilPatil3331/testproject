@@ -1,0 +1,296 @@
+﻿@{
+    var details = ViewBag.Details as List<dynamic> ?? new List<dynamic>();
+    string optionId = ViewBag.OptionId ?? "A";
+    string sectionName = ViewBag.SectionName ?? "";
+    int totalCount = ViewBag.TotalCount ?? 0;
+}
+
+<style>
+    .section-detail-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .section-badge {
+        display: inline-block;
+        padding: 0.25rem 0.85rem;
+        border-radius: 2rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: white;
+    }
+
+    .badge-a {
+        background: #16a34a;
+    }
+
+    .badge-b {
+        background: #2563eb;
+    }
+
+    .badge-c {
+        background: #ca8a04;
+    }
+
+    .badge-d {
+        background: #dc2626;
+    }
+
+    .answer-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .answer-a {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #86efac;
+    }
+
+    .answer-b {
+        background: #dbeafe;
+        color: #2563eb;
+        border: 1px solid #93c5fd;
+    }
+
+    .answer-c {
+        background: #fef3c7;
+        color: #ca8a04;
+        border: 1px solid #fcd34d;
+    }
+
+    .answer-d {
+        background: #fecaca;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+
+    .suggestion-text {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+    }
+
+    .detail-level-tag {
+        display: inline-block;
+        font-size: 0.6rem;
+        padding: 0.15rem 0.6rem;
+        border-radius: 1rem;
+        background: #e2e8f0;
+        color: #475569;
+        white-space: nowrap;
+        font-weight: 600;
+    }
+
+    .details-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+    }
+
+        .details-table th {
+            background: #f8fafc;
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid #e5e7eb;
+            z-index: 10;
+        }
+
+        .details-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        .details-table tr:hover {
+            background: #f8fafc;
+        }
+
+    .details-table-wrapper {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+    }
+
+        .details-table-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .details-table-wrapper::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .details-table-wrapper::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+            .details-table-wrapper::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+
+    .question-count-badge {
+        background: #e2e8f0;
+        padding: 0.15rem 0.6rem;
+        border-radius: 1rem;
+        font-size: 0.7rem;
+        color: #475569;
+    }
+
+    /* Badge Classes for Dynamic */
+    .badge-a, .badge-b, .badge-c, .badge-d {
+        display: inline-block;
+        padding: 0.25rem 0.85rem;
+        border-radius: 2rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: white;
+    }
+
+    .badge-a {
+        background: #16a34a;
+    }
+
+    .badge-b {
+        background: #2563eb;
+    }
+
+    .badge-c {
+        background: #ca8a04;
+    }
+
+    .badge-d {
+        background: #dc2626;
+    }
+
+    .answer-a, .answer-b, .answer-c, .answer-d {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .answer-a {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #86efac;
+    }
+
+    .answer-b {
+        background: #dbeafe;
+        color: #2563eb;
+        border: 1px solid #93c5fd;
+    }
+
+    .answer-c {
+        background: #fef3c7;
+        color: #ca8a04;
+        border: 1px solid #fcd34d;
+    }
+
+    .answer-d {
+        background: #fecaca;
+        color: #dc2626;
+        border: 1px solid #fca5a5;
+    }
+</style>
+
+<div>
+    <!-- Header -->
+    <div class="section-detail-header">
+        <div>
+            @{
+                string badgeClass = "badge-a";
+                if (optionId == "A") { badgeClass = "badge-a"; }
+                else if (optionId == "B") { badgeClass = "badge-b"; }
+                else if (optionId == "C") { badgeClass = "badge-c"; }
+                else if (optionId == "D") { badgeClass = "badge-d"; }
+            }
+            <span class="section-badge @badgeClass">@optionId</span>
+            <span class="ms-2 fw-bold" style="font-size:1rem;">@sectionName</span>
+            <span class="ms-2 question-count-badge">@totalCount questions</span>
+        </div>
+        <span class="text-muted small">Total: <strong>@totalCount</strong></span>
+    </div>
+
+    <!-- Questions List -->
+    @if (details.Any())
+    {
+        <div class="details-table-wrapper">
+            <table class="details-table">
+                <thead>
+                    <tr>
+                        <th style="width:45px; text-align:center;">#</th>
+                        <th style="width:100px;">Level</th>
+                        <th>Question</th>
+                        <th style="width:140px;">Answer</th>
+                        <th style="width:65px; text-align:center;">Score</th>
+                        <th style="width:200px;">Suggestion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int index = 1;
+                    }
+                    @foreach (var item in details)
+                    {
+                        string ansClass = "answer-a";
+                        if (optionId == "A") { ansClass = "answer-a"; }
+                        else if (optionId == "B") { ansClass = "answer-b"; }
+                        else if (optionId == "C") { ansClass = "answer-c"; }
+                        else if (optionId == "D") { ansClass = "answer-d"; }
+
+                        <tr>
+                            <td class="text-center text-muted" style="font-weight:600;">@index</td>
+                            <td><span class="detail-level-tag">@item.LevelName</span></td>
+                            <td style="font-weight:500;">@item.Question</td>
+                            <td><span class="answer-badge @ansClass">@item.SelectedAnswer</span></td>
+                            <td class="text-center"><strong>@item.Score</strong></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Suggestion?.ToString()))
+                                {
+                                    <span class="suggestion-text">💡 @item.Suggestion</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted" style="font-size:0.75rem;">-</span>
+                                }
+                            </td>
+                        </tr>
+                        index++;
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center text-muted small mt-3" style="padding:0.5rem;">
+            Showing <strong>@totalCount</strong> questions in <strong>@sectionName</strong>
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-4 text-gray-400">
+            <span style="font-size:2rem;display:block;margin-bottom:0.5rem;">📭</span>
+            <p class="mb-0">No questions found in this section.</p>
+        </div>
+    }
+</div>

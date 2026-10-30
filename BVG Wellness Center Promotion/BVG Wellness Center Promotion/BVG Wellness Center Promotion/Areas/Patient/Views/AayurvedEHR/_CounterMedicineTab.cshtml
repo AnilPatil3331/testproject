@@ -1,0 +1,270 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane" id="CounterMedicine" role="tabpanel">
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">Counter Product</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            +
+                                        </button>
+
+                                    </div>
+
+                                    <form id="CountermedicineForm" action="/Patient/AayurvedEHR/CounterMedicineMaster" method="post" enctype="">
+
+                                        <div class="p-1 mt-2">
+                                            <div class="section">
+
+                                                <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                                <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+                                                @*<input type="hidden" id="PrescriptionID" name="PrescriptionID" />*@
+                                                @Html.HiddenFor(m => m.PrescriptionID)
+                                                <input type="hidden" id="mixingDataJsonCounter" name="mixingDataJsonCounter" />
+                                                <input type="hidden" id="MixingDataFluidCounter" name="MixingDataFluidCounter" />
+
+
+                                                <div id="dropdownContainerCounter">
+                                                    <div class="row dropdownRow">
+                                                        <!-- Form -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.FormID,
+new SelectList(ViewBag.Forms, "FormID", "FormName"),
+"Select Form", new { @class = "form-control formId", id = "FormIDCounter" })
+                                                            <label class="floating-label">Form</label>
+                                                        </div>
+
+                                                        <!-- Package -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.PackageID,
+new SelectList(ViewBag.Packages, "PackageID", "PackageName"),
+"Select Package", new { @class = "form-control packageId", id = "PackageIDCounter" })
+                                                            <label class="floating-label">Package</label>
+                                                        </div>
+
+                                                        <!-- Number (Left side) -->
+                                                        <div class="col-md-3 form-group">
+                                                            @Html.DropDownListFor(m => m.NumberLeftID,
+                                  new SelectList(ViewBag.NumberLeft, "Id", "NumberValue"),
+                                      "Select Pack Number",
+                                     new { @class = "form-control numberLeft", id = "NumberLeftIDCounter" })
+                                                            <label class="floating-label">Pack Number</label>
+                                                        </div>
+
+                                                        <div class="col-md-1 text-center"><strong>=</strong></div>
+
+
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.FormulaID,
+new SelectList(ViewBag.MedicineList, "ID", "Name"),
+"Select Formula", new { @class = "form-control formulaId", id = "formulaIdCounter" })
+                                                            <label class="floating-label">Medicine</label>
+                                                        </div>
+
+
+
+                                                        <!-- Dose Number -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(m => m.DoseNumberID,
+new SelectList(ViewBag.DoseNumbers, "Id", "NumberQuantity"),
+"Select Dose Number",
+new { @class = "form-control doseNumber", id = "DoseNumberIDCounter" })
+                                                            <label class="floating-label">Dose Number</label>
+                                                        </div>
+
+                                                        <!-- Final Section (Dose=Quantity, Time, FluidVehicle) -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.QuantityIDDose,
+new SelectList(ViewBag.Quantities, "QuantityID", "QuantityName"),
+"Dose", new { @class = "form-control doseId", id = "QuantityIDDoseCounter" })
+                                                            <label class="floating-label">Dose</label>
+                                                        </div>
+
+                                                        <div class="col-md-3 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.TimeID,
+new SelectList(ViewBag.Time, "TimeID", "TimeName"),
+"Select Time", new { @class = "form-control timeId", id = "TimeIDCounter" })
+                                                            <label class="floating-label">Time</label>
+                                                        </div>
+
+
+                                                        <!-- Fluid Number -->
+                                                        <div class="col-md-4 form-group final-section">
+                                                            @Html.DropDownListFor(m => m.FluidNumberID,
+new SelectList(ViewBag.FluidNumbers, "Id", "NumberQuantity"),
+"Select Fluid Number",
+new { @class = "form-control doseNumber", id = "FluidNumberIDCounter" })
+                                                            <label class="floating-label">Fluid Number</label>
+                                                        </div>
+
+                                                        <!-- Final Section (FluidVehicle) -->
+                                                        <div class="col-md-4 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.FluidQuantityID,
+new SelectList(ViewBag.FluidQuantities, "QuantityID", "QuantityName"),
+"Quantity", new { @class = "form-control doseId", id = "FluidQuantityIDCounter" })
+                                                            <label class="floating-label">Fluid Quantity</label>
+                                                        </div>
+
+
+                                                        <div class="col-md-3 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.FluidVehicleID,
+new SelectList(ViewBag.FluidVehicle, "VehicleID", "VehicleName"),
+"Select Vehicle", new { @class = "form-control fluidId", id = "FluidVehicleIDCounter" })
+                                                            <label class="floating-label">Fluid Vehicle</label>
+                                                        </div>
+
+
+                                                        <div class="col-md-1">
+                                                            <button type="button" class="btn btn-primary addFluidMixingCounter">+</button>
+                                                        </div>
+
+                                                        <div class="fluidMixSectionCounter col-md-12"></div>
+
+
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(m => m.DaysNumber, new SelectList(ViewBag.DaysNumber, "Id", "NumberValue"), "Select Days Number", new { @class = "form-control doseNumber", id = "DaysNumberCounter" })
+                                                            <label class="floating-label">Consuming Days </label>
+                                                        </div>
+
+
+
+                                                        <!-- Buttons -->
+                                                        <div class="col-md-2 ">
+                                                            <button type="button" class="btn btn-success addPrescriptionCounter">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" id="prescriptionJsonCounter" name="prescriptionJsonCounter" />
+                                                <input type="hidden" id="deleteCounterUrl"
+                                                       value="@Url.Action("DeleteCounterPrescription", "AayurvedEHR", new { area = "Patient" })" />
+                                                <input type="hidden" id="PrescriptionIDCounter" name="PrescriptionID" value="0" />
+                                                @Html.HiddenFor(m => m.PrescriptionID, new { id = "PrescriptionIDCounter" })
+
+                                                <hr />
+
+                                                <div style="width:100%; overflow:auto;">
+                                                    <table class="table table-bordered" id="prescriptionTableCounter">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instruction</th>
+                                                                <th style="width: 150px;">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (ViewBag.CounterMedicineList != null)
+                                                            {
+                                                                foreach (var item in ViewBag.CounterMedicineList)
+                                                                {
+                                                                    <tr data-id="@item.PrescriptionID">
+
+
+
+                                                                        <td class="text-wrap">
+                                                                            @($"{item.FormName} {item.PackageName} {item.NumberLeft} {item.FormulaName} = " +
+                                                                                $" {item.DoseNumber} {item.Dose} {item.TimeName} ={item.MixingDetailsFluid}" +
+                                                                                $"( {item.DaysNumber} Days )" )
+                                                                        </td>
+
+
+
+                                                                        <td>
+                                                                            @*<i class="fa fa-edit text-primary editRowCounter"
+                                                                                style="cursor:pointer; margin-right:10px;"
+                                                                                data-id="@item.PrescriptionID"
+                                                                                data-formid="@item.FormID"
+                                                                                data-packageid="@item.PackageID"
+                                                                                data-numleftid="@item.NumberLeftID"
+                                                                                data-formulaid="@item.FormulaID"
+                                                                                data-dosenumid="@item.DoseNumberID"
+                                                                                data-doseid="@item.QuantityIDDose"
+                                                                                data-timeid="@item.TimeID"
+                                                                                data-days="@item.DaysNumber"></i>*@
+                                                                            <i class="fa fa-trash text-danger deleteRowCounter" style="cursor:pointer;"></i>
+                                                                        </td>
+
+
+
+                                                                    </tr>
+                                                                }
+                                                            }
+
+
+
+
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="btnBx">
+                                            <button type="submit" class="btn btn-md btn-success mr-1">Submit</button>
+                                            @*<button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                                                <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action("AUList", "reception")'">List</button>*@
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+
+                            </div>

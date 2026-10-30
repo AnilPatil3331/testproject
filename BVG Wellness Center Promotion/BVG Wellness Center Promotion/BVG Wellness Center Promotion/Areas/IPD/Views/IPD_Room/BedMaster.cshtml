@@ -1,0 +1,272 @@
+﻿
+@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model List<IPD_BedModel>
+@{
+    ViewBag.Title = "Bed Master";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var rooms = ViewBag.Rooms as List<SelectListItem>;
+    int? selectedRoomId = ViewBag.SelectedRoomId;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<style>
+    .master-header { background: linear-gradient(135deg, #1565c0, #0d47a1); color: white; padding: 16px 22px; border-radius: 12px; margin-bottom: 20px; position: relative; z-index: 10; }
+    .add-btn { background: #27ae60; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; }
+    .btn-edit { background: #fff8e1; color: #f57f17; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.82rem; cursor: pointer; }
+    .btn-del { background: #fce4ec; color: #c62828; border: none; padding: 5px 12px; border-radius: 6px; font-size: 0.82rem; cursor: pointer; }
+    .modal-hdr { background: linear-gradient(135deg, #1b5e20, #388e3c); color: white; }
+
+    /* Bed Grid */
+    .bed-visual-section { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 20px; }
+    .bed-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .bed-tile { width: 90px; text-align: center; padding: 10px 5px; border-radius: 10px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
+    .bed-tile:hover { transform: translateY(-3px); }
+    .tile-available { background: #e8f5e9; border-color: #4caf50; }
+    .tile-occupied { background: #ffebee; border-color: #f44336; }
+    .tile-cleaning { background: #fff8e1; border-color: #ffc107; }
+    .tile-maintenance { background: #f5f5f5; border-color: #9e9e9e; }
+    .tile-reserved { background: #e3f2fd; border-color: #2196f3; }
+    .bed-icon-big { font-size: 1.8rem; }
+    .bed-no-big { font-size: 0.8rem; font-weight: 700; margin-top: 3px; }
+    .bed-status-text { font-size: 0.65rem; font-weight: 600; }
+    .status-select { font-size: 0.72rem; border: 1px solid #ccc; border-radius: 4px; margin-top: 4px; width: 100%; padding: 2px; }
+
+    /* Light blue input fields */
+    .form-control, .form-select, input[type=text], input[type=number], input[type=datetime-local], textarea, select {
+        background-color: #eef5fb !important;
+        border-color: #c8dff0 !important;
+        color: #1e3a5f;
+    }
+    .form-control:focus, .form-select:focus, input:focus, select:focus, textarea:focus {
+        background-color: #ddeefa !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.15) !important;
+        color: #1e3a5f;
+    }
+    /* Standard IPD table & page styles */
+    .page-title { font-size:1rem; font-weight:700; color:#1e3a5f; }
+    .tbl-ipd th { font-size:0.74rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.3px; border-top:none; background:#f8fafc; padding:7px 10px; white-space:nowrap; }
+    .tbl-ipd td { font-size:0.82rem; padding:7px 10px; vertical-align:middle; border-color:#f1f5f9; }
+    .tbl-ipd tbody tr:hover { background:#f0f9ff; }
+    .badge-on  { background:#dcfce7; color:#15803d; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .badge-off { background:#fee2e2; color:#991b1b; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .act-btn { font-size:0.72rem; padding:3px 9px; border-radius:4px; font-weight:600; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin:1px; transition:all 0.15s; text-decoration:none; }
+    .act-edit { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+    .act-edit:hover { background:#92400e; color:#fff; }
+    .act-del  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+    .act-del:hover  { background:#991b1b; color:#fff; }
+    .act-blue { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .act-blue:hover { background:#1d4ed8; color:#fff; }
+    .act-green { background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+    .act-green:hover { background:#166534; color:#fff; }
+    .modal-hdr { background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border-radius:8px 8px 0 0; }    
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+<div class="container-fluid mt-2">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+            <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                <i class="fas fa-bed me-1"></i> Bed Master
+            </h6>
+        </div>
+        <div class="card-body">
+            <input type="hidden" id="BedId" value="0">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Room <span class="text-danger">*</span></label>
+                    <select id="RoomId" class="form-select form-select-sm">
+                        <option value="">-- Select Room --</option>
+                        @if (rooms != null)
+                        {
+                            foreach (var r in rooms)
+                            {
+                                <option value="@r.Value">@r.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Bed Number <span class="text-danger">*</span></label>
+                    <input type="text" id="BedNumber" class="form-control form-control-sm" placeholder="e.g. B1, B2">
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check form-switch mt-1">
+                        <input class="form-check-input" type="checkbox" id="IsActive" checked>
+                        <label class="form-check-label fw-semibold text-muted" style="font-size: 0.75rem;" for="IsActive">Active</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-sm px-4" id="btnSave" onclick="saveBed()"><i class="fas fa-plus me-1"></i> Add Bed</button>
+                    <button class="btn btn-light btn-sm px-3 ms-2 d-none" id="btnCancel" onclick="resetForm()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body border-top pt-3 pb-3">
+            <div class="d-flex align-items-center" style="gap:15px;">
+                <label class="fw-bold text-muted mb-0" style="font-size:0.8rem;">
+                    Filter by Room:
+                </label>
+
+                <select id="roomFilter" class="form-select form-select-sm" style="width:220px;" onchange="filterRoom()">
+                    <option value="">-- All Rooms --</option>
+                    @if (rooms != null)
+                    {
+                        foreach (var r in rooms)
+                        {
+                            <option value="@r.Value" @(selectedRoomId.HasValue && selectedRoomId.Value.ToString() == r.Value ? "selected" : "")>
+                                @r.Text
+                            </option>
+                        }
+                    }
+                </select>
+
+                <a href="/IPD/IPD_Booking/BedDashboard" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-th me-1"></i> View Dashboard
+                </a>
+            </div>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="bed-visual-section m-3 border mb-0">
+                <h6 class="fw-bold text-muted mb-3" style="font-size: 0.75rem;"><i class="fas fa-th me-2"></i>Bed Status Grid - Click to change status</h6>
+                <div class="bed-grid">
+                    @foreach (var b in Model)
+                    {
+                        string tileClass = b.BedStatus == "Available" ? "tile-available" :
+                                           b.BedStatus == "Occupied" ? "tile-occupied" :
+                                           b.BedStatus == "Cleaning" ? "tile-cleaning" :
+                                           b.BedStatus == "Maintenance" ? "tile-maintenance" :
+                                           b.BedStatus == "Reserved" ? "tile-reserved" : "tile-available";
+                        string icon = b.BedStatus == "Available" ? "🛏️" : 
+                                      b.BedStatus == "Occupied" ? "🛌" :
+                                      b.BedStatus == "Cleaning" ? "🧹" : 
+                                      b.BedStatus == "Maintenance" ? "🔧" : 
+                                      b.BedStatus == "Reserved" ? "📅" : "🛏️";
+                        <div class="bed-tile @tileClass">
+                            <div class="bed-icon-big">@icon</div>
+                            <div class="bed-no-big">@b.BedNumber</div>
+                            <div class="bed-room-small fw-bold" style="font-size: 0.65rem; color: #64748b; margin-top: -3px; margin-bottom: 3px;">Room: @b.RoomNumber</div>
+                            <div class="bed-status-text">@b.BedStatus</div>
+                            @if (b.BedStatus != "Occupied")
+                            {
+                                <select class="status-select" onchange="updateStatus(@b.BedId, this.value)">
+                                    <option value="Available" @(b.BedStatus == "Available" ? "selected" : "")>Available</option>
+                                    <option value="Cleaning" @(b.BedStatus == "Cleaning" ? "selected" : "")>Cleaning</option>
+                                    <option value="Maintenance" @(b.BedStatus == "Maintenance" ? "selected" : "")>Maintenance</option>
+                                    <option value="Reserved" @(b.BedStatus == "Reserved" ? "selected" : "")>Reserved</option>
+                                </select>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="table-responsive border-top mt-3">
+            <table id="tblBed" class="table tbl-ipd mb-0">
+                <thead class="table-light">
+                    <tr><th>Sr No.</th><th>Room</th><th>Bed Number</th><th>Status</th><th>Active</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    @{ int index = 1; }
+                    @foreach (var b in Model)
+                    {
+                        string statusClass = b.BedStatus == "Available" ? "background:#e8f5e9;color:#2e7d32" :
+                                             b.BedStatus == "Occupied" ? "background:#ffebee;color:#c62828" :
+                                             b.BedStatus == "Cleaning" ? "background:#fff8e1;color:#f57f17" :
+                                             b.BedStatus == "Maintenance" ? "background:#f5f5f5;color:#616161" :
+                                             b.BedStatus == "Reserved" ? "background:#e3f2fd;color:#1565c0" : "";
+                        <tr>
+                            <td>@(index++)</td>
+                            <td><strong>@b.RoomNumber</strong></td>
+                            <td><strong>@b.BedNumber</strong></td>
+                            <td><span style="@statusClass; padding:3px 12px; border-radius:20px; font-size:0.78rem; font-weight:600;">@b.BedStatus</span></td>
+                            <td>
+                                @if (b.IsActive) { <span class="badge-on">Active</span> }
+                                else { <span style="background:#ffeaea;color:#c0392b;padding:3px 12px;border-radius:20px;font-size:0.78rem;font-weight:600;">Inactive</span> }
+                            </td>
+                            <td>
+                                <button class="act-btn act-edit me-1" onclick="editBed(@b.BedId, @b.RoomId, '@b.BedNumber', @b.IsActive.ToString().ToLower())">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="act-btn act-del" onclick="deleteBed(@b.BedId)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () { $('#tblBed').DataTable({ pageLength: 25 }); });
+
+    function filterRoom() {
+        var roomId = document.getElementById('roomFilter').value;
+        window.location.href = '/IPD/IPD_Room/BedMaster' + (roomId ? '?roomId=' + roomId : '');
+    }
+
+    function editBed(id, roomId, bedNo, active) {
+        document.getElementById('BedId').value = id || 0;
+        document.getElementById('RoomId').value = roomId || '';
+        document.getElementById('BedNumber').value = bedNo || '';
+        document.getElementById('IsActive').checked = active !== false;
+        
+        document.getElementById('btnSave').innerHTML = '<i class="fas fa-save me-1"></i> Update Bed';
+        document.getElementById('btnSave').classList.replace('btn-primary', 'btn-success');
+        document.getElementById('btnCancel').classList.remove('d-none');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function resetForm() {
+        document.getElementById('BedId').value = 0;
+        document.getElementById('RoomId').value = '';
+        document.getElementById('BedNumber').value = '';
+        document.getElementById('IsActive').checked = true;
+        
+        document.getElementById('btnSave').innerHTML = '<i class="fas fa-plus me-1"></i> Add Bed';
+        document.getElementById('btnSave').classList.replace('btn-success', 'btn-primary');
+        document.getElementById('btnCancel').classList.add('d-none');
+    }
+
+    function saveBed() {
+        var data = {
+            BedId: document.getElementById('BedId').value,
+            RoomId: document.getElementById('RoomId').value,
+            BedNumber: document.getElementById('BedNumber').value,
+            IsActive: document.getElementById('IsActive').checked
+        };
+        if (!data.RoomId) { alert('Please select a room'); return; }
+        if (!data.BedNumber.trim()) { alert('Bed Number is required'); return; }
+        fetch('/IPD/IPD_Room/BedMaster_Save', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data) })
+            .then(r => r.json()).then(res => { if (res.success) { location.reload(); } else alert('Error: ' + res.message); });
+    }
+
+    function deleteBed(id) {
+        if (!confirm('Delete this bed?')) return;
+        fetch('/IPD/IPD_Room/BedMaster_Delete', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'id=' + id })
+            .then(r => r.json()).then(res => { if (res.success) { location.reload(); } else alert('Error: ' + res.message); });
+    }
+
+    function updateStatus(bedId, status) {
+        fetch(`/IPD/IPD_Room/BedMaster_UpdateStatus`, {
+            method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `bedId=${bedId}&status=${status}`
+        }).then(r => r.json()).then(res => {
+            if (res.success) location.reload();
+            else alert('Error: ' + res.message);
+        });
+    }
+</script>
+

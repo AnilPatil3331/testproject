@@ -1,0 +1,670 @@
+﻿
+@{
+    ViewBag.Title = "ClinicList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Clinic List
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    @*<button class="float-right btn btn-sm btn-primary rtl-left">
+                                        <i class="fas fa-file-import">
+                                        </i>
+                                        Import data
+                                    </button>*@
+                                    <a href="/Admin/AddClinic/AddClinic" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-plus">
+                                        </i>
+                                        Add clinic
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body p-0">
+                        <!---->
+                        <!---->
+                        <div data-v-9bd3ed50="">
+                            <!---->
+                        </div>
+                        <div class="row">
+                            @if (TempData["Message"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        var message = '@TempData["Message"]';
+                                        var alertType = '@TempData["Icon"]';
+                                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                        showCustomAlert(message, alertType, imageUrl);
+                                    };
+                                </script>
+
+                            }
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                            </div>
+                                            <div class="vld-icon">
+                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                     height="64" stroke="var(--primary)">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                            </circle>
+                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                                </animateTransform>
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="clinicPrint">
+                                    <div class="vgt-wrap ">
+                                        <!---->
+                                        <div class="vgt-inner-wrap">
+                                            <!---->
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-1381483158664">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                <div class="magnifying-glass">
+                                                                </div>
+                                                            </span>
+                                                            <span class="sr-only">
+                                                                Search
+                                                            </span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search clinic data by id, name, email, admin-email, speciality,address and status(0 or 1)"
+                                                               class="vgt-input vgt-pull-left">
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div>
+                                                        <div class="row">
+                                                            <div data-v-38979de7="" id="export_1734088845344">
+                                                                <button data-v-38979de7="" title="Export CSV" class="btn btn-sm">
+                                                                    <i data-v-38979de7="" class="fas fa-file-csv">
+                                                                    </i>
+                                                                </button>
+                                                            </div>
+                                                            <button title="Export Excel" id="ExportToExcel" class="btn btn-sm mr-0">
+                                                                <i class="fa fa-file-excel">
+                                                                </i>
+                                                            </button>
+                                                            <button title="Export PDF" class="btn btn-sm">
+                                                                <i class="fa fa-file-pdf">
+                                                                </i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-fixed-header">
+                                                <!---->
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="ClinicTable" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <!---->
+                                                            <th scope="col" class="vgt-checkbox-col">
+                                                                @*<input type="checkbox">*@
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Action
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                style="min-width: 80px; max-width: 80px; width: 80px;">
+                                                                <span>
+                                                                    ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Email
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Email in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Clinic Admin Email
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Clinic Admin Email in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                style="min-width: 160px; max-width: 160px; width: 160px;">
+                                                                <span>
+                                                                    Contact No
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Contact No in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Specialization
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Clinic address
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Status in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                           
+                                                        </tr>
+                                                        <tr>
+                                                            <!---->
+                                                            <th>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                @*<div>
+                                                                    <input name="vgt-id" id="FilterById" type="text" placeholder="ID" class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>*@
+                                                            </th>
+                                                            <th class="filter-th">
+                                                              
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-name" id="FilterByClinicName" type="text" placeholder="Filter clinic by name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-email" id="FilterByEmail" type="text" placeholder="Email"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_admin_email" id="FilterbyAdmin" type="text" placeholder="Clinic Admin Email"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-telephone_no" id="FilterByNumber" type="text" placeholder="Filter clinic by contact number"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                               
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_full_address" id="FilterByAddress" type="text" placeholder="Clinic address"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <!---->
+                                                                    <!---->
+                                                                    <select name="vgt-status" id="filetrByStatus" class="vgt-select">
+                                                                        <option value="">
+                                                                            Filter by status
+                                                                        </option>
+                                                                        <option value="ACTIVE">
+                                                                            Active
+                                                                        </option>
+                                                                        <option value="INACTIVE">
+                                                                            Inactive
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <!---->
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (ViewBag.ClinicList != null)
+                                                        {
+                                                            int count = 1;
+                                                            foreach (var item in ViewBag.ClinicList)
+                                                            {
+                                                                <tr class="">
+                                                                    <!---->
+                                                                    <th class="vgt-checkbox-col">
+                                                                        @*<input type="checkbox">*@
+                                                                    </th>
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <a href="@Url.Action("AddClinic", "AddClinic", new { Fid_Encrypted = @item.Fid_Encrypted })" class="btn btn-sm btn-outline-primary" title="Edit">
+                                                                                <i class="fa fa-pen-alt">
+                                                                                </i>
+                                                                            </a>
+                                                                            <button title="Resend credential" id="resend_2" class="btn btn-outline-warning btn-sm">
+                                                                                <i aria-hidden="true" class="fa fa-paper-plane">
+                                                                                </i>
+                                                                            </button>
+                                                                            <button title="Delete" id="resend_2" class="btn btn-outline-danger btn-sm" onclick="DeleteClinic('@item.Fid_Encrypted','@item.ClinicAdminFid_Encrypted')">
+                                                                                <i aria-hidden="true" class="fa fa-trash">
+                                                                                </i>
+                                                                            </button>
+                                                                            @*<a href="@Url.Action("DeleteClinic", "AddClinic", new { Fid_Encrypted = @item.Fid_Encrypted })" class="btn btn-outline-danger btn-sm"
+                                                                                   title="Delete">
+                                                                                    <i class="fa fa-trash">
+                                                                                    </i>
+                                                                                </a>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="ID" class="vgt-left-align">
+                                                                        <div>
+                                                                            @count
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Name" class="vgt-left-align">
+                                                                        <div class="d-flex align-items-center">                                                                           
+                                                                            @item.ClinicName
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Email" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.ClinicEmail
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Clinic Admin Email" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.adminName
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Contact No" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.ClinicContact
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Specialization" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.Specialities
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Clinic address" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.ClinicAddress
+                                                                        </div>
+                                                                    </td>
+                                                                    <td data-label="Status" class="vgt-left-align">
+                                                                        <div class="d-flex">
+                                                                            <div class="custom-control custom-switch b-custom-control-lg">
+                                                                                @if (@item.Status == "Active")
+                                                                                {
+                                                                                    <input id="status_change_@item.Fid" type="checkbox" name="check-button" class="custom-control-input" checked onclick="toggleStatus(this,'@item.Fid_Encrypted')">
+                                                                                    <label for="status_change_@item.Fid" class="custom-control-label">
+                                                                                    </label>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input id="status_change_@item.Fid" type="checkbox" name="check-button" class="custom-control-input" onclick="toggleStatus(this,'@item.Fid_Encrypted')">
+                                                                                    <label for="status_change_@item.Fid" class="custom-control-label">
+                                                                                    </label>
+                                                                                }
+
+                                                                            </div>
+                                                                            @if (@item.Status == "Active")
+                                                                            {
+                                                                                <span class="badge badge-success">
+                                                                                    @item.Status
+                                                                                </span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="badge badge-danger">
+                                                                                    @item.Status
+                                                                                </span>
+                                                                            }
+
+                                                                            <!---->
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                count++;
+                                                            }
+                                                        }
+                                                        <!---->
+                                                        <!---->
+                                                    </tbody>
+                                                    <!---->
+                                                </table>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                    <!---->
+                </div>
+                <!---->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleStatus(checkbox, Fid_Encrypted) {
+        debugger;
+
+        if (checkbox.checked) {
+            debugger;
+            var Status = "Active";
+            var url = '@Url.Action("ChangeClinicStatus", "AddClinic")' + '?Fid_Encrypted=' + Fid_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        } else {
+            debugger;
+            var Status = "Inactive";
+            var url = '@Url.Action("ChangeClinicStatus", "AddClinic")' + '?Fid_Encrypted=' + Fid_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        }
+    }
+</script>
+<script>
+
+    function DeleteClinic(Fid_Encrypted, ClinicAdminFid_Encrypted) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                var url = '@Url.Action("DeleteClinic", "AddClinic")' + '?Fid_Encrypted=' + Fid_Encrypted + '&ClinicAdminFid_Encrypted=' + ClinicAdminFid_Encrypted;
+                window.location.href = url;
+
+            }
+        });
+    }
+
+</script>
+
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('SearchInput', 'ClinicTable'); //Type any for filter
+    filterTable('FilterByEmail', 'ClinicTable');  // Filter by email
+    filterTable('FilterByNumber', 'ClinicTable');  // Filter by Mobile
+    filterTable('FilterByClinicName', 'ClinicTable');  // Filter by Clinic
+    filterTable('FilterbyAdmin', 'ClinicTable');  // Filter by Admin Name
+    filterTable('FilterByAddress', 'ClinicTable');  // Filter by Address
+
+    document.getElementById('filetrByStatus').addEventListener('change', function () {
+        debugger;
+        const selectedValue = this.value; // Get the selected value from the dropdown
+        const table = document.getElementById('ClinicTable'); // Get the table by ID
+        const rows = table.querySelectorAll('tbody tr'); // Get all table rows
+
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(10)'); // Assuming status is in the 8th column (Status column)
+
+            // Get the text content of the badge (either "Active" or "Inactive")
+            const statusValue = statusCell ? statusCell.querySelector('span').textContent.trim() : "";
+
+            // Show row if the selected value matches the status value or if no value is selected
+            if (selectedValue === "" || statusValue.toLowerCase() === selectedValue.toLowerCase()) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('ClinicTable');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+
+@*<script>
+        document.getElementById("ExportToExcel").addEventListener("click", function () {
+            // Temporarily show all rows before exporting
+            const table = document.getElementById("ClinicTable");
+            const rows = table.querySelectorAll('tbody tr');
+
+            // Save the original display style for rows
+            const originalStyles = Array.from(rows).map(row => row.style.display);
+
+            // Show all rows
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+
+            // Create a new Workbook
+            const workbook = XLSX.utils.book_new();
+
+            // Convert the full HTML table to a worksheet
+            const worksheet = XLSX.utils.table_to_sheet(table);
+
+            // Append the worksheet to the workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Patients");
+
+            // Generate an Excel file and trigger download
+            XLSX.writeFile(workbook, "PatientData.xlsx");
+
+            // Reapply the original display styles to restore the table's state
+            rows.forEach((row, index) => {
+                row.style.display = originalStyles[index];
+            });
+        });
+    </script>*@
+
+

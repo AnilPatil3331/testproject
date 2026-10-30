@@ -1,0 +1,348 @@
+﻿
+
+
+@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model List<IPD_BedDashboardModel>
+@{
+    ViewBag.Title = "BedDashboard";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@{
+    var settings = ViewBag.Settings as IPD_HospitalSettingModel;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+@*<div class="container-fluid" style="padding-left:15px !important; padding-bottom: 50px;">*@
+    <style>
+        .ipd-header {
+            background: linear-gradient(135deg, #1a3c5e, #2980b9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 10;
+            margin-top: 10px;
+        }
+
+        .summary-card {
+            border-radius: 12px;
+            padding: 10px 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+        }
+
+            .summary-card:hover {
+                transform: translateY(-3px);
+            }
+
+            .summary-card .icon {
+                font-size: 1.6rem;
+                opacity: 0.85;
+            }
+
+            .summary-card .count {
+                font-size: 1.5rem;
+                font-weight: 700;
+                line-height: 1;
+            }
+
+            .summary-card .label {
+                font-size: 0.75rem;
+                opacity: 0.9;
+            }
+
+        .card-total {
+            background: linear-gradient(135deg, #2c3e50, #4a6fa5);
+        }
+
+        .card-available {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .card-occupied {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+        }
+
+        .card-other {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+        }
+
+        .ward-section {
+            margin-bottom: 15px;
+        }
+
+        .ward-title {
+            background: #f0f4f8;
+            border-left: 4px solid #2980b9;
+            padding: 6px 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .room-group {
+            margin-bottom: 10px;
+        }
+
+        .room-label {
+            font-size: 0.75rem;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .bed-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .bed-card {
+            width: 65px;
+            height: 60px;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+        }
+
+            .bed-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            }
+
+            .bed-card .bed-icon {
+                font-size: 1.2rem;
+            }
+
+            .bed-card .bed-no {
+                font-size: 0.65rem;
+                font-weight: 600;
+                margin-top: 2px;
+            }
+
+        .bed-available {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+            .bed-available:hover {
+                background: #4caf50;
+                color: white;
+                border-color: #388e3c;
+            }
+
+        .bed-occupied {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+            cursor: default;
+        }
+
+        .bed-cleaning {
+            background: #fff8e1;
+            border-color: #ffc107;
+            color: #f57f17;
+        }
+
+        .bed-maintenance {
+            background: #f3f3f3;
+            border-color: #9e9e9e;
+            color: #616161;
+            cursor: default;
+        }
+
+        .bed-reserved {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1565c0;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            padding: 12px 18px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+
+        .floor-tab-content {
+            padding: 15px 0;
+        }
+
+        .nav-tabs .nav-link {
+            color: #555;
+            font-weight: 500;
+        }
+
+            .nav-tabs .nav-link.active {
+                color: #2980b9;
+                border-color: #2980b9 #2980b9 #fff;
+                font-weight: 700;
+            }
+    </style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+<div class="container-fluid">
+    <div class="ipd-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1"><i class="fas fa-hospital-alt me-2"></i>Bed Availability Dashboard</h4>
+                <small class="opacity-75">Live bed status — <span id="currentTime"></span></small>
+            </div>
+            <a href="/IPD/IPD_Booking/NewAdmission" class="btn btn-light btn-sm">
+                <i class="fas fa-plus me-1"></i> New Admission
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="summary-card card-total">
+                <div class="icon"><i class="fas fa-bed"></i></div>
+                <div><div class="count">@ViewBag.TotalBeds</div><div class="label">Total Beds</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="summary-card card-available">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <div><div class="count">@ViewBag.AvailableBeds</div><div class="label">Available</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="summary-card card-occupied">
+                <div class="icon"><i class="fas fa-user-injured"></i></div>
+                <div><div class="count">@ViewBag.OccupiedBeds</div><div class="label">Occupied</div></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="summary-card card-other">
+                <div class="icon"><i class="fas fa-tools"></i></div>
+                <div><div class="count">@ViewBag.OtherBeds</div><div class="label">Cleaning/Maint.</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div> Available</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f44336"></div> Occupied</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ffc107"></div> Cleaning</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#9e9e9e"></div> Maintenance</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2196f3"></div> Reserved</div>
+    </div>
+
+    @{
+        // Group by Floor (if UseFloor), then by Ward, then by Room
+        var useFloor = settings != null && settings.UseFloor;
+        var useWard = settings != null && settings.UseWard;
+
+        if (useFloor)
+        {
+            var floors = Model.GroupBy(b => new { b.FloorId, b.FloorName, b.FloorNumber })
+                              .OrderBy(g => g.Key.FloorNumber).ToList();
+            <ul class="nav nav-tabs mb-3" id="floorTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#floor-all">All Floors</a>
+                </li>
+                @foreach (var floor in floors)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#floor-@floor.Key.FloorId">@(floor.Key.FloorName ?? "No Floor")</a>
+                    </li>
+                }
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="floor-all">
+                    @Html.Partial("_BedGrid", Model)
+                </div>
+                @foreach (var floor in floors)
+                {
+                    <div class="tab-pane" id="floor-@floor.Key.FloorId">
+                        @Html.Partial("_BedGrid", floor.ToList())
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            @Html.Partial("_BedGrid", Model)
+        }
+    }
+
+    <!-- Bed Detail Tooltip Modal -->
+    <div class="modal fade" id="bedModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h6 class="modal-title" id="bedModalTitle">Bed Detail</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="bedModalBody"></div>
+                <div class="modal-footer py-2" id="bedModalFooter"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Live clock
+        function updateClock() {
+            document.getElementById('currentTime').textContent = new Date().toLocaleString('en-IN');
+        }
+        setInterval(updateClock, 1000); updateClock();
+
+        // Click on available bed → open admission
+        function bedClick(bedId, bedNo, roomNo, roomCharge, status) {
+            var body = `<p><strong>Room:</strong> ${roomNo}</p><p><strong>Bed:</strong> ${bedNo}</p><p><strong>Status:</strong> ${status}</p><p><strong>Rate:</strong> ₹${roomCharge}/day</p>`;
+            document.getElementById('bedModalTitle').textContent = 'Bed ' + bedNo;
+            document.getElementById('bedModalBody').innerHTML = body;
+            var footer = '';
+            if (status === 'Available') {
+                footer = `<a href="/IPD/IPD_Booking/NewAdmission?bedId=${bedId}" class="btn btn-success btn-sm w-100"><i class="fas fa-user-plus me-1"></i>Admit Patient to this Bed</a>`;
+            } else {
+                footer = `<span class="badge bg-secondary w-100 py-2">Bed is ${status}</span>`;
+            }
+            document.getElementById('bedModalFooter').innerHTML = footer;
+            new bootstrap.Modal(document.getElementById('bedModal')).show();
+        }
+    </script>
+    <script src="~/assets/js/FlatpickerTime.js"></script>
+    <script src="~/assets/js/FlatpickerDate.js"></script>
+    <script src="~/Areas/IPD/Scripts/BedDashboard.js"></script>
+</div>

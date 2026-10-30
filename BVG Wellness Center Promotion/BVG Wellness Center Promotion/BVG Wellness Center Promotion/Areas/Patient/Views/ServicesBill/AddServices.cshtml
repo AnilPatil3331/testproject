@@ -1,0 +1,2224 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.Medicine
+
+@{
+    ViewBag.Title = "AddServices";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    int count = 0;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+
+}
+ 
+
+<style>
+    .body {
+        background-color: white !important;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    hr {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        background: transparent;
+        width: 100%;
+        color: #000;
+        border-radius: 0;
+        min-height: 38px;
+    }
+
+        .form-control::placeholder {
+            color: transparent;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: transparent;
+        }
+
+    .form-row .form-title {
+        font-weight: 600;
+        color: #000;
+        margin: 10px;
+    }
+
+    .form-check {
+        margin: 0 10px;
+    }
+
+    .form-check-input {
+        margin-left: -1rem;
+    }
+
+    .floating-label {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.75rem;
+        transition: all 0.2s ease;
+        pointer-events: none;
+        color: #3f5368;
+        font-size: 14px;
+        z-index: 2;
+        padding: 0 5px;
+        background-color: white;
+    }
+
+    .form-control:focus ~ .floating-label,
+    .form-control:not(:placeholder-shown) ~ .floating-label {
+        top: -0.6rem;
+        left: 0.65rem;
+        font-size: 12px;
+        color: #007bff;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #333;
+    }
+
+    input::placeholder {
+        color: gray !important;
+        opacity: 1;
+        /* Ensure it's not faded */
+    }
+
+    .input-group-supportx {
+        height: max-content;
+        padding: .375rem .75rem;
+        font-size: .875rem;
+        line-height: 1.5;
+        color: #4F5467;
+        text-align: center;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        min-height: 38px;
+    }
+
+    .data-box {
+        border: 1px solid black;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    .data-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .data-field {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding-bottom: 3px;
+        margin-right: 25px;
+        font-size: 14px;
+        color: #000;
+        min-width: 290px;
+        margin-bottom: 10px;
+    }
+
+    .data-label {
+        font-weight: 600;
+        margin-right: 5px;
+    }
+
+    .small-field {
+        min-width: 80px;
+    }
+
+    /* Reduce table cell padding */
+    #config-table td,
+    #config-table th {
+        padding: 6px 10px !important;
+        vertical-align: middle;
+    }
+
+    /* Action icons */
+    .action-icons i {
+        cursor: pointer;
+        margin: 0 5px;
+        color: #007bff;
+        font-size: 14px;
+    }
+
+        .action-icons i.fa-trash {
+            color: red;
+        }
+
+    .btnBx {
+        margin: 10px;
+        display: flex;
+        justify-content: end;
+    }
+
+    .customtab2 li a.nav-link {
+        border: 1px solid lightgray;
+    }
+
+    .tab-content > .active {
+        border: 1px solid lightgrey;
+    }
+
+    .customtab2 li a.nav-link.active {
+        background-color: #1497dee5;
+    }
+
+    .customtab2 li a.nav-link:hover {
+        background-color: #1497dee5;
+    }
+
+    .section {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+        .section .section-heading {
+            background: #1497dee5;
+            padding: 5px;
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    .section-heading .card-title {
+        color: #fff;
+        margin: 0;
+        margin-left: 10px;
+        /*font-size: 16px;*/
+    }
+
+    .section-heading button {
+        color: #fff;
+        font-size: 20px;
+    }
+
+        .section-heading button:hover {
+            color: #f5f5f5;
+        }
+
+    .autosize-textarea {
+        height: 70px !important;
+        overflow: hidden !important;
+    }
+
+
+    /* Diagnosis Results Styles */
+    .diagnosis-results {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .result-item {
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: white;
+        border-left: 4px solid #BE9076;
+        border-radius: 3px;
+    }
+
+        .result-item h5 {
+            color: #BE9076;
+            margin-bottom: 15px;
+        }
+
+    .result-section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+
+    .quick-date {
+        border-radius: 0px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+        .quick-date.btn-primary {
+            color: #fff !important;
+        }
+
+
+    /*.fixed-card {
+        position: fixed;
+        top: 100px;
+        left: 0;
+        right: 0;
+        z-index: 999;
+
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+    }*/
+
+    /*.tab-pane.active{
+            height:280px;
+            overflow:auto;
+        }*/
+</style>
+
+
+<div class="page-wrapper">
+    <div style="padding: 9px 20px 6px 20px; color:black; margin-top:-80px; display: flex; justify-content: space-between; align-items: center;">
+        <h4 style="margin: 0;"></h4>
+
+        <div style="position: relative; width: 315px; margin-right: 40%;">
+            <i class="fa fa-search" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #aaa;"></i>
+            <input type="text" class="form-control" id="searchInput" placeholder="Patient Name / Mobile Number / UHID Number"
+                   style="padding:10px;   padding-left: 47px; background-color: white; width: 125%; height: 36px; font-size: 14px; border-radius: 20px;" />
+
+            <div id="searchResult"
+                 style="position: absolute; top: 40px; background: white; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000; font-size:small;width: 125%; display: none;">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+
+
+                        <div class="d-flex justify-content-end">
+                            @*<button id="status_update_1476"
+                                        data-trigger="hover"
+                                        title="Check out"
+                                        type="button"
+                                        class="btn btn-outline-danger"
+                                        onclick="CloseAppointmentStatus('@ViewBag.TodayPatients.AppointmentFid_Encrypted')">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                    Check Out
+                                </button>*@
+
+                            <button class="btn btn-sm btn-outline-danger mb-1 mr-0" id="CloseEncounter"   >
+                                <i class="fa fa-check">
+                                </i>
+                                Bill
+                            </button>
+
+
+                        </div>
+
+
+                        @if (ViewBag.Other != "null" && ViewBag.TodayPatients == null)
+                        {
+                            <div class="data-box">
+
+                                <!-- Row 1 -->
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>
+                                        <input type="text"
+                                               class="form-control form-control-sm"
+                                               name="PatientName" id="ManualPatientName" 
+                                               placeholder="Enter Name" />
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>
+                                        <input type="text"
+                                               class="form-control form-control-sm"
+                                               name="MobileNo"
+                                               maxlength="10" id="ManualMobileNo" 
+                                               placeholder="Enter Mobile No" />
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>
+                                        <input type="number"
+                                               class="form-control form-control-sm"
+                                               name="Age" id="ManualAge"
+                                               placeholder="Age" />
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>
+                                        <select class="form-control form-control-sm"
+                                                name="Gender" id="ManualGender" >
+                                            <option value="">Select</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+
+                                    <div class="data-row">
+                                        <div class="data-field">
+                                            <span class="data-label">Visit Date:</span>
+                                            <input type="date"
+                                                   class="form-control form-control-sm"
+                                                   name="VisitDate" id="ManualVisitDate"
+                                                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Row 2 -->
+                                @*<div class="data-row">
+                                                    <div class="data-field">
+                                                        <span class="data-label">UHID No:</span>
+                                                        <input type="text"
+                                                               class="form-control form-control-sm"
+                                                               name="UHIDNO"
+                                                               placeholder="Auto / Manual" />
+                                                    </div>
+
+                                                    <div class="data-field">
+                                                        <span class="data-label">Department:</span>
+                                                        @Html.DropDownList(
+                                    "DepartmentFid",
+                                    ViewBag.DepartmentList as SelectList,
+                                    "-- Select Department --",
+                                    new { @class = "form-control form-control-sm" })
+                                                    </div>
+
+                                                    <div class="data-field">
+                                                        <span class="data-label">Doctor:</span>
+                                                        @Html.DropDownList(
+                                    "DoctorFid",
+                                    ViewBag.DoctorList as SelectList,
+                                    "-- Select Doctor --",
+                                    new { @class = "form-control form-control-sm" })
+                                                    </div>
+                                                </div>*@
+
+                                <!-- Row 3 -->
+
+
+                            </div>
+                        }
+                        else if (ViewBag.TodayPatients != null)
+                        {
+
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>@ViewBag.TodayPatients.PatientName
+                                    </div>
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>@ViewBag.TodayPatients.ContactNumber
+                                    </div>
+                                    <div class="data-field small-field">
+                                       <span class="data-label">Age:</span>@ViewBag.TodayPatients.Age
+                                    </div>
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>@ViewBag.TodayPatients.Gender
+                                    </div>
+                                </div>
+
+                                <!-- ✅ ADD THIS FOR DEBUGGING -->
+                                @*<div class="data-row" style="display:none;">
+                                    <div class="data-field">
+                                        <span class="data-label">PatientFid (Hidden):</span>
+                                        <span id="debugPatientFid">@ViewBag.PatientFid</span>
+                                    </div>
+                                </div>*@
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>
+                                    </div>
+
+                                    @*<div class="data-field">
+                                            <span class="data-label">Email ID:</span>
+                                        </div>*@
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">UHID No:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Department:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Doctor:</span>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-0">
+                    <div class="card-body p-b-0">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs customtab2" role="tablist">
+                            <li class="nav-item">
+
+                                <a class="nav-link active" data-bs-target="#medicine" type="button" role="tab" aria-selected="true" data-bs-toggle="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">Medicine</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Dispensing" role="tab" aria-selected="true">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-email"></i>
+                                    </span> <span class="hidden-xs-down">Dispensing Medicine</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            @*tab close div*@
+
+                            <div class="tab-pane  p-20 active show " id="medicine" role="tabpanel">
+
+                                <form id="prescriptionForm">
+                                    <!-- Added ID to form -->
+                                    <!-- R ow 1: Frequency, Normal (new), Duration, Instruction -->
+                                    <div class="row" style="margin:19px;">
+                                      <input type="hidden" id="PatientID" name="PatientID" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+
+
+
+                                        <div class="col-md-4 form-group">
+                                            @Html.DropDownListFor(m => m.ItemName, new SelectList(ViewBag.Getdata, "Id", "Name"), "Select Services", new { @class = "form-control", id ="ddlServiceName", required = "required" })
+                                            <label class="floating-label">Service Name</label>
+                                        </div>
+                                        
+                                        <div class="col-md-3 form-group">
+                                            @Html.TextBoxFor(m => m.Rate, new { @class = "form-control", id = "Rate" })
+                                            <label class="floating-label">Rate</label>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            @Html.TextBoxFor(m => m.Count, new { @class = "form-control",id = "Quantity", type = "number", value = "1", min = "1" })
+                                            <label class="floating-label">Quantity</label>
+                                        </div>
+
+                                        <div class="col-md-3 form-group">
+                                            @Html.TextBoxFor(m => m.Discount, new { @class = "form-control", id = "Discount", value = "0", min = "0" })
+                                            <label class="floating-label">Discount</label>
+                                        </div>
+
+
+                                        <div class="col-md-3 form-group">
+                                            @Html.DropDownListFor(m => m.DoctorFid, new SelectList(ViewBag.GetDoctorName, "Id", "Name"), "Select Doctor", new { @class = "form-control", id = "DoctorFid", required = "required" })
+                                            <label class="floating-label">Suggested By</label>
+                                        </div>
+
+                                        <div class="col-md-3 form-group">
+                                            @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", placeholder = " ", id = "Amount" })
+                                            <label class="floating-label">Amount</label>
+                                        </div>
+             
+                                        <!-- Row 3: Note -->
+                                        @*<div class="row">*@
+                                        <div class="col-md-6 form-group">
+                                            @Html.TextBoxFor(m => m.Note, new { @class = "form-control", placeholder = " ", id = "Note" })
+                                            <label class="floating-label">Note</label>
+                                        </div>
+
+
+                                    </div>
+
+                                    @*</div>*@
+
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button type="button" id="addButton" class="btn btn-primary me-2">ADD</button>
+                                        <button type="button" id="updateButton" class="btn btn-success me-2" style="display: none;">UPDATE</button>
+                                        <button type="button" id="cancelButton" class="btn btn-secondary" style="display: none;">CANCEL</button>
+                                    </div>
+                                </form>
+
+                                <div class="table-responsive mt-4" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px;">
+                                    <table class="table table-sm table-bordered mb-0">
+                                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                                            <tr>
+                                                <th>Action</th>
+                                                <th>Service Name</th>
+                                                <th>Rate</th>
+                                                <th>Quantity</th>
+                                                <th>Discount</th>
+                                                @*<th>Suggested By</th>*@
+                                                <th>Amount</th>
+                                                <th>Note</th>
+                                                @*<th>Qty</th>
+                                                <th>Note</th>*@
+
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prescriptionTableBody">
+                                            <!-- Table rows will be added dynamically -->
+
+                                            @if(ViewBag.GetServicesList != null)
+                                            {
+                                                foreach (var item in ViewBag.GetServicesList)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-danger"
+                                                                    onclick="deletePrescription()">
+                                                                🗑
+                                                            </button>
+                                                       </td>
+                                                        <td>@item.ServiceName</td>
+                                                        <td>@item.Rate</td>
+                                                        <td>@item.Quantity</td>
+                                                        <td>@item.Discount</td>
+                                                        <td>@item.Amount</td>
+                                                        <td>@item.Note</td>
+                                                    </tr>
+                                                }
+                                            }
+
+
+
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="btnBx">
+                                    <button type="submit" class="btn btn-md btn-success mr-1">Submit</button>                              
+                                </div>
+
+
+
+
+                            </div>
+
+                            <div class="tab-pane p-20" id="Dispensing" role="tabpanel">
+
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+</div>
+
+
+
+<div id="bill-modal___BV_modal_outer_" style="position: absolute; z-index: 1040; display: none;">
+    <div id="bill-modal" role="dialog" aria-describedby="bill-modal___BV_modal_body_"
+         class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <span tabindex="0">
+            </span>
+            <div id="bill-modal___BV_modal_content_" tabindex="-1" class="modal-content">
+                <header id="bill-modal___BV_modal_header_" class="modal-header">
+                    <h2 class="text-primary w-100 text-center">
+                        Generate invoice
+                    </h2>
+                    <button type="button" aria-label="Close" class="close" id="Closemodel">
+                        ×
+                    </button>
+                </header>
+                <div id="bill-modal___BV_modal_body_" class="modal-body pt-0" style="height:80vh;overflow:auto;">
+                    <form id="patientBillDataForm" novalidate="novalidate">
+                        <div class="row">
+                            <div class="col-12 mb-3">
+                                <button type="button" class="btn btn-sm btn-primary float-right" id="addBill">
+                                    <i class="fa fa-plus">
+                                    </i>
+                                    Add Bill Item
+                                </button>
+                            </div>
+                        </div>
+                        <div id="bill-item-add" style="display: none;">
+                            @*<div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="CHKService">
+                                        <label for="CHKService" class="form-check-label">Medicine</label>
+                                    </div>
+                                </div>*@
+                            @*<div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="CHKPrescription">
+                                        <label for="CHKPrescription" class="form-check-label">Select From prescription</label>
+                                    </div>
+                                </div>*@
+                            @*</div>*@
+
+                            <div class="row">
+                                @*@Html.HiddenFor(m => m.EncounterFid, new { id = "txtEncounterFid" })*@
+                                @*@Html.TextBoxFor(m => m.AppointmentFid, new { id = "AppointmentFid",  @alue = "@(ViewBag.TodayPatients.AppointmentFid)" })*@
+
+                                @*<input type="hidden" id="AppointmentFid" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />*@
+
+                            @*<input type="hidden" id="PatientID" name="PatientID" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />*@
+                               
+                                <input type="hidden" id="PatientID" name="PatientID" value="@(ViewBag.PatientFid != null ? ViewBag.PatientFid : 0)" />
+                                <input type="hidden" id="FlagId" name="FlagId" value="@(ViewBag.FlagId  != null ?   ViewBag.FlagId  : 0)" />
+
+
+                                @Html.HiddenFor(m => m.Bill_Fid, new { id = "txtBill_Fid" })
+                                @Html.HiddenFor(m => m.Bill_Fid_Encrapted, new { id = "txtBill_Fid_Encrapted" })
+                                <input hidden name="Service_Fid" id="Service_Fid" />
+                                <div class="col-md-4" style="margin-top:19px;">
+                                    <div class="form-group w-100">
+                                        <!-- Added w-100 for full width -->
+                                        <label for="ddlServiceNameBill" class="form-control-label" id="MedicineName">
+                                            <span class="text-danger">*</span>
+                                        </label>
+
+                                        @Html.DropDownListFor(m => m.ServiceFid, new MultiSelectList(ViewBag.Getdata, "Id", "Name"), "Select", new { @class = "form-control select2", @id = "ddlServiceNameBill", @style = "width: 100%;" })
+
+                                        @*@Html.DropDownListFor(
+                                            m => m.QuestionType,
+                                            new MultiSelectList(new[] { "Multiple Choice Question", "Yes/No " }),
+                                            new
+                                            {
+                                                @class = "form-control select2",
+                                                id = "QuestionType",
+                                                style = "width:100%;"
+                                            })*@
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="price" class="form-control-label">
+                                            Price
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    $
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.Price, new { @class = "form-control", id = "txtPrice", placeholder = "Price", autocomplete = "off" })
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="qty" class="form-control-label">
+                                            Quantity
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", id = "txtQuantity", placeholder = "Quantity", autocomplete = "off" })
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="total" class="form-control-label">
+                                            Total
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        @Html.TextBoxFor(m => m.Total, new { @class = "form-control", id = "txtTotal", placeholder = "$0/-", autocomplete = "off" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <div class="float-right">
+                                        <button type="button" class="btn btn-sm btn-primary" id="BtnSaveBill">
+                                            <i class="fa fa-plus">
+                                            </i>
+                                            Save
+                                        </button>
+                                        @*<button type="button" class="btn btn-sm btn-outline-primary" id="cancel">
+                                                Cancel
+                                            </button>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="collapse" static-id="-1" id="__BVID__332" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="item_id" class="form-control-label">
+                                            Service
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div tabindex="-1" role="combobox" aria-owns="listbox-item_id" class="multiselect">
+                                            <div class="multiselect__select">
+                                            </div>
+                                            <div class="multiselect__tags">
+                                                <div class="multiselect__tags-wrap" style="display: none;">
+                                                </div>
+                                                <!---->
+                                                <div class="multiselect__spinner" style="display: none;">
+                                                </div>
+                                                <input name="" id="item_id" type="text" autocomplete="off" spellcheck="false"
+                                                       placeholder="Services" tabindex="0" aria-controls="listbox-item_id" class="multiselect__input"
+                                                       style="width: 0px; position: absolute; padding: 0px;">
+                                                <!---->
+                                                <span class="multiselect__placeholder">
+                                                    Services
+                                                </span>
+                                            </div>
+                                            <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                <ul role="listbox" id="listbox-item_id" class="multiselect__content" style="display: inline-block;">
+                                                    <!---->
+                                                    <li id="item_id-0" role="option" class="multiselect__element">
+                                                        <span data-select="" data-selected="Selected" data-deselect="" class="multiselect__option multiselect__option--highlight">
+                                                            <span>
+                                                                Telemed
+                                                            </span>
+                                                        </span>
+                                                        <!---->
+                                                    </li>
+                                                    <li id="item_id-1" role="option" class="multiselect__element">
+                                                        <span data-select="" data-selected="Selected" data-deselect="" class="multiselect__option">
+                                                            <span>
+                                                                Checkup
+                                                            </span>
+                                                        </span>
+                                                        <!---->
+                                                    </li>
+                                                    <li style="display: none;">
+                                                        <span class="multiselect__option">
+                                                            No elements found. Consider changing the search query.
+                                                        </span>
+                                                    </li>
+                                                    <li style="display: none;">
+                                                        <span class="multiselect__option">
+                                                            List is empty.
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <span class="text-primary small">
+                                            <b>
+                                                Type and press enter to create new service
+                                            </b>
+                                        </span>
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="price" class="form-control-label">
+                                            Price
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    $
+                                                </div>
+                                            </div>
+                                            <input name="first_name" type="number" placeholder="Price" required="required"
+                                                   min="0" aria-required="true" class="form-control form-control" id="__BVID__337">
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="qty" class="form-control-label">
+                                            Quantity
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <input id="qty" placeholder="Quantity" min="0" required="required" name="first_name"
+                                               type="number" class="form-control">
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="total" class="form-control-label">
+                                            Total
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <label id="total" class="form-control">
+                                            $0/-
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row m-2">
+                                <div class="col-md-12">
+                                    <div class="float-right">
+                                        <button type="button" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-plus">
+                                            </i>
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-sm text-center table-bordered custom-table" id="tblGenerateBill">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>
+                                                Sr no
+                                            </th>
+                                            <th>
+                                                Medicine
+                                            </th>
+                                            <th>
+                                                Price
+                                            </th>
+                                            <th>
+                                                Quantity
+                                            </th>
+                                            <th>
+                                                Total
+                                            </th>
+                                            <th>
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.GenerateBill != null)
+                                        {
+
+                                            foreach (var item in ViewBag.GenerateBill)
+                                            {
+                                                TotalAmount += item.Total;
+                                                <tr>
+                                                    <td>@count</td>
+
+                                                    <td>
+                                                        @if (@item.ServiceName != null && @item.ServiceName != "")
+                                                        {
+                                                            @item.ServiceName
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.MedicineName
+                                                        }
+                                                    </td>
+
+                                                    <td>
+                                                        @item.Price
+                                                    </td>
+
+                                                    <td>
+                                                        @item.Quantity
+                                                    </td>
+
+                                                    <td>
+                                                        @item.Total
+                                                    </td>
+
+                                                    <td>
+                                                        <div role="group" class="btn-group btn-group-sm">
+                                                            <button title="Edit" type="button" class="btn btn-sm btn-outline-primary" onclick="UpdateBill('@item.Bill_Fid_Encrapted')">
+                                                                <i class="fa fa-pen-alt"></i>
+                                                            </button>
+                                                            <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('@item.Bill_Fid_Encrapted','@item.FlagId')">
+                                                                <i class="fa fa-trash"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+
+                                                </tr>
+                                                //count++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6">
+                                                    <h4 class="text-primary mb-0">
+                                                        No records found
+                                                    </h4>
+                                                </td>
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                                <!---->
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-sm text-center table-bordered custom-table">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>
+                                                Sr no
+                                            </th>
+                                            <th>
+                                                Tax Name
+                                            </th>
+                                            <th>
+                                                Charges
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3">
+                                                <h4 class="text-primary mb-0">
+                                                    No tax found
+                                                </h4>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="total_amount" class="form-control-label">
+                                        Total
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="fas fa-rupee-sign"></i>
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.finalAmount, new { @class = "form-control", id = "txtFinalTotal", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="discount" class="form-control-label">
+                                        Discount
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                        <span class="text-primary">
+                                            <small>
+                                                Discount in Parcentages
+                                            </small>
+                                        </span>
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="fas fa-rupee-sign"></i>
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.Discount, new { @class = "form-control", id = "txtDiscount", placeholder = "Enter discount", autocomplete = "off" })
+
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    %
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="actual_amount" class="form-control-label">
+                                        Payable Amount
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    <i class="fas fa-rupee-sign"></i>
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.FinalPaybalAmount, new { @class = "form-control", id = "txtFinalPaybalAmount", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="payment-status-section" class="row">
+                            <div class="offset-md-10 col-md-2 float-right mb-3">
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary" id="BtnAddRow"> Add Row</button>
+                                </div>
+                            </div>
+                            <span class="text-center small text-danger" id="idmismatchAmount">
+
+                            </span>
+                        </div>
+                        <div id="paymentRowsContainer">
+                            <!-- First payment row (default) -->
+                            <div class="row payment-row">
+                                <div class="col-md-4">
+                                    <label class="form-control-label mt-1">
+                                        Payment Type
+                                    </label>
+                                    @Html.DropDownListFor(m => m.PaymentType, new SelectList(
+                                                            new[] {
+                                                            new { Value = "", Text = "Select Payment Type" },
+                                                            new { Value="UPI", Text = "UPI" },
+                                                            new { Value = "Cash", Text = "Cash" },
+                                                            new { Value = "CreditCard", Text = "Credit Card" },
+                                                            new { Value = "DebitCard", Text = "Debit Card" }
+
+
+                                                            }, "Value", "Text"),
+                                                            new { @id = "ddlPaymentType", @class = "form-control custom-select paymentType" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label mt-1">
+                                        Reference
+                                    </label>
+                                    @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control referenceNumber", id = "txtReference" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label mt-1">
+                                        Amount
+                                    </label>
+                                    @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control amount", id = "txtAmount", value = TotalAmount })
+                                </div>
+                            </div>
+                        </div>
+                        <div id="payment-status-section" class="row">
+                            <div class="offset-md-7 col-md-5 float-right mb-3">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <label class="form-control-label mt-1">
+                                            Payment Status
+                                        </label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div role="radiogroup" tabindex="-1" class="bv-no-focus-ring" id="__BVID__341">
+                                            <div class="custom-control custom-control-inline custom-radio">
+                                                @Html.RadioButtonFor(m => m.PaymentStatus, "Paid", new { @class = "custom-control-input", id = "paidRadio", name = "PaymentStatus" })
+                                                <label class="custom-control-label" for="paidRadio">
+                                                    Paid
+                                                </label>
+                                            </div>
+                                            <div class="custom-control custom-control-inline custom-radio">
+                                                @Html.RadioButtonFor(m => m.PaymentStatus, "Unpaid", new { @class = "custom-control-input", id = "unpaidRadio", name = "PaymentStatus" })
+                                                <label class="custom-control-label" for="unpaidRadio">
+                                                    Unpaid
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div id="payment-status-section" class="row">
+                                <div class="offset-md-6 mb-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="form-control-label mb-0">
+                                                Payment Status:
+                                            </label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div role="radiogroup" tabindex="-1" class="d-flex">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Paid", new { @class = "custom-control-input", id = "paidRadio", name = "PaymentStatus" })
+                                                    <label class="custom-control-label" for="paidRadio">Paid</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Unpaid", new { @class = "custom-control-input", id = "unpaidRadio", name = "PaymentStatus" })
+                                                    <label class="custom-control-label" for="unpaidRadio">Unpaid</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Out", new { @class = "custom-control-input", id = "PatientOut", name = "PaymentStatus" })
+                                                    <label class="custom-control-label" for="PatientOut">Out</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="float-left">
+                                    <h4 class="text-center small text-danger">
+                                        @*Note: To close the encounter, invoice payment is mandatory*@
+                                    </h4>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="float-left">
+                                    <h4 class="text-center small text-danger">
+                                        Note: To close the encounter, invoice payment is mandatory
+                                    </h4>
+                                </div>
+                                <div class="float-right">
+                                    <button type="button" class="btn btn-primary" id="submitButton">
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn btn-outline-primary btn-secondary" id="CancelI">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!---->
+            </div>
+            <span tabindex="0">
+            </span>
+        </div>
+    </div>
+    <div id="bill-modal___BV_modal_backdrop_" class="modal-backdrop">
+    </div>
+</div>
+
+
+
+
+
+
+
+@*table script start*@
+
+<script>
+$(document).ready(function () {
+
+    let prescriptions = [];
+
+    /* =========================
+       SERVICE CHANGE → RATE
+    ========================== */
+    $('#ddlServiceName').on('change', function () {
+
+        var serviceId = $(this).val();
+        if (!serviceId) return;
+
+        $.ajax({
+            url: '@Url.Action("GetServicePrice", "Encounter")',
+            type: 'GET',
+            data: { GetServiceId: serviceId },
+            success: function (price) {
+
+                price = parseFloat(price) || 0;
+
+                $('#Rate').val(price.toFixed(2));
+                $('#Quantity').val(1);
+                $('#Discount').val(0);
+
+                calculateAmount();   // ⭐ IMPORTANT
+            }
+        });
+    });
+
+    /* =========================
+       QTY / DISCOUNT → AMOUNT
+    ========================== */
+    $('#Quantity, #Discount').on('input', function () {
+        calculateAmount();
+    });
+
+    function calculateAmount() {
+
+        let rate = parseFloat($('#Rate').val()) || 0;
+        let qty = parseInt($('#Quantity').val()) || 1;
+        let discount = parseFloat($('#Discount').val()) || 0;
+
+        let total = (rate * qty) - discount;
+        if (total < 0) total = 0;
+
+        $('#Amount').val(total.toFixed(2));
+    }
+
+    /* =========================
+       ADD BUTTON
+    ========================== */
+    $('#addButton').on('click', function () {
+
+        if (!$('#ddlServiceName').val()) {
+            alert('Service select करा');
+            return;
+        }
+
+        if (!$('#DoctorFid').val()) {
+            alert('Doctor select करा');
+            return;
+        }
+
+        addPrescription();
+        clearForm();
+    });
+
+    function addPrescription() {
+
+        const prescription = {
+            ServiceFid: $('#ddlServiceName').val(),
+            ServiceName: $('#ddlServiceName option:selected').text(),
+            Rate: $('#Rate').val(),
+            Quantity: $('#Quantity').val(),
+            Discount: $('#Discount').val(),
+            Amount: $('#Amount').val(),
+            Note: $('#Note').val(),
+            DoctorFid: $('#DoctorFid').val(),
+            PatientID: $('#PatientID').val()
+        };
+
+        prescriptions.push(prescription);
+        renderTable();
+    }
+
+    /* =========================
+       TABLE RENDER
+    ========================== */
+    function renderTable() {
+
+        $('#prescriptionTableBody').empty();
+
+        $.each(prescriptions, function (index, p) {
+
+            $('#prescriptionTableBody').append(`
+                <tr>
+                    <td>
+                        <button type="button"
+                                class="btn btn-sm btn-danger"
+                                onclick="deletePrescription(${index})">🗑</button>
+                    </td>
+                    <td>${p.ServiceName}</td>
+                    <td>${p.Rate}</td>
+                    <td>${p.Quantity}</td>
+                    <td>${p.Discount}</td>
+                    <td>${p.Amount}</td>
+                    <td>${p.Note}</td>
+                </tr>
+            `);
+        });
+    }
+
+    window.deletePrescription = function (index) {
+        prescriptions.splice(index, 1);
+        renderTable();
+    };
+
+    function clearForm() {
+        $('#prescriptionForm')[0].reset();
+        $('#Quantity').val(1);
+        $('#Discount').val(0);
+        $('#Amount').val('');
+    }
+
+    /* =========================
+       SUBMIT → SAVE → REDIRECT
+    ========================== */
+    $('.btnBx button[type="submit"]').on('click', function (e) {
+
+        e.preventDefault();
+
+        if (prescriptions.length === 0) {
+            alert('कृपया किमान एक service add करा');
+            return;
+        }
+
+
+        let manualPatient = null;
+
+        if ($('#PatientID').val() === "") {
+
+            manualPatient = {
+                PatientName: $('#ManualPatientName').val(),
+                MobileNo: $('#ManualMobileNo').val(),
+                Age: $('#ManualAge').val(),
+                Gender: $('#ManualGender').val(),
+                VisitDate: $('#ManualVisitDate').val()
+            };
+
+            if (!manualPatient.PatientName || !manualPatient.MobileNo) {
+                alert('Manual patient details आवश्यक आहेत');
+                return;
+            }
+        }
+
+
+        $.ajax({
+            url: '@Url.Action("SaveServices")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                services: prescriptions,
+                manualPatient: manualPatient
+            }),
+            success: function (res) {
+
+           if (res.success) {
+        // ✅ Get patientId from response or hidden field
+        var patientId = res.patientID || $('#PatientID').val();
+
+        // ✅ IMPORTANT: Always pass both FlageId and PatientFid
+        var redirectUrl = '@Url.Action("AddServices")' +
+                         '?ServicesPFid=' + res.servicePFid +
+                         '&FlageId=' + res.flageId;
+
+        // ✅ Add PatientFid only if it exists
+        if (patientId && patientId != "") {
+            redirectUrl += '&PatientFid=' + patientId;
+        }
+
+        window.location.href = redirectUrl;
+    } else {
+        alert(res.message);
+    }
+            },
+            error: function () {
+                alert('Something went wrong');
+            }
+        });
+    });
+
+});
+</script>
+
+@*table script End*@
+
+@*search table script*@
+
+<script>
+    $(document).ready(function () {
+        $('#searchInput').on('input', function () {
+            var query = $(this).val().trim();
+
+            if (query.length >= 1) {
+                $.ajax({
+                    url: '@Url.Action("SearchOPD")',
+                    type: 'GET',
+                    data: { searchTerm: query },
+                    success: function (data) {
+                        debugger;
+                        let html = "";
+                        if (data.length > 0) {
+                            html += "<ul class='list-group mb-0'>";
+
+                            $.each(data, function (i, item) {
+                                html += "<li class='list-group-item list-group-item-action' " + "style='cursor:pointer;' onclick='selectPatient(" + item.PatientFid + ")'>";
+
+                                html += "<span>" + item.FullName + " | " + item.ContactNumber + " | " + item.UHIDNO + "</span>";
+
+                                html += "</li>";
+
+                            });
+
+                            html += "</ul>";
+                        } else {
+                            //html = "<div class='p-2 text-muted'>No matches found</div>";
+
+                            html = `
+                                <div class='p-2 text-muted'
+                                     style='cursor:pointer;'
+                                     onclick="selectOtherPatient()">
+                                     No matches found (Click to add Other)
+                                </div>`;
+
+                        }
+
+                        $('#searchResult').html(html).show();
+                    },
+                    error: function () {
+                        $('#searchResult').html('<div class="p-2 text-danger">Error fetching data</div>').show();
+                    }
+                });
+            } else {
+                $('#searchResult').hide();
+            }
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#searchInput, #searchResult').length) {
+                $('#searchResult').hide();
+            }
+        });
+    });
+
+       function selectPatient(PatientFid) {
+           window.location.href = '/patient/ServicesBill/AddServices/?PatientFid=' + PatientFid;
+       }
+
+
+       function selectOtherPatient() {
+           // 🔥 string pass to controller
+           window.location.href =
+               '/patient/ServicesBill/AddServices?Source=other';
+       }
+</script>
+
+@*search table script End *@
+
+
+
+
+@*Model Scripts*@
+<script>
+  document.getElementById('MedicineName').innerHTML = '';
+        $("#CloseEncounter").click(function () {
+            debugger;
+            // Correct the URL assignment
+            $("#bill-modal___BV_modal_outer_")
+             .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+             .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+             .addClass("show");
+
+
+        });
+
+
+        $("#Closemodel").click(function () {
+            debugger;
+
+            const modalOuter = $("#bill-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            $("#txtTotal").val("");
+            $("#txtQuantity").val("");
+            $("#txtPrice").val("");
+            $("#txtServiceName").val("");
+
+        });
+
+
+        $("#Cancel").click(function () {
+            debugger;
+
+            const modalOuter = $("#bill-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            $("#txtTotal").val("");
+            $("#txtQuantity").val("");
+            $("#txtPrice").val("");
+            $("#txtServiceName").val("");
+
+        });
+
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $("#addBill").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#bill-item-add").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#bill-item-add").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#addBill").html('<i class="fa fa-times"></i> Close');
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#addBill").html('<i class="fa fa-plus"></i> Add Bill Item');
+                    $("#txtTotal").val("");
+                    $("#txtQuantity").val("");
+                    $("#txtPrice").val("");
+                    $("#txtServiceName").val("");
+                }
+            });
+        });
+        $("#BtnAddRow").click(function () {
+            debugger;
+            var FinalPaybalAmt = parseFloat($("#txtFinalPaybalAmount").val());
+            var PayAmount=parseFloat($("#txtAmount").val());
+
+            var FinalTotal=0;
+            var DiffenceAmount=0;
+            $(".payment-row").each(function () {
+                debugger;
+                var amount = $(this).find(".amount").val();
+                FinalTotal += parseFloat(amount) || 0;
+
+            });
+
+            DiffenceAmount=FinalPaybalAmt-FinalTotal;
+
+
+            var newRow = `
+        <div class="row payment-row dynamic-row"">
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Payment Type</label>
+                <select class="form-control custom-select paymentType">
+                    <option value="">Select Status</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                    <option value="CreditCard">Credit Card</option>
+                    <option value="DebitCard">Debit Card</option>
+
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Reference</label>
+                <input type="text" class="form-control referenceNumber" placeholder="Enter Reference">
+            </div>
+            <div class="col-md-3">
+                <label class="form-control-label mt-1">Amount</label>
+                <input type="number" class="form-control amount" placeholder="Enter Amount" value=${DiffenceAmount}>
+            </div>
+             <div class="col-md-1 mt-3 dynamic-btn">
+               <button title="Remove" class="btn btn-sm btn-outline-danger btn-remove-row">
+                <i class="fa fa-trash"></i>
+            </button>
+            </div>
+        </div>`;
+
+            // Append new row to container
+            $("#paymentRowsContainer").append(newRow);
+        });
+
+        $(document).on("click", ".btn-remove-row", function () {
+            var FinalPaybalAmt = parseFloat($("#txtFinalPaybalAmount").val());
+
+            $(this).closest(".dynamic-row").remove();
+            $("#txtAmount").val(FinalPaybalAmt);
+        });
+    });
+</script>
+
+<script>
+    $("#ddlServiceNameBill").change(function(){
+        debugger;
+        var GetServiceId=$("#ddlServiceNameBill").val();
+        var selectedServiceName = $("#ddlServiceNameBill option:selected").text();
+        $("#txtServiceName").val(selectedServiceName);
+        $.ajax({
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetServicePrice")',
+            data: { GetServiceId: GetServiceId },
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    var Price=data.GetServicePrice;
+                    $("#txtPrice").val(data);
+                    $("#txtQuantity").val(1);
+                    $("#txtTotal").val(data);
+                }
+            }
+
+        })
+    });
+
+    $("#txtQuantity").on("keyup", function () {
+        debugger
+        var GetPrice = parseFloat($("#txtPrice").val()) || 0; // Ensure Price is selected correctly and defaults to 0 if empty
+
+        var Quantity = parseFloat($(this).val()) || 0; // Parse quantity and handle non-numeric input
+        var TotalPrice = GetPrice * Quantity;
+        $("#txtTotal").val(TotalPrice.toFixed(2)); // Fix total to 2 decimal places
+    });
+
+
+    $("#txtDiscount").on("keyup", function () {
+        debugger
+
+        var totalAmount = parseFloat($("#txtFinalTotal").val()) || 0;
+
+
+        // Ensure Discount is parsed correctly or defaults to 0
+        var discount = parseFloat($(this).val()) || 0;
+
+        //var totalPayableAmount = totalAmount - discount;
+        var totalPayableAmount = totalAmount - (totalAmount * discount / 100);
+
+        // Ensure the total payable amount is not negative
+        if (totalPayableAmount < 0) {
+            $("#txtFinalPaybalAmount").val(totalAmount.toFixed(2));
+        }
+
+        // Set the calculated total payable amount to 2 decimal places in the input field
+        $("#txtFinalPaybalAmount").val(totalPayableAmount.toFixed(2));
+        $("#txtAmount").val(totalPayableAmount.toFixed(2));
+    });
+
+    $("#BtnSaveBill").click(function(){
+        debugger;
+        //var Bill = {
+
+        var Bill_Fid = $("#txtBill_Fid").val();
+        var Bill_Fid_Encrapted= $("#txtBill_Fid_Encrapted").val();
+        var  ServiceFid= $("#ddlServiceNameBill").val();
+        var Price=$("#txtPrice").val();
+        var Quantity=$("#txtQuantity").val();
+        var Total=$("#txtTotal").val();
+        var  EncounterFid=$("#EncounterFid").val();
+        //AppointmentFid:$("#AppointmentFid").val(),
+        var  Service_Fid=$("#Service_Fid").val();
+
+        //};
+        var AppointmentFid=$("#AppointmentFid").val();
+        var PatientID=$("#PatientID").val();
+        var FlagId = $("#FlagId").val();
+        $.ajax({
+
+            //dataType: 'JSON',
+            //contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("SaveGenerateBillServices")',
+            type: 'Post',
+            data:{AppointmentFid:AppointmentFid ,PatientID:PatientID,FlagId:FlagId, Bill_Fid:Bill_Fid,  Bill_Fid_Encrapted:Bill_Fid_Encrapted, ServiceFid:ServiceFid, Price:Price , Quantity:Quantity ,Total:Total , EncounterFid:EncounterFid,Service_Fid:Service_Fid},
+            //data: JSON.stringify({
+            //    Bill: Bill,
+            //    AppointmentFid: AppointmentFid
+            //}),
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    var GenerateBill = data.GetBillList || [];
+
+                    // Get the table body where rows should be added
+                    var tableBody = $("#tblGenerateBill tbody");
+
+                    // Clear any existing rows
+                    tableBody.empty();
+
+                    // Check if data exists
+                    if (GenerateBill.length > 0) {
+                        // Iterate through the prescription list and append rows
+                        var TotalAmount = 0; // Initialize TotalAmount
+                        var Count = 0;
+                        $.each(GenerateBill, function (i, item) {
+                            var row = "";
+                            var ServiceName = "";
+                            var MedicineName = "";
+                            var Price = "";
+                            var Quantity = "";
+                            var Total = "";
+                            var Bill_Fid = "";
+                            var Bill_Fid_Encrapted = "";
+                            var EncounterFid="";
+
+                            // Iterate over key-value pairs in the item
+                            $.each(item, function (index, pair) {
+                                if (pair.Key === "Bill_Fid_Encrapted") {
+                                    Bill_Fid_Encrapted = pair.Value;
+                                }
+                                if (pair.Key === "Bill_Fid") {
+                                    Bill_Fid = pair.Value;
+                                }
+                                if (pair.Key === "ServiceName") {
+                                    ServiceName = pair.Value;
+                                }
+                                if(pair.Key=="MedicineName")
+                                {
+                                    MedicineName = pair.Value;
+                                }
+                                if (pair.Key === "Price") {
+                                    Price = pair.Value;
+                                }
+                                if (pair.Key === "Quantity") {
+                                    Quantity = pair.Value;
+                                }
+                                if (pair.Key === "Total") {
+                                    //Total = pair.Value;
+                                    Total = parseFloat(pair.Value) || 0; // Ensure Total is parsed as a number
+                                    TotalAmount += Total;
+                                }
+                                if (pair.Key === "EncounterFid") {
+                                    EncounterFid = pair.Value;
+                                }
+
+                            });
+                            $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                            $("#txtFinalPaybalAmount").val(TotalAmount.toFixed(2));
+                            $("#txtAmount").val(TotalAmount.toFixed(2));
+                           Count++;
+                            // Construct the row dynamically
+                            row = `
+                <tr class ="animated fadeInUp">
+
+                <td>${Count}</td>
+                   <td class ="fixed-width">
+                         <span>${MedicineName && MedicineName.trim() !== "" ? MedicineName : ServiceName}</span>
+                     </td>
+                     <td>${Price}</td>
+                     <td>${Quantity}</td>
+                     <td>${Total}</td>
+                    <td>
+                        <div role="group" class="btn-group btn-group-sm">
+                              <button title="Edit" type="button" class ="btn btn-sm btn-outline-primary" onclick="UpdateBill('${Bill_Fid_Encrapted}')">
+                                 <i class ="fa fa-pen-alt"></i>
+                            </button>
+                            <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('${Bill_Fid_Encrapted}','${FlagId}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+
+                            // Append the row to the table body
+                            tableBody.append(row);
+                        });
+                    } else {
+                        // Show "No prescription found" if no data exists
+                        var noDataRow = `
+            <tr>
+                <td colspan="4" class="text-center text-primary">
+                    <h4>No records found</h4>
+                </td>
+            </tr>`;
+                        tableBody.append(noDataRow);
+                    }
+                }
+                $("#txtServiceName").val("");
+                $("#txtPrice").val("");
+                $("#txtQuantity").val("");
+                $("#txtTotal").val("");
+                $("#Service_Fid").val("");
+            }
+
+
+        })
+    });
+
+
+    var Discount=@Html.Raw(Json.Encode(ViewBag.Discountamt));
+    if(Discount!=null && Discount!="")
+    {
+        var totalAmount = @TotalAmount;
+        var totalPayableAmount = totalAmount - (totalAmount * Discount / 100);
+        $("#txtFinalTotal").val(totalAmount);
+        $("#txtFinalPaybalAmount").val(totalPayableAmount);
+        $("#txtAmount").val(totalPayableAmount);
+        $("#txtDiscount").val(Discount);
+        var FinalbillDetails=@Html.Raw(Json.Encode(ViewBag.GetFinalbillDetails));
+
+        var finalCount=1;
+        $.each(FinalbillDetails, function (i, item) {
+            debugger;
+            function getValue(key) {
+                let foundItem = item.find(obj => obj.Key === key);
+                return foundItem ? foundItem.Value : ""; // Return value or empty string if not found
+            }
+
+            let amount = getValue("Amount");
+            let paymentReference = getValue("PaymentReferenceNumber");
+            let paymentMode = getValue("PaymentMode");
+
+            if(finalCount===1)
+            {
+                $("#ddlPaymentType").val(paymentMode);
+                $("#txtReference").val(paymentReference);
+                $("#txtAmount").val(amount);
+                finalCount=2;
+            }else{
+                let paymentOptions = ["UPI", "Cash", "CreditCard", "DebitCard"];
+                let optionsHtml = `<option value="">Select Status</option>`;
+
+                // Loop through payment options and mark the selected option
+                $.each(paymentOptions, function (index, option) {
+                    let selected = paymentMode === option ? "selected" : "";
+                    optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+                });
+
+                let newRow = `
+                         <div class="row payment-row">
+                            <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Payment Type</label>
+                                 <select class="form-control custom-select paymentType">
+                                     ${optionsHtml} <!-- Insert dynamically generated options -->
+                                 </select>
+                             </div>
+                             <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Reference</label>
+                                 <input type="text" class="form-control referenceNumber" placeholder="Enter Reference" value="${paymentReference || ''}">
+                             </div>
+                             <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Amount</label>
+                                 <input type="number" class="form-control amount" placeholder="Enter Amount" value="${amount || ''}">
+                             </div>
+                         </div>`;
+
+                // Append new row to container
+                $("#paymentRowsContainer").append(newRow);
+            }
+        });
+    }else{
+        debugger;
+        var totalAmount = @TotalAmount;
+        $("#txtFinalTotal").val(totalAmount);
+        $("#txtFinalPaybalAmount").val(totalAmount);
+        $("#txtAmount").val(totalAmount);
+    }
+
+
+    function UpdateBill(Bill_Fid_Encrapted){
+        debugger;
+        $.ajax({
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("UpdateBill")',
+            data: { Bill_Fid_Encrapted: Bill_Fid_Encrapted },
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    $("#ddlServiceNameBill option").each(function() {
+                        if ($(this).text() === data.MedicineName) {
+                            $(this).prop("selected", true);  // Set it as selected
+                        }
+                    });
+
+                    // Trigger change event to update the dropdown
+                    $("#ddlServiceNameBill").trigger('change');
+                    $("#txtPrice").val(data.Price);
+                    $("#txtQuantity").val(data.Quantity);
+                    $("#txtTotal").val(data.Total);
+                    $("#txtBill_Fid_Encrapted").val(data.BillFid_Encrapted);
+                    $("#Service_Fid").val(data.ServiceFid);
+                    $("#bill-modal___BV_modal_outer_")
+           .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+           .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+           .addClass("show");
+
+
+                    $("#bill-item-add").show();
+                    $("#addBill").html('<i class="fa fa-times"></i> Close Form');
+
+
+
+                }
+            }
+
+        })
+    }
+    function GenereteBillTable(GenerateBill)
+    {
+        GenerateBill = GenerateBill || [];
+        var tableBody = $("#tblGenerateBill tbody");
+
+        // Clear any existing rows
+        tableBody.empty();
+
+        // Check if data exists
+        if (GenerateBill.length > 0) {
+            // Iterate through the prescription list and append rows
+            var TotalAmount = 0; // Initialize TotalAmount
+            var Count = 1;
+            $.each(GenerateBill, function (i, item) {
+                var row = "";
+                var ServiceName = "";
+                var MedicineName = "";
+                var Price = "";
+                var Quantity = "";
+                var Total = "";
+                var Bill_Fid = "";
+                var Bill_Fid_Encrapted = "";
+                var EncounterFid="";
+
+                // Iterate over key-value pairs in the item
+                $.each(item, function (index, pair) {
+                    if (pair.Key === "Bill_Fid_Encrapted") {
+                        Bill_Fid_Encrapted = pair.Value;
+                    }
+                    if (pair.Key === "Bill_Fid") {
+                        Bill_Fid = pair.Value;
+                    }
+                    if (pair.Key === "ServiceName") {
+                        ServiceName = pair.Value;
+                    }
+                    if (pair.Key === "MedicineName") {
+                        MedicineName = pair.Value;
+                    }
+                    if (pair.Key === "Price") {
+                        Price = pair.Value;
+                    }
+                    if (pair.Key === "Quantity") {
+                        Quantity = pair.Value;
+                    }
+                    if (pair.Key === "Total") {
+                        //Total = pair.Value;
+                        Total = parseFloat(pair.Value) || 0; // Ensure Total is parsed as a number
+                        TotalAmount += Total;
+                    }
+                    if (pair.Key === "EncounterFid") {
+                        EncounterFid = pair.Value;
+                    }
+
+                });
+                $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                $("#txtFinalPaybalAmount").val(TotalAmount.toFixed(2));
+                $("#txtAmount").val(TotalAmount);
+                Count++;
+                // Construct the row dynamically
+                row = `
+                <tr class ="animated fadeInUp">
+
+                <td>${Count}</td>
+                              <td class="fixed-width">
+        <span>${MedicineName && MedicineName.trim() !== "" ? MedicineName : ServiceName}</span>
+    </td>
+                     <td>${Price}</td>
+                     <td>${Quantity}</td>
+                     <td>${Total}</td>
+                    <td>
+                        <div role="group" class="btn-group btn-group-sm">
+                              <button title="Edit" type="button" class ="btn btn-sm btn-outline-primary" onclick="UpdateBill('${Bill_Fid_Encrapted}')">
+                                 <i class ="fa fa-pen-alt"></i>
+                            </button>
+                            <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('${Bill_Fid_Encrapted}','${FlagId}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+
+                // Append the row to the table body
+                tableBody.append(row);
+            });
+        } else {
+            // Show "No prescription found" if no data exists
+            var noDataRow = `
+            <tr>
+                <td colspan="4" class="text-center text-primary">
+                    <h4>No records found</h4>
+                </td>
+            </tr>`;
+            tableBody.append(noDataRow);
+        }
+    }
+
+    function DeleteBill(Bill_Fid_Encrapted,FlagId) {
+        debugger
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("DeleteBill")',
+                    data: { Bill_Fid_Encrapted: Bill_Fid_Encrapted,FlagId:FlagId},
+                    success: function (data) {
+                        debugger;
+                        if (data != null) {
+                            debugger
+
+                            var GenerateBill = data.GenerateBill || []; // Use null-coalescing operator for safety
+
+                            GenereteBillTable(GenerateBill);      // Bind Table  by function
+
+                        }
+                    }
+
+                })
+            }
+        });
+
+    }
+</script>
+
+<script>
+    $("#submitButton").click(function(){
+        debugger;
+
+        var paymentList = [];
+
+        $(".payment-row").each(function () {
+            debugger;
+            var paymentType = $(this).find(".paymentType").val();
+            var referenceNumber = $(this).find(".referenceNumber").val();
+            var amount = $(this).find(".amount").val();
+
+            // Store row data in an object
+            var finalbill1 = {
+                PaymentType: paymentType,
+                ReferenceNumber: referenceNumber,
+                Amount: amount,
+                FinalPaybalAmount:$("#txtFinalPaybalAmount").val(),
+                Discount:$("#txtDiscount").val(),
+                finalAmount:$("#txtFinalTotal").val(),
+                EncounterFid:$("#EncounterFid").val(),
+                AppointmentFid:$("#AppointmentFid").val(),
+                PatientFid:$("#PatientID").val(),
+                BillFlageID:$("#FlagId").val(),
+                PaymentStatus: $("input[name='PaymentStatus']:checked").val()
+            };
+
+            // Add row data to list
+            paymentList.push(finalbill1);
+        });
+
+
+        //FinalTotal = parseFloat(FinalTotal.toFixed(2));
+        //FinalPaybalAmt = parseFloat(FinalPaybalAmt.toFixed(2));
+
+
+        //if (FinalTotal > FinalPaybalAmt) {
+        //    $("#idmismatchAmount").html('Error : Paid amount cannot be greater than Payable amount.');
+        //    return false;
+        //} else {
+        //    $("#idmismatchAmount").html('');
+        //}
+
+
+
+        $.ajax({
+            type: 'Post',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("SaveAndCloseBilling")',
+            data: JSON.stringify(paymentList),
+            success: function (data) {
+                debugger;
+                if (data.success) {
+                    window.location.href = '@Url.Action("AddServices")';
+                } else {
+                    alert(data.message);
+                }
+
+                @*if (data.AppointmentFid != null && data.AppointmentFid!=0) {
+                    var AppointmentFid = data.AppointmentFid;
+                    var url = '@Url.Action("AayurvedEHR", "AayurvedEHR")'+'?AppointmentFid=' +AppointmentFid
+                    window.location.href = url;
+                }
+                if(data.EncounterFid!=null && data.EncounterFid!=0)
+                {
+                    var EncounterFid = data.EncounterFid;
+                    var url = '@Url.Action("AayurvedEHRList", "AayurvedEHR")';
+                    window.location.href = url;
+                }*@
+            }
+        })
+    });
+
+    const serviceck = document.getElementById('CHKService');
+    if (serviceck && serviceck.checked) {
+        document.getElementById('MedicineName').innerHTML = '<i class="fa fa-times"></i> Service';
+    }
+    //const serviceck=document.getElementById('CHKService');
+    //if(serviceck.checked)
+    //{
+    //    $("#MedicineName").html('<i class="fa fa-times"></i> Service');
+
+    //}
+
+
+</script>

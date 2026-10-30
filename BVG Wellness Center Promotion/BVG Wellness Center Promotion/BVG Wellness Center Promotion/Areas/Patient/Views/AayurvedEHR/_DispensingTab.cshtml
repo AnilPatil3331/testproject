@@ -1,0 +1,400 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane p-20" id="Dispensing" role="tabpanelGenerateinvoice">
+                                <hr />
+
+                                @using (Html.BeginForm("SaveDispensing", "AayurvedEHR", FormMethod.Post, new { id = "dispensingForm" }))
+                                {
+                                    <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                    <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+                                    {
+                                        // Get both data sources
+                                        var savedDispensing = ViewBag.ResultView as IEnumerable<dynamic>;
+                                        var medicineInstructions = ViewBag.MedicineInstructions as IEnumerable<dynamic>;
+
+                                        // Create a set of PrescriptionIDs that are already saved
+                                        var savedPrescriptionIds = new HashSet<int>();
+                                        if (savedDispensing != null)
+                                        {
+                                            foreach (var item in savedDispensing)
+                                            {
+                                                int? presId = item.PrescriptionID;
+                                                if (presId.HasValue)
+                                                {
+                                                    savedPrescriptionIds.Add(presId.Value);
+                                                }
+                                            }
+                                        }
+
+                                        int medicineIndex = 0;
+                                        var processedPrescriptionIds = new HashSet<int>();
+
+                                        int? globalPathyaId = null;
+                                        string globalPathyaInstruction = "";
+                                        if (savedDispensing != null && savedDispensing.Any())
+                                        {
+                                            var firstSaved = Enumerable.FirstOrDefault(savedDispensing);
+                                            if (firstSaved != null)
+                                            {
+                                                globalPathyaId = firstSaved.PathyaId != null ? (int?)Convert.ToInt32(firstSaved.PathyaId) : null;
+                                                globalPathyaInstruction = firstSaved.PathyaInstruction != null ? Convert.ToString(firstSaved.PathyaInstruction) : "";
+                                            }
+                                        }
+
+                                        // STEP 1: First show all saved dispensing records (ResultView)
+                                        if (savedDispensing != null && savedDispensing.Any())
+                                        {
+                                            foreach (var savedItem in savedDispensing)
+                                            {
+                                                int presId = savedItem.PrescriptionID;
+                                                processedPrescriptionIds.Add(presId);
+
+                                                <text>
+                                                    <input type="hidden" name="MedicineInstructions[@medicineIndex].PrescriptionID" value="@presId" />
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-3 font-weight-bold">
+                                                            औषध (Saved)
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" name="MedicineInstructions[@medicineIndex].Description">@savedItem.MedicineDescription</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-3">
+                                                            <label for="ddlSuchana_@medicineIndex">सूचना निवडा:</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <select id="ddlSuchana_@medicineIndex" class="form-control suchanaDropdown"
+                                                                    data-prescriptionid="@presId" data-target="txtSuchana_@medicineIndex">
+                                                                <option value="">सूचना निवडा</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-3 mb-4">
+                                                        <div class="col-md-3">
+                                                            <label for="txtSuchana_@medicineIndex">सूचना तपशील:</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <textarea id="txtSuchana_@medicineIndex" class="form-control" rows="4" style="height: 100px !important;" name="MedicineInstructions[@medicineIndex].MorningSuchana"> @savedItem.MorningSuchana </textarea>
+                                                        </div>
+                                                    </div>
+                                                                <!-- STEP 1 PATHYA UI HIDDEN (SAVED ITEMS) -->
+                                                                <input type="hidden" class="hidden-pathya-id" name="MedicineInstructions[@medicineIndex].PathyaId" value="@savedItem.PathyaId" />
+                                                                <input type="hidden" class="hidden-pathya-instruction" name="MedicineInstructions[@medicineIndex].PathyaInstruction" value="@savedItem.PathyaInstruction" />
+                                                                <!-- END STEP 1 PATHYA UI HIDDEN -->
+                                                                <!-- END STEP 2: PATHYA UI -->
+                                                    <hr />
+                                                </text>
+                                                medicineIndex++;
+                                            }
+                                        }
+
+                                        // STEP 2: Show remaining medicine instructions that are NOT saved yet
+                                        if (medicineInstructions != null && medicineInstructions.Any())
+                                        {
+                                            foreach (var item in medicineInstructions)
+                                            {
+                                                int presId = item.PrescriptionID;
+
+                                                // Skip if already saved
+                                                if (processedPrescriptionIds.Contains(presId))
+                                                {
+                                                    continue;
+                                                }
+
+                                                // Skip if all fields are null
+                                                if (item == null ||
+                                                    (item.ProcessingNumber == null && item.ProcessingUnitType == null &&
+                                                     item.FormResult == null && item.PackageResult == null &&
+                                                     item.NumberLeft == null && item.DoseNumber == null &&
+                                                     item.Dose == null && item.TimeResult == null &&
+                                                     item.MixingDetailsFluid == null))
+                                                {
+                                                    continue;
+                                                }
+
+                                                // Build medicine description text
+                                                var parts = new List<string>();
+                                                string finalText = "";
+
+                                                string basePart = "";
+                                                if (item.FormResult != null)
+                                                {
+                                                    basePart += item.FormResult + " ";
+                                                }
+                                                if (item.PackageResult != null)
+                                                {
+                                                    basePart += item.PackageResult;
+                                                    if (item.NumberLeft != null)
+                                                    {
+                                                        basePart += " नं. " + item.NumberLeft;
+                                                    }
+                                                }
+
+                                                if ((item.FormResult ?? "").Contains("फाण्ट") ||
+                                                    (item.FormResult ?? "").Contains("काढा") ||
+                                                    (item.FormResult ?? "").Contains("हिम"))
+                                                {
+                                                    if (!string.IsNullOrWhiteSpace(basePart))
+                                                    {
+                                                        parts.Add(basePart.Trim());
+                                                    }
+
+                                                    if (item.DoseNumber != null || item.Dose != null)
+                                                    {
+                                                        parts.Add((item.DoseNumber + " " + item.Dose).Trim());
+                                                    }
+
+                                                    if (item.ProcessingNumber != null || item.ProcessingUnitType != null)
+                                                    {
+                                                        parts.Add((item.ProcessingNumber + " " + item.ProcessingUnitType).Trim());
+                                                    }
+
+                                                    if (item.Time != null)
+                                                    {
+                                                        parts.Add(item.Time.Trim());
+                                                    }
+
+                                                    if (item.TimeResult != null)
+                                                    {
+                                                        parts.Add(item.TimeResult.Trim());
+                                                    }
+
+                                                    if (item.DaysNumber != null)
+                                                    {
+                                                        parts.Add("(" + item.DaysNumber + " Days)");
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (!string.IsNullOrWhiteSpace(basePart))
+                                                    {
+                                                        parts.Add(basePart.Trim());
+                                                    }
+
+                                                    if (item.DoseNumber != null || item.Dose != null)
+                                                    {
+                                                        var dosePart = (item.DoseNumber + " " + item.Dose).Trim();
+                                                        if (item.Time != null)
+                                                        {
+                                                            dosePart += " " + item.Time.Trim();
+                                                        }
+                                                        parts.Add(dosePart);
+                                                    }
+
+                                                    if (item.MixingDetailsFluid != null)
+                                                    {
+                                                        parts.Add(item.MixingDetailsFluid.Trim());
+                                                    }
+
+                                                    if (item.TimeResult != null)
+                                                    {
+                                                        parts.Add(item.TimeResult.Trim());
+                                                    }
+                                                    if (item.DaysNumber != null)
+                                                    {
+                                                        parts.Add("(" + item.DaysNumber + " Days)");
+                                                    }
+                                                }
+
+                                                finalText = string.Join(" = ", parts);
+
+                                                <text>
+                                                    <input type="hidden" name="MedicineInstructions[@medicineIndex].PrescriptionID" value="@presId" />
+
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-3 font-weight-bold">
+                                                            औषध (New)
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" name="MedicineInstructions[@medicineIndex].Description">@finalText</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-3">
+                                                            <label for="ddlSuchana_@medicineIndex">सूचना निवडा:</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <select id="ddlSuchana_@medicineIndex" class="form-control suchanaDropdown"
+                                                                    data-formid="@item.FormID" data-target="txtSuchana_@medicineIndex">
+                                                                <option value="">सूचना निवडा</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row mt-3 mb-4">
+                                                        <div class="col-md-3">
+                                                            <label for="txtSuchana_@medicineIndex">सूचना तपशील:</label>
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <textarea id="txtSuchana_@medicineIndex" class="form-control" rows="4" style="height: 100px !important;" name="MedicineInstructions[@medicineIndex].MorningSuchana"></textarea>
+                                                        </div>
+                                                    </div>
+                                                                <!-- STEP 2 PATHYA UI HIDDEN -->
+                                                                <input type="hidden" class="hidden-pathya-id" name="MedicineInstructions[@medicineIndex].PathyaId" value="" />
+                                                                <input type="hidden" class="hidden-pathya-instruction" name="MedicineInstructions[@medicineIndex].PathyaInstruction" value="" />
+                                                                <!-- END STEP 2 PATHYA UI HIDDEN -->
+                                                    <hr />
+                                                </text>
+                                                medicineIndex++;
+                                            }
+                                        }
+
+                                        <!-- GLOBAL PATHYA UI -->
+                                        <div class="row mt-4" style="border-top: 1px solid #ddd; padding-top: 15px;">
+                                            <div class="col-md-3">
+                                                <label for="globalPathyaDropdown" style="font-weight:bold; color:#0056b3;">पथ्य निवडा (संपूर्ण प्रिस्क्रिप्शनसाठी):</label>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <select id="globalPathyaDropdown" name="GlobalPathyaIds" class="form-control select2" multiple="multiple" data-placeholder="-- पथ्य निवडा --">
+                                                    @if (ViewBag.PathyaList != null)
+                                                    {
+                                                        foreach (var p in ViewBag.PathyaList)
+                                                        {
+                                                            bool isMatched = false;
+                                                            if (ViewBag.SavedPathyaIds != null)
+                                                            {
+                                                                var savedList = ViewBag.SavedPathyaIds as List<int>;
+                                                                if (savedList != null && savedList.Contains(p.Id))
+                                                                {
+                                                                    isMatched = true;
+                                                                }
+                                                            }
+                                                            if (isMatched)
+                                                            {
+                                                                <option value="@p.Id" data-instruction="@p.PathyaInstruction" selected="selected">@p.PathyaName</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@p.Id" data-instruction="@p.PathyaInstruction">@p.PathyaName</option>
+                                                            }
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3 mb-4">
+                                            <div class="col-md-3">
+                                                <label for="globalPathyaInstruction" style="font-weight:bold; color:#0056b3;">पथ्य सूचना:</label>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <textarea id="globalPathyaInstruction" class="form-control" rows="4" style="height: 100px !important;" onchange="updateGlobalPathyaInstruction()">@globalPathyaInstruction</textarea>
+                                            </div>
+                                        </div>
+
+                                        <script>
+                                            $(document).ready(function() {
+                                                $('#globalPathyaDropdown').select2({
+                                                    placeholder: "-- पथ्य निवडा --",
+                                                    allowClear: true,
+                                                    width: '100%'
+                                                });
+
+                                                $('#globalPathyaDropdown').on('change', function() {
+                                                    updateGlobalPathya();
+                                                });
+                                            });
+
+                                            function updateGlobalPathya() {
+                                                var selectedOptions = $('#globalPathyaDropdown').find('option:selected');
+                                                var instructions = [];
+                                                var firstPathyaId = "";
+
+                                                selectedOptions.each(function(index) {
+                                                    var val = $(this).val();
+                                                    if (val) {
+                                                        if (index === 0) firstPathyaId = val;
+                                                        var inst = $(this).data('instruction');
+                                                        if (inst && inst.trim() !== '') {
+                                                            instructions.push(inst.trim());
+                                                        }
+                                                    }
+                                                });
+
+                                                var combinedInstruction = instructions.join('\n\n');
+                                                $('#globalPathyaInstruction').val(combinedInstruction);
+
+                                                $('.hidden-pathya-id').val(firstPathyaId);
+                                                $('.hidden-pathya-instruction').val(combinedInstruction);
+                                            }
+
+                                            function updateGlobalPathyaInstruction() {
+                                                var instruction = $('#globalPathyaInstruction').val();
+                                                $('.hidden-pathya-instruction').val(instruction);
+                                            }
+                                        </script>
+                                        <!-- END GLOBAL PATHYA UI -->
+
+                                        // Save Button - Show only if there is data
+                                        if (medicineIndex > 0)
+                                        {
+                                            <div class="text-center mt-4">
+                                                <button type="submit" class="btn btn-success px-4">Save</button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-info" style="margin:40px;">
+                                                <i class="fas fa-info-circle"></i>
+                                                No Formula results to display. Please submit the form to see results.
+                                            </div>
+                                        }
+                                    }
+                                }
+                            </div>

@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "AppConfigurations";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        @Html.Partial("SettingSidebar")
+
+
+        <div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="card card-body">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                <i class="fa fa-cogs fa-4x text-warning mb-3"></i>
+                                <i class="fa fa-wrench fa-3x text-secondary"></i>
+                            </div>
+                            <h3 class="text-warning mb-3">
+                                <i class="fa fa-hourglass-half"></i> Under Development
+                            </h3>
+                            <h4 class="text-muted mb-3">
+                                This page is currently under active development.
+                            </h4>
+                            <div class="progress mb-3" style="height: 10px; max-width: 300px; margin: 0 auto;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                     style="width: 65%"></div>
+                            </div>
+                            <p class="text-muted small">
+                                We're working hard to bring you new features. <br>
+                                Estimated completion: Coming soon
+                            </p>
+                            <a href="javascript:history.back()" class="btn btn-outline-primary mt-3">
+                                <i class="fa fa-arrow-left"></i> Go Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="b-overlay-wrap position-relative">
+                                <div class="card p-0 shadow">
+                                    <!---->
+                                    <header class="card-header">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                                <h2 class="mb-0">
+                                                    App Configurations
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-body">
+                                        <!---->
+                                        <!---->
+                                        <div class="card">
+                                            <!---->
+                                            <!---->
+                                            <div class="card-body">
+                                                <!---->
+                                                <!---->
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="mb-2 col-md-12">
+                                                                <h3>
+                                                                    One Signal App Configuration (Deprecated)
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="app_id" class="form-control-label">
+                                                                        App ID
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="app_id" disabled="disabled" placeholder="Enter App ID" name="app_id"
+                                                                           type="text" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="api_key" class="form-control-label">
+                                                                        API Key
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="api_key" disabled="disabled" placeholder="Enter API Key" name="api_key"
+                                                                           type="text" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="d-flex justify-content-end">
+                                                            <button type="button" disabled="disabled" class="btn mr-2 btn-primary disabled">
+                                                                <i class="fa fa-save">
+                                                                </i>
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <!---->
+                                        </div>
+                                        <div class="card">
+                                            <!---->
+                                            <!---->
+                                            <div class="card-body">
+                                                <!---->
+                                                <!---->
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="row">
+                                                            <div class="mb-2 col-md-12">
+                                                                <h3>
+                                                                    Firebase Cloud Messaging Configuration
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="firebase_serverKey" class="form-control-label">
+                                                                        Firebase Server Key
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="firebase_serverKey" placeholder="Firebase Server Key" name="firebaseConfig.apiKey"
+                                                                           type="text" class="form-control">
+                                                                    <!---->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="firebase_client_emaail" class="form-control-label">
+                                                                        Client Email
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="firebase_client_emaail" placeholder="Client Email" name="firebaseConfig.client_emaail"
+                                                                           type="text" class="form-control">
+                                                                    <!---->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="firebase_privat_key" class="form-control-label">
+                                                                        Private Key
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="firebase_privat_key" placeholder="Private Key" name="firebaseConfig.apiKey"
+                                                                           type="text" class="form-control">
+                                                                    <!---->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="firebase_project_id" class="form-control-label">
+                                                                        Project Id
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <input id="firebase_project_id" placeholder="Project Id" name="firebaseConfig.apiKey"
+                                                                           type="text" class="form-control">
+                                                                    <!---->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                        <div class="d-flex justify-content-end">
+                                                            <button type="button" class="btn mr-2 btn-primary">
+                                                                <i class="fa fa-save">
+                                                                </i>
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <!---->
+                                    <!---->
+                                </div>
+                                <!---->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+    </div>
+</div>
+

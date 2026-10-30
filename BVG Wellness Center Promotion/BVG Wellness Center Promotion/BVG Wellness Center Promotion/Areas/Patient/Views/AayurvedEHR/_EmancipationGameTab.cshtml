@@ -1,0 +1,238 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+}
+<div class="tab-pane p-20" id="EmancipationGame" role="tabpanel">
+
+
+
+                                @if (!userInfo.Any())
+                                {
+                                    <div class="text-center py-5">
+                                        <div class="text-4xl mb-3">🎮</div>
+                                        <h4>No Game Data Found</h4>
+                                        <p class="text-muted">This user hasn't started the Emancipation Game yet.</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <!-- ============================================ -->
+                                    <!-- 1. USER INFO -->
+                                    <!-- ============================================ -->
+                                    if (userInfo.Any())
+                                    {
+                                        var user = userInfo.First();
+                                        <div class="game-stats-card">
+                                            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                                <div>
+                                                    <h3 class="fw-bold mb-1">@user.FirstName @user.LastName</h3>
+                                                    <p class="text-sm opacity-90 mb-0">Mobile: @user.MobileNo | @user.Gender | @user.Age years</p>
+                                                </div>
+                                                <div class="text-center">
+                                                    <div class="stat-number" style="font-size: 2.5rem; font-weight: 700;">@totalScore</div>
+                                                    <div class="stat-label" style="font-size: 0.75rem; opacity: 0.8;">Total Score</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <!-- ============================================ -->
+                                    <!-- 2. LEVEL-WISE OPTION COUNTS -->
+                                    <!-- ============================================ -->
+                                    if (levelCounts.Any())
+                                    {
+                                        <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+                                            <h4 class="fw-bold text-gray-800 mb-3">📊 Level-wise Option Selection</h4>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover">
+                                                    <thead class="bg-light">
+                                                        <tr>
+                                                            <th>Level</th>
+                                                            <th class="text-a">A</th>
+                                                            <th class="text-b">B</th>
+                                                            <th class="text-c">C</th>
+                                                            <th class="text-d">D</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @{
+                                                            int grandTotalA = 0, grandTotalB = 0, grandTotalC = 0, grandTotalD = 0;
+                                                        }
+                                                        @foreach (var level in levelCounts)
+                                                        {
+                                                            int total = level.A_Count + level.B_Count + level.C_Count + level.D_Count;
+                                                            grandTotalA += level.A_Count;
+                                                            grandTotalB += level.B_Count;
+                                                            grandTotalC += level.C_Count;
+                                                            grandTotalD += level.D_Count;
+                                                            <tr>
+                                                                <td><strong>@level.LevelName</strong></td>
+                                                                <td class="text-a">@level.A_Count</td>
+                                                                <td class="text-b">@level.B_Count</td>
+                                                                <td class="text-c">@level.C_Count</td>
+                                                                <td class="text-d">@level.D_Count</td>
+                                                                <td><strong>@total</strong></td>
+                                                            </tr>
+                                                        }
+                                                        <tr class="table-active fw-bold">
+                                                            <td>Total</td>
+                                                            <td class="text-a">@grandTotalA</td>
+                                                            <td class="text-b">@grandTotalB</td>
+                                                            <td class="text-c">@grandTotalC</td>
+                                                            <td class="text-d">@grandTotalD</td>
+                                                            <td>@(grandTotalA + grandTotalB + grandTotalC + grandTotalD)</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <!-- ============================================ -->
+                                    <!-- 3. SECTION CARDS (CLICKABLE) -->
+                                    <!-- ============================================ -->
+                                    <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+                                        <h4 class="fw-bold text-gray-800 mb-3">📈 Overall Section Selection</h4>
+                                        <div class="row g-3">
+                                            @if (sectionCounts != null)
+                                            {
+                                                <div class="col-6 col-md-3">
+                                                    <a href="javascript:void(0)" onclick="loadSectionDetails('A', @patientFid)"
+                                                       class="section-card-click active-a" id="sectionCardA">
+                                                        <div class="label">A Wellness Zone</div>
+                                                        <div class="value text-a">@sectionCounts.A_Total</div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <a href="javascript:void(0)" onclick="loadSectionDetails('B', @patientFid)"
+                                                       class="section-card-click" id="sectionCardB">
+                                                        <div class="label">B Balance Zone</div>
+                                                        <div class="value text-b">@sectionCounts.B_Total</div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <a href="javascript:void(0)" onclick="loadSectionDetails('C', @patientFid)"
+                                                       class="section-card-click" id="sectionCardC">
+                                                        <div class="label">C Imbalance Zone</div>
+                                                        <div class="value text-c">@sectionCounts.C_Total</div>
+                                                    </a>
+                                                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <a href="javascript:void(0)" onclick="loadSectionDetails('D', @patientFid)"
+                                                       class="section-card-click" id="sectionCardD">
+                                                        <div class="label">D Deep Imbalance</div>
+                                                        <div class="value text-d">@sectionCounts.D_Total</div>
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- ============================================ -->
+                                    <!-- 4. SECTION DETAILS (DYNAMIC - AJAX) -->
+                                    <!-- ============================================ -->
+
+                                    @*<div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+                                            <div id="sectionDetailsContainer">
+                                                <div id="sectionDetailsContent" class="section-details-container">
+                                                    @{
+                                                        int appFidd = 0;
+                                                        if (ViewBag.TodayPatients != null)
+                                                        {
+                                                            appFidd = Convert.ToInt32(ViewBag.TodayPatients.AppointmentFid);
+                                                        }
+                                                    }
+
+                                                    @if (appFidd > 0)
+                                                    {
+                                                      //  @Html.Action("GetSectionDetailsPartial", "Appointment", new { AppointmentFid = appFidd, optionId = "A" })
+
+                                                        @Html.Action("GetSectionDetailsPartial", "Appointment",
+                                                            new { AppointmentFid = appFidd, optionId = "A" }) }
+                                                    else
+                                                    {
+                                                        <div class="text-center py-5 text-muted">
+                                                            <p>Please select a patient to view game details.</p>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                    <div id="sectionDetailsContent" class="section-details-container">
+                                        <div class="text-center py-5 text-muted">
+                                            <p>Loading section details...</p>
+                                        </div>
+                                    </div>
+
+
+
+                                    <!-- ============================================ -->
+                                    <!-- 5. ANSWER HISTORY -->
+                                    <!-- ============================================ -->
+                                    if (answersDetail.Any())
+                                    {
+                                        <div class="bg-white rounded-lg shadow-sm p-4">
+                                            <h4 class="fw-bold text-gray-800 mb-3">📝 Answer History</h4>
+                                            <div class="details-table-wrapper">
+                                                <table class="details-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Level</th>
+                                                            <th>Question</th>
+                                                            <th>Answer</th>
+                                                            <th>Score</th>
+                                                            <th>Suggestion</th>
+                                                            <th>Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var ans in answersDetail)
+                                                        {
+                                                            int maxScore = ans.MaxPossibleScore != null ? Convert.ToInt32(ans.MaxPossibleScore) : 0;
+                                                            int earnedScore = ans.ScoreEarned != null ? Convert.ToInt32(ans.ScoreEarned) : 0;
+                                                            bool isHighScore = earnedScore >= (maxScore / 2);
+                                                            string optionId = ans.OptionId?.ToString() ?? "";
+
+                                                            <tr>
+                                                                <td><span class="detail-level-tag">@ans.LevelNumber</span></td>
+                                                                <td>@ans.QuestionText</td>
+                                                                <td><span class="answer-badge answer-@optionId.ToLower()">@ans.UserAnswer</span></td>
+                                                                <td class="@(isHighScore ? "text-success fw-bold" : "text-danger fw-bold")">
+                                                                    @earnedScore / @maxScore
+                                                                </td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrEmpty(ans.AnswerSuggestion?.ToString()))
+                                                                    {
+                                                                        <span class="suggestion-text">💡 @ans.AnswerSuggestion</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-muted">-</span>
+                                                                    }
+                                                                </td>
+                                                                <td class="text-muted small" style="white-space:nowrap;">
+                                                                    @if (ans.AnsweredOn != null)
+                                                                    {
+                                                                        @Convert.ToDateTime(ans.AnsweredOn).ToString("dd MMM HH:mm")
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>

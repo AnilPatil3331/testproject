@@ -1,0 +1,1442 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    var chronicList = ViewBag.ChronicIllness as IEnumerable<dynamic>;
+    var complaintsList = ViewBag.Complaints as IEnumerable<dynamic>;
+    var durationUnitsList = ViewBag.DurationUnits as IEnumerable<dynamic>;
+    var familyHistoryList = ViewBag.FamilyHistory as IEnumerable<dynamic>;
+    var labTestsList = ViewBag.LabTests as IEnumerable<dynamic>;
+    var imagingList = ViewBag.Imaging as IEnumerable<dynamic>;
+    var surgeryList = ViewBag.PastSurgery as IEnumerable<dynamic>;
+    var traumaList = ViewBag.Trauma as IEnumerable<dynamic>;
+    var allergyList = ViewBag.Allergy as IEnumerable<dynamic>;
+    var medList = ViewBag.Medication as IEnumerable<dynamic>;
+    var progressionList = ViewBag.Progressions as IEnumerable<dynamic>;
+    var symptomsList = ViewBag.Symptoms as IEnumerable<dynamic>;
+    var aggravatingList = ViewBag.Aggravating as IEnumerable<dynamic>;
+    var relievingList = ViewBag.Relieving as IEnumerable<dynamic>;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+<div class="tab-pane p-20 active show" id="CasePaper" role="tabpanel">
+
+
+
+    @using (Html.BeginForm("CasePaper", "AayurvedEHR", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input type="hidden" name="isCasePaperOnly" value="@Request.QueryString["isCasePaperOnly"]" />
+
+
+        <div class="section" id="casePaperSummaryBlock">
+            <!-- === SHORT SUMMARY START === -->
+            @{
+                var patFid = ViewBag.TodayPatients?.PatientFid ?? 0;
+                var currentAppFid = ViewBag.TodayPatients?.AppointmentFid ?? 0;
+
+                var pastChiefComplaints = new List<string>();
+                var pastTreatments = new List<string>();
+                var pastInvestigations = new List<string>();
+
+                var currentChiefComplaints = new List<string>();
+                var currentTreatments = new List<string>();
+                var currentInvestigations = new List<string>();
+
+                var allChronicNames = new List<string>();
+                var allAllergyNames = new List<string>();
+                var allMedNames = new List<string>();
+
+                if (patFid > 0)
+                {
+                    Dapper.DynamicParameters qParam = new Dapper.DynamicParameters();
+                    qParam.Add("@p_Query", $"SELECT AppointmentFid FROM PatientAppoinment WHERE PatientFid = {patFid} ORDER BY AppointmentFid ASC");
+                    var allAppointments = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<dynamic>("sp_ExecuteQuery", qParam);
+
+                    if (allAppointments != null)
+                    {
+                        // Find the immediate previous appointment
+                        int previousAppFid = 0;
+                        foreach (var app in allAppointments)
+                        {
+                            int aFid = Convert.ToInt32(app.AppointmentFid);
+                            if (aFid < currentAppFid)
+                            {
+                                previousAppFid = aFid; // Will hold the max aFid < currentAppFid because it's ordered ASC
+                            }
+                        }
+
+                        int lastSeenCasePaperId = 0;
+                        foreach (var app in allAppointments)
+                        {
+                            int appFid = Convert.ToInt32(app.AppointmentFid);
+                            if (appFid > currentAppFid) { continue; } // Ignore future appointments
+
+                            bool isCurrent = (appFid == currentAppFid);
+                            bool isPrevious = (appFid == previousAppFid);
+
+                            var paramEHR = new Dapper.DynamicParameters();
+                            paramEHR.Add("@AppointmentFid", appFid);
+                            var ehrData = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>("Sp_GetFullEHR_ByAppointment", paramEHR).FirstOrDefault();
+
+                            if (ehrData != null)
+                            {
+                                int casePaperId = ehrData.CasePaperId;
+
+                                // 1. Chronic Illnesses (Red Flag - collect from all past up to current)
+                                var cParam = new Dapper.DynamicParameters();
+                                cParam.Add("@p_Query", $"SELECT IllnessId AS ChronicIllnessId FROM CasePaper_ChronicIllness WHERE CasePaperId = {casePaperId}");
+                                var chronicIds = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR.ChronicIllnessModel>("sp_ExecuteQuery", cParam);
+                                if (chronicIds != null && ViewBag.ChronicIllness != null)
+                                {
+                                    foreach (var cid in chronicIds)
+                                    {
+                                        if (cid.ChronicIllnessId != null)
+                                        {
+                                            foreach (dynamic item in ViewBag.ChronicIllness)
+                                            {
+                                                if (item.Id.ToString() == cid.ChronicIllnessId.ToString())
+                                                {
+                                                    var name = item.Name.ToString();
+                                                    if (!allChronicNames.Contains(name)) { allChronicNames.Add(name); }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // 2. Allergies (Red Flag)
+                                var aParam = new Dapper.DynamicParameters();
+                                aParam.Add("@p_Query", $"SELECT AllergyId FROM CasePaper_Allergy WHERE CasePaperId = {casePaperId}");
+                                var allergyIds = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR.AllergyModel>("sp_ExecuteQuery", aParam);
+                                if (allergyIds != null && ViewBag.Allergy != null)
+                                {
+                                    foreach (var aid in allergyIds)
+                                    {
+                                        if (aid.AllergyId != null)
+                                        {
+                                            foreach (dynamic item in ViewBag.Allergy)
+                                            {
+                                                if (item.Id.ToString() == aid.AllergyId.ToString())
+                                                {
+                                                    var name = item.Name.ToString();
+                                                    if (!allAllergyNames.Contains(name)) { allAllergyNames.Add(name); }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // 3. Long Term Medication (Red Flag)
+                                var mParam = new Dapper.DynamicParameters();
+                                mParam.Add("@p_Query", $"SELECT MedicationId AS LongTermMedicationId FROM CasePaper_Medication WHERE CasePaperId = {casePaperId}");
+                                var medIds = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR.LongTermMedicationModel>("sp_ExecuteQuery", mParam);
+                                if (medIds != null && ViewBag.Medication != null)
+                                {
+                                    foreach (var mid in medIds)
+                                    {
+                                        if (mid.LongTermMedicationId != null)
+                                        {
+                                            foreach (dynamic item in ViewBag.Medication)
+                                            {
+                                                if (item.Id.ToString() == mid.LongTermMedicationId.ToString())
+                                                {
+                                                    var name = item.Name.ToString();
+                                                    if (!allMedNames.Contains(name)) { allMedNames.Add(name); }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Only get Investigations & Complaints if it's Current or Previous
+                                bool isRealCurrent = false;
+                                if (isCurrent)
+                                {
+                                    var checkParam = new Dapper.DynamicParameters();
+                                    checkParam.Add("@p_Query", $"SELECT COUNT(1) FROM CasePaper_Result WHERE AppointmentFid = {appFid}");
+                                    int saveCount = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<int>("sp_ExecuteQuery", checkParam).FirstOrDefault();
+                                    isRealCurrent = (saveCount > 0);
+                                }
+                                if (ehrData.CasePaperId > 0) { lastSeenCasePaperId = ehrData.CasePaperId; }
+                                if (isRealCurrent || isPrevious)
+                                {
+                                    // 4. Investigations (Lab + Imaging)
+                                    if (!string.IsNullOrEmpty(ehrData.LabTestsAdvisedIds))
+                                    {
+                                        var ids = ehrData.LabTestsAdvisedIds.Split(',');
+                                        if (ViewBag.LabTests != null)
+                                        {
+                                            foreach (var id in ids)
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(id))
+                                                {
+                                                    foreach (dynamic item in ViewBag.LabTests)
+                                                    {
+                                                        if (item.Id.ToString() == id.Trim())
+                                                        {
+                                                            var name = item.Name.ToString();
+                                                            if (isRealCurrent) { if (!currentInvestigations.Contains("Lab: " + name)) { currentInvestigations.Add("Lab: " + name); } }
+                                                            else { if (!pastInvestigations.Contains("Lab: " + name)) { pastInvestigations.Add("Lab: " + name); } }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!string.IsNullOrEmpty(ehrData.ImagingAdvisedIds))
+                                    {
+                                        var ids = ehrData.ImagingAdvisedIds.Split(',');
+                                        if (ViewBag.Imaging != null)
+                                        {
+                                            foreach (var id in ids)
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(id))
+                                                {
+                                                    foreach (dynamic item in ViewBag.Imaging)
+                                                    {
+                                                        if (item.Id.ToString() == id.Trim())
+                                                        {
+                                                            var name = item.Name.ToString();
+                                                            if (isRealCurrent) { if (!currentInvestigations.Contains("Imaging: " + name)) { currentInvestigations.Add("Imaging: " + name); } }
+                                                            else { if (!pastInvestigations.Contains("Imaging: " + name)) { pastInvestigations.Add("Imaging: " + name); } }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // 5. Chief Complaints & Previous Treatment
+                                    var ccParam = new Dapper.DynamicParameters();
+                                    ccParam.Add("@p_Query", $"SELECT ComplaintId, PreviousTreatment, PreviousTreatmentOther FROM CasePaperComplaints WHERE CasePaperId = {casePaperId}");
+                                    var compIds = BVG_Wellness_Center_Promotion.Models.BVGWellnessCenterDapparORM.ReturnList<dynamic>("sp_ExecuteQuery", ccParam);
+
+                                    if (compIds != null)
+                                    {
+                                        foreach (var comp in compIds)
+                                        {
+                                            if (ViewBag.Complaints != null && comp.ComplaintId != null)
+                                            {
+                                                foreach (dynamic item in ViewBag.Complaints)
+                                                {
+                                                    if (item.Id.ToString() == comp.ComplaintId.ToString())
+                                                    {
+                                                        var name = item.Name.ToString();
+                                                        if (isRealCurrent) { if (!currentChiefComplaints.Contains(name)) { currentChiefComplaints.Add(name); } }
+                                                        else { if (!pastChiefComplaints.Contains(name)) { pastChiefComplaints.Add(name); } }
+                                                    }
+                                                }
+                                            }
+
+                                            string trt = "";
+
+                                            if (comp.PreviousTreatment != null && comp.PreviousTreatment.ToString() != "null")
+                                            {
+
+                                                string matchedName = null;
+
+                                                var prevTreatList = ViewBag.PreviousTreatments as IEnumerable<dynamic>;
+
+                                                if (prevTreatList != null)
+                                                {
+
+                                                    foreach (var pt in prevTreatList)
+                                                    {
+
+                                                        if (Convert.ToString(pt.Id) == comp.PreviousTreatment.ToString())
+                                                        {
+
+                                                            matchedName = Convert.ToString(pt.Name);
+
+                                                            break;
+
+                                                        }
+
+                                                    }
+
+                                                }
+
+                                                trt += string.IsNullOrEmpty(matchedName) ? comp.PreviousTreatment.ToString() : matchedName;
+
+                                            }
+                                            if (comp.PreviousTreatmentOther != null && comp.PreviousTreatmentOther.ToString() != "null" && comp.PreviousTreatmentOther.ToString().Trim() != "")
+                                            {
+                                                trt += (trt != "" ? " - " : "") + comp.PreviousTreatmentOther.ToString();
+                                            }
+
+                                            if (!string.IsNullOrWhiteSpace(trt))
+                                            {
+                                                if (isRealCurrent) { if (!currentTreatments.Contains(trt)) { currentTreatments.Add(trt); } }
+                                                else { if (!pastTreatments.Contains(trt)) { pastTreatments.Add(trt); } }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            <div class="card mb-3" style="border: 1px solid #ddd; background-color: #f9f9f9; border-radius: 5px;">
+                <div class="card-body p-3">
+                    <h5 class="font-weight-bold text-center" style="text-decoration: underline; margin-bottom: 15px;">CASE PAPER SUMMARY</h5>
+                    <div class="row">
+                        <!-- 1st Column: PAST CONSULTATION -->
+                        <div class="col-md-4">
+                            <h6 class="font-weight-bold text-primary" style="border-bottom: 2px solid #e0e0e0; padding-bottom: 5px;">PAST CONSULTATION</h6>
+
+                            <strong style="font-size: 13px;">Chief Complaint:</strong>
+                            @if (pastChiefComplaints.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in pastChiefComplaints)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Previous Treatment:</strong>
+                            @if (pastTreatments.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in pastTreatments)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Investigations:</strong>
+                            @if (pastInvestigations.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in pastInvestigations)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+                        </div>
+
+                        <!-- 2nd Column: CURRENT CONSULTATION -->
+                        <div class="col-md-4" style="border-left: 1px solid #ddd;">
+                            <h6 class="font-weight-bold text-primary" style="border-bottom: 2px solid #e0e0e0; padding-bottom: 5px;">CURRENT CONSULTATION</h6>
+
+                            <strong style="font-size: 13px;">Chief Complaint:</strong>
+                            @if (currentChiefComplaints.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in currentChiefComplaints)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Previous Treatment:</strong>
+                            @if (currentTreatments.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in currentTreatments)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Investigations:</strong>
+                            @if (currentInvestigations.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var item in currentInvestigations)
+                                    {
+                                        <li>@item</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+                        </div>
+
+                        <!-- 3rd Column: RED FLAG -->
+                        <div class="col-md-4" style="border-left: 1px solid #ddd;">
+                            <h6 class="font-weight-bold text-danger" style="border-bottom: 2px solid #e0e0e0; padding-bottom: 5px;">MEDICAL HISTORY</h6>
+
+                            <strong style="font-size: 13px;">Chronic Illnesses:</strong>
+                            @if (allChronicNames.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var name in allChronicNames)
+                                    {
+                                        <li>@name</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Drug / Food Allergies:</strong>
+                            @if (allAllergyNames.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var name in allAllergyNames)
+                                    {
+                                        <li>@name</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+
+                            <strong style="font-size: 13px;">Long-term Medication:</strong>
+                            @if (allMedNames.Count > 0)
+                            {
+                                <ul class="pl-3 mb-2" style="font-size: 13px;">
+                                    @foreach (var name in allMedNames)
+                                    {
+                                        <li>@name</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            { <p class="mb-2 text-muted" style="font-size: 12px;">None</p>}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- === SHORT SUMMARY END === -->
+        </div>
+
+        <div class="section">
+            <div class="section-heading">
+                <h4 class="card-title">GENERAL EXAMINATION</h4>
+                <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)">
+                    -
+                </button>
+            </div>
+
+            <input type="hidden" name="CasePaperId" value="@Model.CasePaperId" />
+            <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+            <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold">Height (cm)</label>
+                    @Html.TextBoxFor(m => m.Height, new
+{
+@class = "form-control",
+type = "number",
+placeholder = "cm",
+id = "Height",
+min = "30",
+max = "250",
+required = "required",
+oninput = "calculateBMI()"
+})
+                    <span class="error-text" id="HeightError"></span>
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold">Weight (kg)</label>
+                    @Html.TextBoxFor(m => m.Weight, new
+{
+@class = "form-control",
+type = "number",
+placeholder = "kg",
+id = "Weight",
+min = "1",
+max = "300",
+required = "required",
+oninput = "calculateBMI()"
+})
+                    <span class="error-text" id="WeightError"></span>
+                </div>
+
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold">BMI</label>
+                    @Html.TextBoxFor(m => m.BMI, new
+{
+@class = "form-control",
+placeholder = "BMI",
+id = "BMI",
+@readonly = "readonly",
+required = "required"
+})
+                    <span class="error-text">&nbsp;</span>
+                    <span id="BMICategory" class="ml-2 font-weight-bold"></span>
+                </div>
+
+                @*<div class="col-md-3 form-group">
+                        <label class="font-weight-bold">BMI Category</label>
+                        <input type="text" id="BMICategory" class="form-control" placeholder="Category" readonly="readonly" />
+                    </div>*@
+            </div>
+        </div>
+
+
+
+
+        <hr />
+        <div class="section">
+            <div class="section-heading">
+                <h4 class="card-title">VITAL SIGNS</h4>
+                <button type="button" class="btn btn-md toggle-btn"
+                        onclick="toggleSection(this)">
+                    -
+                </button>
+            </div>
+
+            <div class="form-row align-items-end">
+                <div class="col-md-2 form-group">
+                    <label>Pulse(bpm)</label>
+                    @*@Html.TextBoxFor(m => m.Pulse,
+                        new { @class = "form-control" , id= "Pulse" })*@
+                    @Html.TextBoxFor(m => m.Pulse, new { @class = "form-control", id = "Pulse", type = "number", required = "required" })
+                    <span class="error-text" id="PulseError"></span>
+                </div>
+
+                <div class="col-md-2 form-group">
+                    <label>BP (Sys/Dia)</label>
+                    <div class="d-flex">
+                        <input type="text" id="BPSys" class="form-control me-1" placeholder="Sys" required />
+                        <span class="mx-1">/</span>
+                        <input type="text" id="BPDia" class="form-control ms-1" placeholder="Dia" required />
+
+                    </div>
+                    <span class="error-text" id="BPError"></span>
+                    @*@Html.TextBoxFor(m => m.BloodPressure,
+                        new { @class = "form-control", placeholder = "120/80", id = "BloodPressure" })*@
+                    @Html.TextBoxFor(m => m.BloodPressure, new { style = "display:none;", id = "BloodPressure", required = "required" })
+
+                </div>
+
+                <div class="col-md-2 form-group">
+                    <label>Temperature</label>
+                    @*@Html.TextBoxFor(m => m.TemperatureCasepaper,
+                        new { @class = "form-control", placeholder = "°F / °C", id = "TemperatureCasepaper" })*@
+                    @Html.TextBoxFor(m => m.TemperatureCasepaper, new { @class = "form-control", placeholder = "Value", id = "TemperatureCasepaper", type = "number", step = "0.1", required = "required" })
+                    <span class="error-text" id="TemperatureCasepaperError"></span>
+                </div>
+
+
+                <div class="col-md-2 form-group">
+                    <label>Temperature Unit</label>
+                    @Html.DropDownListFor(m => m.TempUnitCP,
+new SelectList(new[] {
+new { Value = "°F", Text = "°F" }
+}, "Value", "Text"),
+new { @class = "form-control" }
+)
+                    <span class="error-text">&nbsp;</span>
+                </div>
+
+                <div class="col-md-2 form-group">
+                    <label>Respiratory Rate</label>
+                    @*@Html.TextBoxFor(m => m.RespiratoryRate,
+                        new { @class = "form-control", placeholder = "/min", id = "RespiratoryRate" })*@
+                    @Html.TextBoxFor(m => m.RespiratoryRate, new { @class = "form-control", placeholder = "/min", id = "RespiratoryRate", type = "number", required = "required" })
+
+                    <span class="error-text" id="RespiratoryRateError"></span>
+                </div>
+
+                <div class="col-md-2 form-group">
+                    <label>SpO2 (%)</label>
+                    @*@Html.TextBoxFor(m => m.SpO2,
+                        new { @class = "form-control", placeholder = "%", id = "SpO2" })*@
+                    @Html.TextBoxFor(m => m.SpO2, new { @class = "form-control", placeholder = "%", id = "SpO2", type = "number", required = "required" })
+
+                    <span class="error-text" id="SpO2Error"></span>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        @*CHIEF COMPLAINTS*@
+
+
+        @*<div class="container">
+
+                <div id="complaintsContainer">
+
+
+
+
+
+                </div>
+
+                <button type="button" class="btn btn-success mt-3" onclick="addComplaint()">
+                    + Add Complaint
+                </button>
+
+            </div>*@
+        <div class="w-100">
+            <div id="complaintsContainer">
+
+
+
+
+
+            </div>
+
+            <button type="button" class="btn btn-success mt-3" onclick="addComplaint()">
+                + Add Complaint
+            </button>
+
+        </div>
+
+
+
+        // MAIN WORKING CODE BY ANIL WITH VALIDATION
+        @*<div class="section">
+                <div class="section-heading">
+                    <h4 class="card-title">PAST HISTORY (Purva Vyadhi)</h4>
+                    <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> - </button>
+                </div>
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                        <label class="font-weight-bold">Chronic Illnesses</label>
+                        @Html.DropDownListFor(m => m.ChronicIllnessId, new SelectList(ViewBag.ChronicIllness, "Id", "Name"), "Select Illness", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.ChronicIllnessDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                        <label>Duration</label>
+                        @Html.TextBoxFor(m => m.ChronicIllnessDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                        <small class="text-danger error-msg" style="display:none;"></small>
+                    </div>
+                </div>
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                        <label class="font-weight-bold">Past Surgeries / Hospitalizations</label>
+                        @Html.DropDownListFor(m => m.PastSurgeryId, new SelectList(ViewBag.PastSurgery, "Id", "Name"), "Select Surgery", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.PastSurgeryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit",disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                        <label>Duration</label>
+                        @Html.TextBoxFor(m => m.PastSurgeryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                        <small class="text-danger error-msg" style="display:none;"></small>
+                    </div>
+                </div>
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                        <label class="font-weight-bold">History of Trauma / Accident</label>
+                        @Html.DropDownListFor(m => m.TraumaHistoryId, new SelectList(ViewBag.Trauma, "Id", "Name"), "Select Trauma History", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.TraumaHistoryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                        <label>Duration</label>
+                        @Html.TextBoxFor(m => m.TraumaHistoryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                        <small class="text-danger error-msg" style="display:none;"></small>
+                    </div>
+                </div>
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                        <label class="font-weight-bold">Drug / Food Allergies</label>
+                        @Html.DropDownListFor(m => m.AllergyId, new SelectList(ViewBag.Allergy, "Id", "Name"), "Select Allergy", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.AllergyHistoryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                        <label>Duration</label>
+                        @Html.TextBoxFor(m => m.AllergyHistoryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                        <small class="text-danger error-msg" style="display:none;"></small>
+                    </div>
+                </div>
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                        <label class="font-weight-bold">Long-term Medication History</label>
+                        @Html.DropDownListFor(m => m.LongTermMedicationId, new SelectList(ViewBag.Medication, "Id", "Name"), "Select Medication", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.LongTermMedicationDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                        <label>Duration</label>
+                        @Html.TextBoxFor(m => m.LongTermMedicationDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                        <small class="text-danger error-msg" style="display:none;"></small>
+                    </div>
+                </div>
+                <hr />
+            </div>*@
+        <hr />
+
+        //anil ppatil ADD MULTIPLE ROW
+        <div id="pastHistorySection" class="section">
+            <div class="section-heading">
+                <h4 class="card-title">PAST HISTORY (Purva Vyadhi)</h4>
+                <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> + </button>
+            </div>
+
+            <div id="container-ChronicIllness" class="history-container mt-3">
+                <label class="font-weight-bold">Chronic Illnesses</label>
+                <div class="form-row align-items-end history-row mb-3">
+                    <input type="hidden" name="ChronicIllnessList[0].Id" class="record-id" value="" />
+                    <div class="col-lg-4 col-md-12 form-group mb-0">
+                        @Html.DropDownList("ChronicIllnessList[0].ChronicIllnessId", new SelectList(ViewBag.ChronicIllness, "Id", "Name"), "Select Illness", new { @class = "form-control form-control-sm main-field search-dropdown", @style = "height: 31px !important;", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.DropDownList("ChronicIllnessList[0].DurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.TextBox("ChronicIllnessList[0].Duration", null, new
+                   {
+                       @class = "form-control form-control-sm duration-field durationField",
+                       type = "number",
+                       placeholder = "Duration",
+                       step = "0.01",
+                       disabled = "disabled", // 'disabled' काढले
+                       style = "background-color: #e9ecef;",
+                       onblur = "validateDuration(this)"
+                   })
+                        <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-ChronicIllness')">Add +</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div id="container-PastSurgery" class="history-container">
+                <label class="font-weight-bold">Past Surgeries / Hospitalizations</label>
+                <div class="form-row align-items-end history-row mb-3">
+                    <!-- ?? HIDDEN ID FIELD -->
+                    <input type="hidden" name="PastSurgeryList[0].Id" class="record-id" value="" />
+                    <div class="col-lg-4 col-md-12 form-group mb-0">
+                        @Html.DropDownList("PastSurgeryList[0].PastSurgeryId", new SelectList(ViewBag.PastSurgery, "Id", "Name"), "Select Surgery", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.DropDownList("PastSurgeryList[0].PastSurgeryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.TextBox("PastSurgeryList[0].PastSurgeryDuration", null, new
+                   {
+                       @class = "form-control form-control-sm duration-field durationField",
+                       type = "number",
+                       placeholder = "Duration",
+                       step = "0.01",
+                       disabled = "disabled", // 'disabled' काढले
+                       style = "background-color: #e9ecef;",
+                       onblur = "validateDuration(this)"
+                   })
+                        <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-PastSurgery')">Add +</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div id="container-Trauma" class="history-container">
+                <label class="font-weight-bold">History of Trauma / Accident</label>
+                <div class="form-row align-items-end history-row mb-3">
+                    <!-- ?? HIDDEN ID FIELD -->
+                    <input type="hidden" name="TraumaHistoryList[0].Id" class="record-id" value="" />
+                    <div class="col-lg-4 col-md-12 form-group mb-0">
+                        @Html.DropDownList("TraumaHistoryList[0].TraumaHistoryId", new SelectList(ViewBag.Trauma, "Id", "Name"), "Select Trauma", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.DropDownList("TraumaHistoryList[0].TraumaHistoryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.TextBox("TraumaHistoryList[0].TraumaHistoryDuration", null, new
+                   {
+                       @class = "form-control form-control-sm duration-field durationField",
+                       type = "number",
+                       placeholder = "Duration",
+                       step = "0.01",
+                       disabled = "disabled", // 'disabled' काढले
+                       style = "background-color: #e9ecef;",
+                       onblur = "validateDuration(this)"
+                   })
+                        <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Trauma')">Add +</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div id="container-Allergy" class="history-container">
+                <label class="font-weight-bold">Drug / Food Allergies</label>
+                <div class="form-row align-items-end history-row mb-3">
+                    <!-- ?? HIDDEN ID FIELD -->
+                    <input type="hidden" name="AllergyList[0].Id" class="record-id" value="" />
+                    <div class="col-lg-4 col-md-12 form-group mb-0">
+                        @Html.DropDownList("AllergyList[0].AllergyId", new SelectList(ViewBag.Allergy, "Id", "Name"), "Select Allergy", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.DropDownList("AllergyList[0].AllergyHistoryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.TextBox("AllergyList[0].AllergyHistoryDuration", null, new
+                   {
+                       @class = "form-control form-control-sm duration-field durationField",
+                       type = "number",
+                       placeholder = "Duration",
+                       step = "0.01",
+                       disabled = "disabled", // 'disabled' काढले
+                       style = "background-color: #e9ecef;",
+                       onblur = "validateDuration(this)"
+                   })
+                        <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Allergy')">Add +</button>
+                    </div>
+                </div>
+            </div>
+            <hr />
+
+            <div id="container-Medication" class="history-container">
+                <label class="font-weight-bold">Long-term Medication History</label>
+                <div class="form-row align-items-end history-row mb-3">
+                    <!-- ?? HIDDEN ID FIELD -->
+                    <input type="hidden" name="LongTermMedicationList[0].Id" class="record-id" value="" />
+                    <div class="col-lg-4 col-md-12 form-group mb-0">
+                        @Html.DropDownList("LongTermMedicationList[0].LongTermMedicationId", new SelectList(ViewBag.Medication, "Id", "Name"), "Select Medication", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.DropDownList("LongTermMedicationList[0].LongTermMedicationDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                        @Html.TextBox("LongTermMedicationList[0].LongTermMedicationDuration", null, new
+                   {
+                       @class = "form-control form-control-sm duration-field durationField",
+                       type = "number",
+                       placeholder = "Duration",
+                       step = "0.01",
+                       disabled = "disabled", // 'disabled' काढले
+                       style = "background-color: #e9ecef;",
+                       onblur = "validateDuration(this)"
+                   })
+                        <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Medication')">Add +</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*family History*@
+        <div class="section">
+            <div class="section-heading">
+                <h4 class="card-title">FAMILY HISTORY (Kulavruttanta)</h4>
+                <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)">-</button>
+            </div>
+
+            <div id="container-FamilyHistory" class="family-history-container mt-3">
+                <div class="form-row align-items-end family-history-row mb-3">
+                    <input type="hidden" name="FamilyHistoryList[0].Id" class="record-id" value="" />
+                    <div class="col-md-7 form-group mb-0">
+                        <label class="font-weight-bold d-block">Family History (Kulavruttanta)</label>
+                        <select name="FamilyHistoryList[0].FamilyHistoryIds" class="form-control family-history-dropdown search-dropdown" multiple="multiple" style="width: 100%;">
+                            @if (ViewBag.FamilyHistory != null)
+                            {
+                                foreach (var item in ViewBag.FamilyHistory)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3 form-group mb-0">
+                        <label class="font-weight-bold d-block">Relation (नाते)</label>
+                        <select name="FamilyHistoryList[0].Relation" class="form-control relation-dropdown" style="height: 38px !important;">
+                            <option value="">Select Relation</option>
+                            <option value="Father">Father (वडील)</option>
+                            <option value="Mother">Mother (आई)</option>
+                            <option value="Brother">Brother (भाऊ)</option>
+                            <option value="Sister">Sister (बहीण)</option>
+                            <option value="Husband">Husband (पती)</option>
+                            <option value="Wife">Wife (पत्नी)</option>
+                            <option value="Son">Son (मुलगा)</option>
+                            <option value="Daughter">Daughter (मुलगी)</option>
+                            <optgroup label="Paternal (पितृपक्ष - वडिलांकडील)">
+                                <option value="PaternalGrandfather">Grandfather (आजोबा - वडिलांचे वडील)</option>
+                                <option value="PaternalGrandmother">Grandmother (आजी - वडिलांची आई)</option>
+                                <option value="PaternalUncle">Uncle (काका)</option>
+                                <option value="PaternalAunt">Aunt (आत्या / काकू)</option>
+                            </optgroup>
+                            <optgroup label="Maternal (मातृपक्ष - आईकडील)">
+                                <option value="MaternalGrandfather">Grandfather (आजोबा - आईचे वडील)</option>
+                                <option value="MaternalGrandmother">Grandmother (आजी - आईची आई)</option>
+                                <option value="MaternalUncle">Uncle (मामा)</option>
+                                <option value="MaternalAunt">Aunt (मावशी / मामी)</option>
+                            </optgroup>
+                            <option value="Other">Other (इतर)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 btn-container d-flex" style="margin-bottom: 2px;">
+                        <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewFamilyHistoryRow(this, 'container-FamilyHistory')"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+
+        <hr />
+
+        //if (ViewBag.TodayPatients != null && ViewBag.TodayPatients.Gender != null && (ViewBag.TodayPatients.Gender == "Female" || ViewBag.TodayPatients.Gender == "Other"))
+        if (ViewBag.TodayPatients != null &&
+ViewBag.TodayPatients.Gender != null &&
+(ViewBag.TodayPatients.Gender.Equals("Female", StringComparison.OrdinalIgnoreCase) ||
+ViewBag.TodayPatients.Gender.Equals("Other", StringComparison.OrdinalIgnoreCase)))
+
+        {
+            <div class="section" id="menstrualSection">
+                <div class="section-heading">
+                    <h4 class="card-title"> MENSTRUAL / OBSTETRIC HISTORY</h4>
+                    <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> - </button>
+                </div>
+
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-3 col-md-6 col-12 form-group">
+                        <label class="font-weight-bold">Menarche Age (Years)</label>
+                        @Html.TextBoxFor(m => m.MenarcheAge, new
+                   {
+                       @class = "form-control",
+                       type = "number",
+                       //min = "8",
+                       //max = "25",
+                       oninput = "limitMenarcheAge(this)"
+                   })
+                        @*<small id="menarcheError" class="text-danger" style="display:none;">Max age allowed is 25</small>*@
+                    </div>
+
+
+
+                    <div class="col-lg-3 col-md-6 col-12 form-group">
+                        <label class="font-weight-bold">LMP (Last Period)</label>
+                        @Html.TextBoxFor(m => m.LMP, "{0:yyyy-MM-dd}", new
+                   {
+                       @type = "date",
+                       @class = "form-control",
+                       @id = "lmpDatePicker", // Navin ID add kela
+                       @max = DateTime.Now.ToString("yyyy-MM-dd") // Server-side block
+                   })
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <label class="font-weight-bold">Cycle Regularity</label>
+
+                        <div class="radio-group mt-2 d-flex align-items-center">
+
+                            <label style="cursor: pointer;" class="mr-4 mb-0 d-flex align-items-center">
+                                @Html.RadioButtonFor(m => m.CycleRegular, "Yes", new { id = "rbRegularYes" })
+                                <span>Regular (Yes)</span>
+
+                            </label>
+
+                            <label style="cursor: pointer;" class="mb-0 d-flex align-items-center">
+                                @Html.RadioButtonFor(m => m.CycleRegular, "No", new { id = "rbRegularNo" })
+                                <span>Irregular (No)</span>
+
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row align-items-end history-row">
+                    <div class="col-lg-2 col-md-4 col-6 form-group">
+                        <label>Unit</label>
+                        @Html.DropDownListFor(m => m.MENSTRUALDurationUnit,
+new SelectList(((IEnumerable<dynamic>)ViewBag.DurationUnits)
+.Where(x => x.Name.Contains("Day")),
+"Id", "Name"),
+null,
+new { @class = "form-control durationUnit", onchange = "validateDuration(this)" })
+                    </div>
+
+                    <div class="col-lg-2 col-md-4 col-6 form-group duration-container">
+                        <label>Flow Duration</label>
+                        @Html.TextBoxFor(m => m.MENSTRUALDurationC, new
+                   {
+                       @class = "form-control durationField",
+                       type = "number",
+                       min = "1",
+                       oninput = "validateFlowDuration(this)"
+                   })
+                        <small id="flowError" class="text-danger error-msg" style="display:none; font-size: 11px;"></small>
+                    </div>
+
+
+
+                    <div class="col-lg-3 col-md-4 col-12 form-group">
+                        <label>Amount Of Flow</label>
+                        @Html.DropDownListFor(m => m.AmountOfFlow, new SelectList(new[] { "Low", "Moderate", "Heavy", "Excessive" }), "Select Amount", new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-lg-5 col-md-12 col-12 form-group">
+                        <label class="font-weight-bold">Pain During Menstruation</label>
+
+                        <div class="radio-group mt-2 d-flex align-items-center flex-wrap" style="font-size: 0.9rem;">
+
+                            <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                @Html.RadioButtonFor(m => m.MenstrualPain, "No Pain")
+                                <span class="ml-1">None</span>
+                            </label>
+
+
+                            <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                @Html.RadioButtonFor(m => m.MenstrualPain, "Mild Pain")
+                                <span class="ml-1">Mild</span>
+                            </label>
+
+
+                            <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                @Html.RadioButtonFor(m => m.MenstrualPain, "Moderate Pain")
+                                <span class="ml-1">Mod</span>
+                            </label>
+
+
+                            <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                @Html.RadioButtonFor(m => m.MenstrualPain, "Severe Pain")
+                                <span class="ml-1">Severe</span>
+                            </label>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row history-row">
+                    <div class="col-md-12 form-group">
+                        <label>Obstetric History (G P L A)</label>
+                        @Html.TextBoxFor(m => m.ObstetricHistory, new { @class = "form-control", @id = "ObstetricHistory", maxlength = "50", placeholder = "Type numbers only (e.g. 2110)" })
+                    </div>
+                </div>
+                <hr />
+            </div>
+        }
+
+        <div class="section">
+            <div class="section-heading">
+                <h4 class="card-title">INVESTIGATIONS</h4>
+                <button type="button"
+                        class="btn btn-md toggle-btn" p
+                        onclick="toggleSection(this)">
+                    -
+                </button>
+            </div>
+
+            <!-- Row 1 : Lab Tests -->
+            <div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label>Lab Tests Advised</label>
+                    @*@Html.ListBoxFor(m => m.LabTestsAdvisedIds,
+                        new MultiSelectList(ViewBag.LabTests, "Id", "Name"),
+                        new { @class = "form-control", id = "LabTestsAdvised", size = "5" })*@
+
+                    @Html.ListBoxFor(m => m.LabTestsAdvisedIdsList,
+new MultiSelectList(ViewBag.LabTests, "Id", "Name", Model.LabTestsAdvisedIdsList),
+new { @class = "form-control select2", id = "LabTestsAdvised", multiple = "multiple" })
+
+                </div>
+            </div>
+
+            <!-- Row 2 : Imaging -->
+            <div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label>Imaging Advised</label>
+                    @Html.ListBoxFor(m => m.ImagingAdvisedIdsList,
+new MultiSelectList(ViewBag.Imaging, "Id", "Name", Model.ImagingAdvisedIdsList),
+new { @class = "form-control select2", id = "ImagingAdvised", multiple = "multiple" })
+
+
+                </div>
+            </div>
+
+            <!-- Row 3 : Patient Reports (Mobile App) -->
+            <div class="form-row mt-3">
+                <div class="col-md-12 form-group">
+                    <label class="font-weight-bold" style="color: #2c3e50; display: inline-flex; align-items: center; gap: 8px;">
+                        Patient Reports (Mobile App)
+                        @*<button type="button" class="btn btn-xs btn-outline-primary px-2" onclick="$('#uploadReportModal').modal('show')" style="font-size: 11px; padding: 2px 6px; line-height: 1.2;"><i class="fa fa-upload"></i> Upload Report</button>*@
+                        @*<button type="button" class="btn btn-xs btn-outline-info px-2" onclick="$('#ViewReportModal').modal('show')" style="font-size: 11px; padding: 2px 6px; line-height: 1.2;"><i class="fa fa-eye"></i> View Report</button>*@
+                    </label>
+                    @{
+                        var appReports = ViewBag.PatientMobileReports as List<BVG_Wellness_Center_Promotion.Areas.Patient.Models.PatientMobileReportModel>;
+                    }
+                    @if (appReports != null && appReports.Count > 0)
+                    {
+                        var groupedReports = appReports
+                            .GroupBy(r => string.IsNullOrEmpty(r.ReportType) ? "other" : r.ReportType.ToLower())
+                            .ToList();
+
+                        <div class="reports-container" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; background-color: #f8fafc; margin-top: 5px;">
+                            @foreach (var group in groupedReports)
+                            {
+                                var typeLabel = "";
+                                var badgeBg = "";
+                                var badgeColor = "";
+                                var groupId = "invest_collapse_" + group.Key.Replace(" ", "_");
+
+                                switch (group.Key)
+                                {
+                                    case "x-ray": typeLabel = "X-Ray"; badgeBg = "#E6F1FB"; badgeColor = "#0C447C"; break;
+                                    case "mri": typeLabel = "MRI"; badgeBg = "#EEEDFE"; badgeColor = "#3C3489"; break;
+                                    case "ct-scan": typeLabel = "CT Scan"; badgeBg = "#FAEEDA"; badgeColor = "#633806"; break;
+                                    case "blood-test": typeLabel = "Blood Test"; badgeBg = "#FCEBEB"; badgeColor = "#A32D2D"; break;
+                                    case "prescription": typeLabel = "Prescription"; badgeBg = "#E1F5EE"; badgeColor = "#085041"; break;
+                                    case "lab": typeLabel = "Lab"; badgeBg = "#FCEBEB"; badgeColor = "#A32D2D"; break;
+                                    case "imaging": typeLabel = "Imaging"; badgeBg = "#E6F1FB"; badgeColor = "#0C447C"; break;
+                                    case "other": typeLabel = "Other"; badgeBg = "#F1EFE8"; badgeColor = "#5F5E5A"; break;
+                                    default:
+                                        typeLabel = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(group.Key);
+                                        badgeBg = "#F1EFE8";
+                                        badgeColor = "#5F5E5A";
+                                        break;
+                                }
+
+                                <div class="rep-section" style="margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff;">
+                                    <div class="rep-header" data-toggle="collapse" data-target="#@groupId" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; cursor: pointer; background: #f8fafc;">
+                                        <span class="rep-badge" style="background:@badgeBg; color:@badgeColor; padding: 4px 10px; border-radius: 12px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
+                                            <i class="fa fa-folder-open-o"></i> @typeLabel
+                                        </span>
+                                        <span class="rep-count" style="font-size: 12px; color: #666;">@group.Count() Reports <i class="fa fa-chevron-down ml-2"></i></span>
+                                    </div>
+
+                                    <div id="@groupId" class="collapse show">
+                                        <div class="rep-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; padding: 15px; border-top: 1px solid #eee; background: #fff;">
+                                            @foreach (var item in group)
+                                            {
+                                                var files = new[] { item.ReportFile1, item.ReportFile2, item.ReportFile3, item.ReportFile4, item.ReportFile5 };
+
+                                                foreach (var file in files.Where(f => !string.IsNullOrEmpty(f)))
+                                                {
+                                                    var relativePath = file.Replace("C:\\Wellness\\UserReports\\", "").Replace("\\", "/");
+                                                    var reportUrl = Url.Action("DownloadMobileReport", "AayurvedEHR", new { filePath = file });
+                                                    var ext = System.IO.Path.GetExtension(file).ToLower();
+
+                                                    <div class="rep-card" style="border: 1px solid #e0e0e0; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                                                        @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
+                                                        {
+                                                            <a href="@reportUrl" target="_blank" style="display: block;">
+                                                                <img src="@reportUrl" class="rep-card-thumb" style="width: 100%; height: 90px; object-fit: cover;" />
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="rep-card-placeholder" style="width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                                                                <i class="fa fa-file-pdf-o" style="font-size:20px; color:#ccc;"></i>
+                                                            </div>
+                                                            <a href="@reportUrl" target="_blank" class="rep-btn" style="display: block; margin: 4px; padding: 2px; text-align: center; font-size: 10px; border-radius: 4px; border: 1px solid #ddd; background: #fdfdfd; color: #555; text-decoration: none;">View @ext.Replace(".", "").ToUpper()</a>
+                                                        }
+                                                        <div class="rep-card-body" style="padding: 6px; background: #fff;">
+                                                            <div class="rep-card-title text-truncate" style="font-size: 11px; font-weight: 500; color: #333;" title="@item.ReportTitle">@item.ReportTitle</div>
+                                                            <div class="rep-card-date" style="font-size: 10px; color: #888;">@Convert.ToDateTime(item.Date).ToString("dd-MM-yyyy")</div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info py-2" style="font-size: 13px; margin-top: 5px;">No reports uploaded specifically for this appointment.</div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="section">
+
+            @*<div class="form-row">
+                    <div class="col-md-4 form-group">
+                        <label class="font-weight-bold" style="color: #2c3e50;">Previous Follow-up (Date & Time)</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+
+                            </div>
+                            <input type="text"
+                                   class="form-control shadow-sm"
+                                   value="@ViewBag.LastFollowUpDate"
+                                   readonly="readonly"
+                                   style="background-color: #f4f7f6; font-weight: bold; color: #2c3e50;" />
+                        </div>
+                    </div>
+                </div>*@
+            <div class="form-row">
+                <!-- 1. Juni Date Dakvnya sathi (Read-only) -->
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold" style="color: #2c3e50;">Previous Follow-up</label>
+                    <input type="text" class="form-control bg-light" value="@ViewBag.LastFollowUpDate" readonly="readonly" />
+                </div>
+
+                <!-- 2. Navin Date Select Karnya sathi (Calendar) -->
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold" style="color: #2c3e50;">Set Next Follow-up Date</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white text-primary"><i class="fa fa-calendar"></i></span>
+                        </div>
+                        <input type="date"
+                               name="FollowUpDate"
+                               id="FollowUpDate"
+                               class="form-control shadow-sm"
+                               min="@DateTime.Now.ToString("yyyy-MM-dd")"
+                               value="@(Model.FollowUpDate.HasValue ? Model.FollowUpDate.Value.ToString("yyyy-MM-dd") : "")" />
+                    </div>
+                </div>
+
+                <!-- 3. Follow-up Days -->
+                <div class="col-md-4 form-group">
+                    <label class="font-weight-bold" style="color: #2c3e50;">Follow-up Days</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-white text-primary"><i class="fa fa-clock-o"></i></span>
+                        </div>
+                        <input type="number"
+                               id="FollowUpDays"
+                               class="form-control shadow-sm"
+                               min="0"
+                               placeholder="Enter Days" />
+                    </div>
+                </div>
+            </div>
+            @*<div class="section-heading">
+                    <h4 class="card-title"> PREVIOUS FOLLOW-UP & PROGNOSIS</h4>
+                    <button type="button"
+                            class="btn btn-md toggle-btn"
+                            onclick="toggleSection(this)">
+                        -
+                    </button>
+                </div>*@
+
+            <!-- Row 1 : Follow-up Date -->
+            @*<div class="form-row">
+                <div class="col-md-4 form-group">
+                    <label>Follow-up Date</label>
+
+                    @Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control",@max = DateTime.Now.ToString("yyyy-MM-dd") })*@
+            @*@Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}" , new { @class = "form-control", type = "date" })*@
+            @*</div>
+                </div>*@
+
+            @*<div class="form-row">
+                                                     <div class="col-md-4 form-group">
+                                                         <label class="font-weight-bold">Follow-up Date</label>
+                                                         <div class="input-group custom-date-container">
+
+                                                             @Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}", new
+                {
+                    @type = "date",
+                    @class = "form-control shadow-sm",
+                    @max = DateTime.Now.ToString("yyyy-MM-dd")
+                })
+                                                         </div>
+                                                     </div>
+                                                 </div>*@
+
+
+
+            <!-- Row 2 : Expected Outcome -->
+            @*<div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label>Expected Outcome</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Complete relief")
+                            Complete relief
+                        </div>
+                        <div class="col-md-4">
+                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Partial relief")
+                            Partial relief
+                        </div>
+                        <div class="col-md-4">
+                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Condition under control")
+                            Condition under control
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Requires further treatment")
+                            Requires further treatment
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Chronic / long-term management")
+                            Chronic / long-term management
+                        </div>
+                    </div>
+                </div>*@
+            <div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label class="font-weight-bold">Expected Outcome</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label style="cursor: pointer;">
+                                @Html.RadioButtonFor(m => m.ExpectedOutcome, "Complete relief", new { id = "outcome1" })
+                                <span class="ml-1">Complete relief</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label style="cursor: pointer;">
+                                @Html.RadioButtonFor(m => m.ExpectedOutcome, "Partial relief", new { id = "outcome2" })
+                                <span class="ml-1">Partial relief</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label style="cursor: pointer;">
+                                @Html.RadioButtonFor(m => m.ExpectedOutcome, "Condition under control", new { id = "outcome3" })
+                                <span class="ml-1">Condition under control</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label style="cursor: pointer;">
+                                @Html.RadioButtonFor(m => m.ExpectedOutcome, "Requires further treatment", new { id = "outcome4" })
+                                <span class="ml-1">Requires further treatment</span>
+                            </label>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label style="cursor: pointer;">
+                                @Html.RadioButtonFor(m => m.ExpectedOutcome, "Chronic / long-term management", new { id = "outcome5" })
+                                <span class="ml-1">Chronic / long-term management</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Row 3 : Red Flag Advice -->
+            <div class="form-row">
+                <div class="col-md-12 form-group">
+                    <label>Red-Flag Advice</label>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_FeverIncrease) Fever increases
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_SeverePain) Severe pain
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_SuddenWorsening) Sudden worsening of symptoms
+                            </label>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_VomitingBleeding) Vomiting / bleeding
+                            </label>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_DizzinessFainting) Dizziness / fainting
+                            </label>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label>
+                                @Html.CheckBoxFor(m => m.RF_NoImprovement) No improvement after treatment
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other -->
+            <div class="form-row">
+                <div class="col-md-6 form-group">
+                    <label>Other (if any)</label>
+                    @Html.TextAreaFor(m => m.RF_Other, new { placeholder = "Specify other red-flag advice", rows = "4", style = "width: 200%; min-height: 100px; border: 1px solid #ced4da; border-radius: 4px; padding: 10px;" })
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+
+
+        <div class="btnBx">
+            <button type="submit" class="btn btn-md btn-success submit-action-btn mr-1" id="submitBtn">Submit</button>
+            @*<button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action("AUList", "reception")'">List</button>*@
+
+        </div>
+
+    }
+</div>

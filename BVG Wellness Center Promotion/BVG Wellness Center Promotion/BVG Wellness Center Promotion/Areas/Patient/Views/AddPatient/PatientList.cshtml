@@ -1,0 +1,1165 @@
+﻿
+@{
+    ViewBag.Title = "PatientList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/dist/js/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+
+<style>
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+        }
+
+    .shadow-sm {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="form-row">
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                window.onload = function () {
+                    var message = '@TempData["Message"]';
+                    var alertType = '@TempData["Icon"]';
+                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                    showCustomAlert(message, alertType, imageUrl);
+                };
+            </script>
+
+        }
+        <div class="col-md-12">
+            <div class="card p-0 shadow">
+                <!----><header class="card-header">
+                           <div class="row align-items-center mb-3">
+                               <div class="col-md-6">
+                                   <h3 class="mb-0 fw-bold text-primary">
+                                       <i class="fa fa-users me-2"></i>Patients List
+                                   </h3>
+                               </div>
+
+                               <div class="col-md-6">
+                                   <div class="d-flex justify-content-end flex-wrap gap-2">
+
+                                       <button class="btn btn-success btn-sm shadow-sm" id="btnExport">
+                                           <i class="fa fa-file-excel me-1"></i> Export
+                                       </button>
+
+                                       <button class="btn btn-info btn-sm text-white shadow-sm" id="btnImport">
+                                           <i class="fas fa-file-import me-1"></i> Import
+                                       </button>
+
+                                       <button class="btn btn-secondary btn-sm shadow-sm" id="btnDownloadTemplate">
+                                           <i class="fa fa-download me-1"></i> Template
+                                       </button>
+
+                                       <input type="file"
+                                              id="importExcelFile"
+                                              accept=".xlsx,.xls,.csv"
+                                              style="display:none;" />
+
+                                       <a href="/Patient/AddPatient/AddPatient"
+                                          class="btn btn-primary btn-sm shadow-sm">
+                                           <i class="fa fa-plus me-1"></i> Add Patient
+                                       </a>
+
+                                   </div>
+                               </div>
+                           </div>
+                </header><div class="card-body p-0">
+                    <!----><!----> <!----> <div data-v-9bd3ed50="">
+                        <!---->
+                    </div>
+                    <div class="page-loader-section" style="display: none;">
+                        <div class="text-center loader-2-container">
+                            <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                </div>
+                                <div class="vld-icon">
+                                    <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                         height="64" stroke="var(--primary)">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <g transform="translate(1 1)" stroke-width="2">
+                                                <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                </circle>
+                                                <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                    <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                      to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                    </animateTransform>
+                                                </path>
+                                            </g>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="printPatientData">
+                        <div class="vgt-wrap">
+                            <div class="vgt-inner-wrap">
+                                <!-- Search Bar -->
+                                <div class="vgt-global-search vgt-clearfix">
+                                    <div class="vgt-global-search__input vgt-pull-left">
+                                        <form role="search">
+                                            <label for="tablSearchRow">
+                                                <span class="sr-only">Search</span>
+                                            </label>
+                                            <input id="tablSearchRow" type="text" placeholder="Search patient by ID, name, email, and status (0 or 1)"
+                                                   class="vgt-input vgt-pull-left">
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Table Section -->
+                                <div class="table-responsive">
+                                    <table id="Patienttable" class="vgt-table table-striped vgt-compact">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="vgt-left-align">Action</th>
+                                                <th scope="col" class="vgt-left-align">UHID No</th>
+                                                <th scope="col" class="vgt-left-align" onclick="sortTable(1)" style="cursor: pointer;">Name <i class="fa fa-sort"></i></th>
+                                                @*<th scope="col" class="vgt-left-align">Clinic</th>*@
+                                                
+                                                
+                                                <th scope="col" class="vgt-left-align">Mobile</th>
+                                                <th scope="col" class="vgt-left-align">Email</th>
+                                                <th scope="col" class="vgt-left-align">Patient Source</th>
+                                                <th scope="col" class="vgt-left-align">Origin</th>
+                                                <th scope="col" class="vgt-left-align" onclick="sortTable(6)" style="cursor: pointer;">Registered ON <i class="fa fa-sort"></i></th>
+                                                @*<th scope="col" class="vgt-left-align">Status</th>*@
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.PatientDetails != null)
+                                            {
+                                                foreach (var item in ViewBag.PatientDetails)
+                                                {
+                                                    <tr>
+                                                        <td data-label="Action" class="vgt-left-align">
+                                                            <div class="btn-group">
+                                                                <a href="@Url.Action("AddPatient", "AddPatient", new { PatientFid_Encrypted = @item.PatientFid_Encrypted })" class="btn btn-sm btn-outline-primary" title="Edit">
+                                                                    <i class="fa fa-pen-alt"></i>
+                                                                </a>
+                                                                <a href="@Url.Action("Appointment","Appointment",new { FromPatientList="FromPatientList" , PatientFid = @item.PatientFid})" class="btn btn-sm btn-outline-primary" title=" Add Appointments">
+                                                                    <i class="fas fa-calendar-week"></i>
+                                                                </a>
+                                                                @*<a href="#/patient-medical-report_id/102170" class="btn btn-sm btn-outline-primary" title="Reports">
+                                                                    <i class="fa fa-file"></i>
+                                                                </a>*@
+                                                                @*<button title="Resend credential" id="resend_102170" class="btn btn-outline-warning btn-sm">
+                                                                    <i class="fa fa-paper-plane"></i>
+                                                                </button>*@
+                                                                @*<a href="" class="btn btn-sm btn-outline-primary" title="Profile" id="btnShowPatientDeatils" onclick="PatientDetails('@item.PatientFid_Encrypted')">
+                                                                    <i class="fa fa-user"></i>
+                                                                </a>*@
+                                                                @*<button data-trigger="hover" title="View" type="button" class="btn btn-outline-primary" id="btnShowPatientDeatils" onclick="AppointmentDetails('@item.AppointmentFid')">
+                                                                    <i class="fa fa-eye"></i>
+                                                                </button>*@
+                                                                @*<button title="Delete" id="user_delete_01" class="btn btn-outline-danger btn-sm" onclick="DeletePtient('@item.PatientFid_Encrypted')">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>*@
+                                                            </div>
+                                                        </td>
+                                                        <td data-label="UHID" class="vgt-left-align">@item.UHIDNO</td>
+                                                        <td data-label="Name" class="vgt-left-align">@item.PatientFullName</td>
+                                                        @*<td data-label="Clinic" class="vgt-left-align">@item.ClinicName</td>
+                                                        <td data-label="Patient Type" class="vgt-left-align">@item.PatientType</td>*@
+                                                  
+                                                        <td data-label="Mobile" class="vgt-left-align">@item.ContactNumber</td>
+                                                        <td data-label="Email" class="vgt-left-align">@item.Email</td>
+                                                        <td data-label="Patient Type" class="vgt-left-align">@item.PatientType</td>
+                                                        <td data-label="Origin" class="vgt-left-align">
+                                                            @if (!string.IsNullOrEmpty((string)item.Origin))
+                                                            {
+                                                                <span class="badge" style="background-color:#6f42c1; color:#fff; padding:4px 8px; border-radius:12px; font-size:11px; font-weight:600; letter-spacing:0.4px;">
+                                                                    <i  style="margin-right:3px;"></i>@item.Origin
+                                                                </span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span style="color:#aaa; font-size:12px;">--</span>
+                                                            }
+                                                        </td>
+                                                        <td data-label="Registered ON" class="vgt-left-align">@item.FormattedDate</td>
+                                                        @*<td data-label="Status" class="vgt-left-align">
+                                                            <div class="d-flex">
+                                                                <div class="custom-control custom-switch b-custom-control-lg">
+                                                                    <input id="status_change_@item.PatientFid" type="checkbox" name="check-button" class="custom-control-input"
+                                                                           @(item.Status == "Active" ? "checked" : "") onclick="toggleStatus(this,'@item.PatientFid_Encrypted')">
+                                                                    <label for="status_change_@item.PatientFid" class="custom-control-label"></label>
+                                                                </div>
+                                                                <span class="badge @(item.Status == "Active" ? "badge-success" : "badge-danger")">
+                                                                    @item.Status
+                                                                </span>
+                                                            </div>
+                                                        </td>*@
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Footer: Pagination & Rows Per Page -->
+                                <div class="vgt-wrap__footer vgt-clearfix">
+                                    <div class="footer__row-count vgt-pull-left">
+                                        <form>
+                                            <label for="PageOption" class="footer__row-count__label">Rows per page:</label>
+                                            <select id="PageOption" autocomplete="off" class="footer__row-count__select">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="30">30</option>
+                                                <option value="40">40</option>
+                                                <option value="50">50</option>
+                                                <option value="-1">ALL</option>
+                                            </select>
+                                        </form>
+                                    </div>
+                                    <div class="footer__navigation vgt-pull-right">
+                                        <div class="footer__navigation__page-info">
+                                            <form>
+                                                <label for="InputPage">
+                                                    <span>Page</span>
+                                                    <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                    <span>of <span id="total-pages">1</span></span>
+                                                </label>
+                                            </form>
+                                        </div>
+                                        <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                            <span class="chevron left"></span><span>Prev</span>
+                                        </button>
+                                        <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                            <span>Next</span><span class="chevron right"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!----><!---->
+            </div>
+        </div>
+    </div>
+
+
+
+    @*==========================Patient Details========================================*@
+    @*@if (PatientDetail != null && PatientDetail != "")
+        {*@
+    <div id="appointment-details-modal" style="position: absolute; z-index: 1040; display: none;">
+        <div id="appointment-details-modal" role="dialog" aria-describedby="appointment-details-modal___BV_modal_body_"
+             class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <span tabindex="0">
+                </span>
+                <div id="appointment-details-modal___BV_modal_content_" tabindex="-1"
+                     class="modal-content">
+                    <header id="appointment-details-modal___BV_modal_header_" class="modal-header">
+                        <h2 class="text-primary w-100 text-center">
+                            Patient Details
+                        </h2>
+                        <button type="button" aria-label="Close" class="close" id="ClosePatientDetailsModel">
+                            ×
+                        </button>
+                    </header>
+                    <div id="appointment-details-modal___BV_modal_body_" class="modal-body pt-0">
+                        <div class="m-4">
+                            <div class="row border-bottom p-2">
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Date :&nbsp;
+                                        </span>
+                                        <span id="pDate">
+
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Time :&nbsp;
+                                        </span>
+                                        <span id="pTime">
+                                            @*@PatientDetail.SloteStartTime*@
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row border-bottom p-2">
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Doctor :&nbsp;
+                                        </span>
+                                        <span id="pDoctor">
+
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Patient :&nbsp;
+                                        </span>
+                                        <span id="pPatient">
+                                            @*@PatientDetail.PatientName*@
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row border-bottom p-2">
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Clinic :&nbsp;
+                                        </span>
+                                        <span id="pClinic">
+                                            @*@PatientDetail.ClinicName*@
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Patient Contact :&nbsp;
+                                        </span>
+                                        <span id="pContact">
+                                            @*@PatientDetail.patientContact*@
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row border-bottom p-2">
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Services :&nbsp;
+                                        </span>
+                                        <span id="pService">
+                                            @*@PatientDetail.ServiceNames*@
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0 d-flex">
+                                        <span class="font-weight-bold">
+                                            Charges :&nbsp;
+                                        </span>
+                                        <span id="pCharges">
+                                            @*Rs @PatientDetail.Charges/-*@
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row border-bottom p-2">
+                                <div class="col-md-6">
+                                    <p class="mb-0 font-weight-bold d-flex">
+                                        <span class="font-weight-bold">
+                                            Status :&nbsp;
+                                        </span>
+                                        <!---->
+                                        <span class="text-primary" id="pStatus">
+                                            @*@PatientDetail.appointmentstatus*@
+                                        </span>
+                                        <!---->
+                                        <!---->
+                                        <!---->
+                                    </p>
+                                </div>
+                                @*<div class="col-md-6">
+                                        <p class="mb-0 d-flex">
+                                            <span class="font-weight-bold">
+                                                Payment Mode :&nbsp;
+                                            </span>
+                                            <span>
+                                                Manual
+                                            </span>
+                                        </p>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                </div>
+                <span tabindex="0">
+                </span>
+            </div>
+        </div>
+        <div id="appointment-details-modal___BV_modal_backdrop_" class="modal-backdrop" style="width:0 !important;">
+        </div>
+    </div>
+    @*}*@
+
+
+    @*==========================Patient Details========================================*@
+
+
+</div>
+
+@*============================Change Status===================================*@
+<script>
+    var rawPatientData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.PatientDetails));
+
+    function excelDateToJSDate(serial) {
+        if (typeof serial === 'number') {
+            var utc_days = Math.floor(serial - 25569);
+            var utc_value = utc_days * 86400;
+            var date_info = new Date(utc_value * 1000);
+            var tzOffset = date_info.getTimezoneOffset() * 60 * 1000;
+            return new Date(date_info.getTime() + tzOffset);
+        }
+        if (typeof serial === 'string') {
+            var d = new Date(serial);
+            if (!isNaN(d.getTime())) return d;
+        }
+        return null;
+    }
+
+    function formatDateToISO(date) {
+        if (!date) return null;
+        var y = date.getFullYear();
+        var m = String(date.getMonth() + 1).padStart(2, '0');
+        var d = String(date.getDate()).padStart(2, '0');
+        return y + '-' + m + '-' + d;
+    }
+
+    function parseDotNetDate(dateStr) {
+        if (!dateStr) return "";
+        if (typeof dateStr === 'string' && dateStr.indexOf('/Date(') !== -1) {
+            var millis = parseInt(dateStr.replace(/\/Date\((\d+)\)\//, '$1'));
+            return formatDateToISO(new Date(millis));
+        }
+        var d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+            return formatDateToISO(d);
+        }
+        return "";
+    }
+
+    function robustParseDate(val) {
+        if (!val) return null;
+        
+        if (val instanceof Date || Object.prototype.toString.call(val) === '[object Date]') {
+            return isNaN(val.getTime()) ? null : val;
+        }
+        
+        if (typeof val === 'number') {
+            return excelDateToJSDate(val);
+        }
+        
+        var str = String(val).trim();
+        if (str === "") return null;
+        
+        // Check for DD/MM/YYYY or DD-MM-YYYY formats (e.g. 01/06/2000 or 1-6-2000)
+        var parts = str.split(/[\/\-]/);
+        if (parts.length === 3) {
+            var p0 = parseInt(parts[0], 10);
+            var p1 = parseInt(parts[1], 10);
+            var p2 = parseInt(parts[2], 10);
+            
+            // Format: YYYY-MM-DD
+            if (p0 > 1000 && p1 <= 12 && p2 <= 31) {
+                return new Date(p0, p1 - 1, p2);
+            }
+            // Format: DD/MM/YYYY or MM/DD/YYYY. In India/UK, DD/MM/YYYY is default
+            if (p0 <= 31 && p1 <= 12 && p2 > 1000) {
+                return new Date(p2, p1 - 1, p0);
+            }
+            // Format with 2 digit year: DD/MM/YY
+            if (p0 <= 31 && p1 <= 12 && p2 <= 99) {
+                var fullYear = p2 + (p2 < 50 ? 2000 : 1900);
+                return new Date(fullYear, p1 - 1, p0);
+            }
+        }
+        
+        var fallbackDate = new Date(str);
+        if (!isNaN(fallbackDate.getTime())) {
+            return fallbackDate;
+        }
+        
+        return null;
+    }
+
+    function robustParseGender(val) {
+        if (!val) return "Male";
+        var s = String(val).trim().toLowerCase();
+        if (s === "m" || s === "male" || s === "पुरुष") return "Male";
+        if (s === "f" || s === "female" || s === "स्त्री") return "Female";
+        if (s === "o" || s === "other" || s === "इतर") return "Other";
+        return "Invalid";
+    }
+
+    function robustParseBloodGroup(val) {
+        if (!val) return "";
+        var s = String(val).trim().toUpperCase().replace(/\s+/g, "");
+        s = s.replace(/POSITIVE|\+VE/g, "+");
+        s = s.replace(/NEGATIVE|-VE/g, "-");
+        return s;
+    }
+
+    $(document).ready(function () {    
+
+        $("#btnExport").click(function () {
+            if (!rawPatientData || rawPatientData.length === 0) {
+                Swal.fire("Info", "No patient data available to export.", "info");
+                return;
+            }
+
+            var exportData = rawPatientData.map(function(p) {
+                return {
+                    "UHID No": p.UHIDNO || "",
+                    "First Name": p.FirstName || "",
+                    "Last Name": p.LName || "",
+                    "Contact Number": p.ContactNumber || "",
+                    "Email": p.Email || "",
+                    "Date Of Birth (YYYY-MM-DD)": parseDotNetDate(p.DateOfBirth),
+                    "Age": p.Age || "",
+                    "Gender": p.Gender || "",
+                    "Blood Group": p.BloodGroup || "",
+                    "Weight (kg)": p.Weight || 0,
+                    "Pulse": p.Palse || "",
+                    "Blood Pressure": p.BloodPressure || "",
+                    "SpO2": p.SpO2 || "",
+                    "Health Issue": p.HealthIssue || "",
+                    "Address": p.Address || "",
+                    "City Name": p.CityName || "",
+                    "Postal Code": p.PostalCode || "",
+                    "Country": p.Country || "",
+                    "Patient Type": p.PatientType || "",
+                    "Patient Reference": p.PatientReference || "",
+                    "Status": p.Status || "",
+                    "Registered On": p.FormattedDate || ""
+                };
+            });
+
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.json_to_sheet(exportData);
+            
+            // Set beautiful professional column widths
+            var wscols = [
+                {wch: 16}, // UHID No
+                {wch: 15}, // First Name
+                {wch: 15}, // Last Name
+                {wch: 18}, // Contact Number
+                {wch: 25}, // Email
+                {wch: 28}, // Date Of Birth (YYYY-MM-DD)
+                {wch: 8},  // Age
+                {wch: 10}, // Gender
+                {wch: 14}, // Blood Group
+                {wch: 14}, // Weight (kg)
+                {wch: 10}, // Pulse
+                {wch: 16}, // Blood Pressure
+                {wch: 10}, // SpO2
+                {wch: 22}, // Health Issue
+                {wch: 25}, // Address
+                {wch: 15}, // City Name
+                {wch: 12}, // Postal Code
+                {wch: 12}, // Country
+                {wch: 15}, // Patient Type
+                {wch: 22}, // Patient Reference
+                {wch: 10}, // Status
+                {wch: 18}  // Registered On
+            ];
+            ws['!cols'] = wscols;
+
+            XLSX.utils.book_append_sheet(wb, ws, "Patients");
+            XLSX.writeFile(wb, "PatientList.xlsx");
+        });
+
+        $("#btnDownloadTemplate").click(function () {
+            var headers = [
+                "First Name", "Last Name", "Contact Number", "Email", "Gender", 
+                "Date Of Birth (YYYY-MM-DD)", "Age", "Blood Group", "Weight (kg)", 
+                "Pulse", "Blood Pressure", "SpO2", "Health Issue", "Address", 
+                "City Name", "Postal Code", "Country", "Patient Type", "Patient Reference"
+            ];
+            
+            var sampleRow = [
+                "ANIL", "PATIL", "8796489335", "ap879648@gmail.com", "Male", 
+                "2000-06-01", 25, "O+", 70, 
+                72, "120/80", 98, "Back Pain", "Shivaji Nagar", 
+                "PUNE", "425408", "India", "WalkIn", "Friend Reference"
+            ];
+
+            var workbook = new ExcelJS.Workbook();
+            var worksheet = workbook.addWorksheet("Patient Template");
+
+            // Add headers
+            var headerRow = worksheet.addRow(headers);
+            headerRow.font = { name: 'Arial', size: 11, bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FF007BFF' }
+            };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            headerRow.height = 25;
+
+            // Apply formatting for dates
+            var dobCol = worksheet.getColumn(6); // F is 6
+            dobCol.numFmt = 'yyyy-mm-dd';
+
+            // Define validation range: from row 2 to 1000
+            for (var r = 2; r <= 1000; r++) {
+                // First Name Validation (A)
+                worksheet.getCell('A' + r).dataValidation = {
+                    type: 'custom',
+                    allowBlank: true,
+                    showInputMessage: true,
+                    promptTitle: 'Patient First Name',
+                    prompt: 'Please enter the First Name. It will be automatically capitalized upon import.',
+                    formulae: ['TRUE']
+                };
+
+                // Last Name Validation (B)
+                worksheet.getCell('B' + r).dataValidation = {
+                    type: 'custom',
+                    allowBlank: true,
+                    showInputMessage: true,
+                    promptTitle: 'Patient Last Name',
+                    prompt: 'Please enter the Last Name. It will be automatically capitalized upon import.',
+                    formulae: ['TRUE']
+                };
+
+                // Contact Number Validation (C) - must be exactly 10 digits
+                worksheet.getCell('C' + r).dataValidation = {
+                    type: 'textLength',
+                    operator: 'equal',
+                    formulae: [10],
+                    allowBlank: true,
+                    showErrorMessage: true,
+                    errorTitle: 'Invalid Contact Number',
+                    error: 'Contact number must be exactly 10 digits (numbers only, e.g., 9876543210).',
+                    showInputMessage: true,
+                    promptTitle: 'Contact Number',
+                    prompt: 'Enter a 10-digit mobile number.'
+                };
+
+                // Email Validation (D)
+                worksheet.getCell('D' + r).dataValidation = {
+                    type: 'custom',
+                    allowBlank: true,
+                    formulae: ['AND(ISNUMBER(FIND("@@",D' + r + ')),ISNUMBER(FIND(".",D' + r + ')),ISERROR(FIND(" ",D' + r + ')))'],
+                    showErrorMessage: true,
+                    errorTitle: 'Invalid Email Format',
+                    error: 'Please enter a valid email address (e.g., test@example.com).',
+                    showInputMessage: true,
+                    promptTitle: 'Email Address',
+                    prompt: 'Enter a valid email address.'
+                };
+
+                // Gender Validation (E) - dropdown list
+                worksheet.getCell('E' + r).dataValidation = {
+                    type: 'list',
+                    allowBlank: true,
+                    formulae: ['"Male,Female,Other"'],
+                    showErrorMessage: true,
+                    errorTitle: 'Invalid Gender Value',
+                    error: 'Please select Gender from the list (Male, Female, or Other).',
+                    showInputMessage: true,
+                    promptTitle: 'Gender Dropdown',
+                    prompt: 'Choose Male, Female, or Other from the dropdown list.'
+                };
+
+                // Date of Birth Validation (F)
+                worksheet.getCell('F' + r).dataValidation = {
+                    type: 'date',
+                    operator: 'lessThan',
+                    formulae: [new Date(2099, 11, 31)], // Ensure it's a valid date
+                    allowBlank: true,
+                    showErrorMessage: true,
+                    errorTitle: 'Invalid Date of Birth',
+                    error: 'Date of Birth must be a valid date in the past formatted as YYYY-MM-DD.',
+                    showInputMessage: true,
+                    promptTitle: 'Date of Birth',
+                    prompt: 'Enter date of birth in YYYY-MM-DD format.'
+                };
+            }
+
+            // Set beautiful professional column widths
+            worksheet.columns = [
+                { width: 18 }, // First Name
+                { width: 18 }, // Last Name
+                { width: 20 }, // Contact Number
+                { width: 28 }, // Email
+                { width: 12 }, // Gender
+                { width: 28 }, // Date Of Birth (YYYY-MM-DD)
+                { width: 8 },  // Age
+                { width: 14 }, // Blood Group
+                { width: 14 }, // Weight (kg)
+                { width: 10 }, // Pulse
+                { width: 18 }, // Blood Pressure
+                { width: 10 }, // SpO2
+                { width: 25 }, // Health Issue
+                { width: 30 }, // Address
+                { width: 18 }, // City Name
+                { width: 14 }, // Postal Code
+                { width: 14 }, // Country
+                { width: 18 }, // Patient Type
+                { width: 25 }  // Patient Reference
+            ];
+
+            workbook.xlsx.writeBuffer().then(function (buffer) {
+                var blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                var url = window.URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = "Patient_Import_Template.xlsx";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }).catch(function (error) {
+                console.error("Error writing excel file:", error);
+                Swal.fire("Error", "Could not download template. Please try again.", "error");
+            });
+        });
+
+        $("#btnImport").click(function () {
+            $("#importExcelFile").click();
+        });
+
+        $("#importExcelFile").change(function(e) {
+            var files = e.target.files;
+            if (!files || files.length === 0) return;
+            var file = files[0];
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var data = new Uint8Array(e.target.result);
+                var workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                var sheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[sheetName];
+                var rows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                if (rows.length === 0) {
+                    Swal.fire("Error", "The uploaded Excel file contains no data.", "error");
+                    $("#importExcelFile").val("");
+                    return;
+                }
+
+                var patientsList = [];
+                var importErrors = [];
+
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var patient = {};
+                    var rowNum = i + 2;
+
+                    for (var key in row) {
+                        var normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+                        var val = row[key];
+
+                        if (normalizedKey === "firstname" || normalizedKey === "first" || normalizedKey === "fname" || normalizedKey === "name") {
+                            patient.FirstName = String(val).toUpperCase().trim();
+                        } else if (normalizedKey === "lastname" || normalizedKey === "last" || normalizedKey === "lname") {
+                            patient.LName = String(val).toUpperCase().trim();
+                        } else if (normalizedKey === "contactnumber" || normalizedKey === "contact" || normalizedKey === "mobile" || normalizedKey === "phone" || normalizedKey === "number") {
+                            patient.ContactNumber = String(val).replace(/[^0-9]/g, "");
+                        } else if (normalizedKey === "email" || normalizedKey === "mailid" || normalizedKey === "emailid") {
+                            patient.Email = String(val).trim();
+                        } else if (normalizedKey === "gender" || normalizedKey === "sex") {
+                            patient.Gender = robustParseGender(val);
+                        } else if (normalizedKey.indexOf("dateofbirth") !== -1 || normalizedKey === "dob" || normalizedKey === "birthdate") {
+                            var parsedDate = robustParseDate(val);
+                            patient.DateOfBirth = formatDateToISO(parsedDate);
+                        } else if (normalizedKey === "age") {
+                            patient.Age = String(val).replace(/[^0-9]/g, "");
+                        } else if (normalizedKey.indexOf("bloodgroup") !== -1 || normalizedKey === "bg") {
+                            patient.BloodGroup = robustParseBloodGroup(val);
+                        } else if (normalizedKey.indexOf("weight") !== -1) {
+                            patient.Weight = parseInt(String(val).replace(/[^0-9]/g, "")) || 0;
+                        } else if (normalizedKey === "pulse" || normalizedKey === "palse") {
+                            patient.Palse = String(val).replace(/[^0-9]/g, "");
+                        } else if (normalizedKey === "bloodpressure" || normalizedKey === "bp") {
+                            patient.BloodPressure = String(val).replace(/\s+/g, "").replace(/[^\d\/]/g, "");
+                        } else if (normalizedKey === "spo2") {
+                            patient.SpO2 = String(val).replace(/[^0-9]/g, "");
+                        } else if (normalizedKey === "healthissue" || normalizedKey === "issue" || normalizedKey === "disease") {
+                            patient.HealthIssue = val;
+                        } else if (normalizedKey === "address") {
+                            patient.Address = val;
+                        } else if (normalizedKey === "cityname" || normalizedKey === "city") {
+                            patient.CityName = val;
+                        } else if (normalizedKey === "postalcode" || normalizedKey === "pincode" || normalizedKey === "zipcode") {
+                            patient.PostalCode = String(val).replace(/[^0-9]/g, "");
+                        } else if (normalizedKey === "country") {
+                            patient.Country = val;
+                        } else if (normalizedKey === "patienttype" || normalizedKey === "type") {
+                            patient.PatientType = val;
+                        } else if (normalizedKey === "patientreference" || normalizedKey === "reference") {
+                            patient.PatientReference = val;
+                        }
+                    }
+
+                    if (!patient.FirstName) {
+                        importErrors.push("Row " + rowNum + ": 'First Name' is missing.");
+                        continue;
+                    }
+                    if (!patient.ContactNumber) {
+                        importErrors.push("Row " + rowNum + " (" + patient.FirstName + "): 'Contact Number' is missing.");
+                        continue;
+                    }
+                    if (patient.ContactNumber.length !== 10) {
+                        importErrors.push("Row " + rowNum + " (" + patient.FirstName + "): 'Contact Number' (" + patient.ContactNumber + ") must be exactly 10 digits.");
+                        continue;
+                    }
+                    if (patient.Email && patient.Email !== "") {
+                        var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                        if (!emailRegex.test(patient.Email)) {
+                            importErrors.push("Row " + rowNum + " (" + patient.FirstName + "): 'Email' (" + patient.Email + ") has an invalid format.");
+                            continue;
+                        }
+                    }
+                    if (patient.Gender !== "Male" && patient.Gender !== "Female" && patient.Gender !== "Other") {
+                        importErrors.push("Row " + rowNum + " (" + patient.FirstName + "): 'Gender' must be Male, Female, or Other.");
+                        continue;
+                    }
+                    if (!patient.DateOfBirth || patient.DateOfBirth === "") {
+                        importErrors.push("Row " + rowNum + " (" + patient.FirstName + "): 'Date Of Birth' is invalid or missing.");
+                        continue;
+                    }
+
+                    patientsList.push(patient);
+                }
+
+                if (patientsList.length === 0) {
+                    Swal.fire("Error", "No valid patient rows found. Errors:<br>" + importErrors.join("<br>"), "error");
+                    $("#importExcelFile").val("");
+                    return;
+                }
+
+                var confirmMsg = "Found " + patientsList.length + " patients to import/update.";
+                if (importErrors.length > 0) {
+                    confirmMsg += " (Skipped " + importErrors.length + " invalid rows).";
+                }
+                confirmMsg += " Do you want to proceed?";
+
+                Swal.fire({
+                    title: 'Confirm Import',
+                    text: confirmMsg,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Import!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $(".page-loader-section").show();
+
+                        $.ajax({
+                            url: '/Patient/AddPatient/ImportPatients',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ patients: patientsList }),
+                            success: function(response) {
+                                $(".page-loader-section").hide();
+                                $("#importExcelFile").val("");
+
+                                if (response.success) {
+                                    var statusIcon = "success";
+                                    var errorDetails = "";
+                                    if (response.errors && response.errors.length > 0) {
+                                        statusIcon = "warning";
+                                        errorDetails = "<br><br><b>Warnings:</b><br>" + response.errors.join("<br>");
+                                    }
+                                    Swal.fire({
+                                        title: 'Success',
+                                        html: response.message + errorDetails,
+                                        icon: statusIcon
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire("Error", response.message, "error");
+                                }
+                            },
+                            error: function() {
+                                $(".page-loader-section").hide();
+                                $("#importExcelFile").val("");
+                                Swal.fire("Error", "An error occurred while uploading patient data.", "error");
+                            }
+                        });
+                    } else {
+                        $("#importExcelFile").val("");
+                    }
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+    });
+
+
+    function toggleStatus(checkbox, PatientFid_Encrypted) {
+        debugger;
+
+        if (checkbox.checked) {
+            debugger;
+            var Status = "Active";
+            var url = '@Url.Action("ChangePatientStatus", "AddPatient")' + '?PatientFid_Encrypted=' + PatientFid_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        } else {
+            debugger;
+            var Status = "Inactive";
+            var url = '@Url.Action("ChangePatientStatus", "AddPatient")' + '?PatientFid_Encrypted=' + PatientFid_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        }
+    }
+</script>
+@*============================Change Status===================================*@
+<script>
+    function DeletePtient(PatientFid_Encrypted) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                var url = '@Url.Action("DeletePatient", "AddPatient")' + '?PatientFid_Encrypted=' + PatientFid_Encrypted;
+                window.location.href = url;
+            }
+        });
+    }
+</script>
+
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('tablSearchRow', 'Patienttable'); // Filter by email
+
+
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('Patienttable');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+
+<script>
+                //====================Show Patient Details==================
+                function formatDate(dotNetDate) {
+                    debugger
+                    if (!dotNetDate) return "";
+                    var millis = parseInt(dotNetDate.replace(/\/Date\((\d+)\)\//, '$1'));
+                    var d = new Date(millis);
+                    return d.toLocaleDateString('en-GB');
+                }
+
+
+                function PatientDetails(PatientFid_Encrypted)
+                {
+                    debugger;
+
+
+
+                    $.ajax({
+                        url: '/Patient/AddPatient/PatientDetails',
+                        type: 'GET',
+                        data: { PatientFid_Encrypted: PatientFid_Encrypted },
+                        success: function (data) {
+
+                            debugger
+                            var patient = {};
+                            data.forEach(function (item) {
+                                patient[item.Key] = item.Value;
+                            });
+
+
+                            $("#DateOfBirth").text(formatDate(patient.DateOfBirth));
+                            $("#Email").text(patient.Email);
+                            $("#Age").text(patient.Age);
+                            $("#pPatient").text(patient.PatientFullName);
+                            $("#PatientType").text(patient.PatientType);
+                            $("#patientContact").text(patient.patientContact);
+                            $("#PostalCode").text(patient.PostalCode);
+                            $("#BloodGroup").text(patient.BloodGroup);
+                            //$("#pStatus").text(patient.appointmentstatus);
+
+
+                            $('#appointment-details-modal').modal('show');
+                           // $("#appointment-details-modal").css("display", "block").attr("aria-hidden", "false").addClass("show");
+
+                        }
+                    });
+
+
+
+                    //$("#appointment-details-modal").css("display", "block").attr("aria-hidden", "false").addClass("show");
+                    @*var url = '@Url.Action("Appointment", "Appointment")' + '?AppointmentFid=' + AppointmentFid;
+        window.location.href = url;*@
+                }
+                @*function GetPatientDeatils(AppointmentFid){
+        var url = '@Url.Action("GetPatientDeatils", "Appointment")' + '?AppointmentFid=' + AppointmentFid;
+        window.location.href = url;
+    }*@
+
+                //$("#btnShowPatientDeatils").click(function () {
+                //    debugger;
+                //    // Correct the URL assignment
+                //    $("#appointment-details-modal")
+                //     .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+                //     .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+                //     .addClass("show");
+                //});
+
+                $("#ClosePatientDetailsModel").click(function () {
+
+                    debugger;
+                    // Correct the URL assignment
+
+                    $('#appointment-details-modal').modal('hide');
+                    //const modalOuter = $("#appointment-details-modal");
+                    //modalOuter.css("display", "none").attr("aria-hidden", "true");
+                    var Url = '@Url.Action("Appointment", "Appointment")';
+       window.location.href = Url;
+                });
+                //====================Show Patient Details end==================
+</script>
+<script>
+    let sortDirection = {};
+
+    function sortTable(columnIndex) {
+        let table = document.getElementById("Patienttable");
+        let tbody = table.querySelector("tbody");
+        let rows = Array.from(tbody.querySelectorAll("tr"));
+
+        // Toggle ASC / DESC
+        sortDirection[columnIndex] = !sortDirection[columnIndex];
+
+        let isAsc = sortDirection[columnIndex];
+
+        rows.sort((a, b) => {
+            let cellA = a.children[columnIndex].innerText.trim();
+            let cellB = b.children[columnIndex].innerText.trim();
+
+            // Date check (Registered ON column)
+            if (columnIndex === 6) {
+                let dateA = new Date(cellA);
+                let dateB = new Date(cellB);
+                return isAsc ? dateA - dateB : dateB - dateA;
+            }
+
+            // String compare (Name column)
+            return isAsc
+                ? cellA.localeCompare(cellB)
+                : cellB.localeCompare(cellA);
+        });
+
+        // Re-append sorted rows
+        rows.forEach(row => tbody.appendChild(row));
+    }
+</script>

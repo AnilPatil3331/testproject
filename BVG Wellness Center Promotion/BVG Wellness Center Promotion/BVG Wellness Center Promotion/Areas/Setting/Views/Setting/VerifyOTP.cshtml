@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "Verify OTP";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="container-fluid" style="padding: 15px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow border-0">
+                <div class="card-header text-center" style="background-color: #5881ed; color: white; padding: 20px;">
+                    <h5 class="mb-0">Verify OTP</h5>
+                </div>
+                <div class="card-body" style="padding: 40px 20px;">
+                    <p class="text-center text-muted">We have sent a 4-digit OTP to <b>@Session["ResetEmail"]</b></p>
+
+                    @using (Html.BeginForm("VerifyOTP", "Home", FormMethod.Post))
+                    {
+                        <div class="form-group mb-4">
+                            <input type="text" name="UserOTP" class="form-control text-center" required
+                                   placeholder="X X X X" maxlength="4"
+                                   style="height: 55px; font-size: 24px; letter-spacing: 10px; font-weight: bold;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary px-5" style="background-color: #5881ed; border: none; height: 45px; width: 100%;">
+                            Verify & Proceed
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

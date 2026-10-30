@@ -1,0 +1,494 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.ClsClinic
+@{
+    ViewBag.Title = "AddClinic";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<style>
+    input[type="file"] {
+        display: none; /* Hide the input element */
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    @*<div id="loader" class="loader hidden">
+        <img src="~/assets/images/favicon-1.ico" />
+    </div>*@
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/Admin/AddClinic/SaveClinic" id="clinicForm" name="clinicForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Add clinic
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary" id="Back">
+                                        <i class="fa fa-angle-double-left">
+                                        </i>
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        @if (TempData["Message"] != null)
+                        {
+                            <script>
+                                window.onload = function () {
+                                    var message = '@TempData["Message"]';
+                                    var alertType = '@TempData["Icon"]';
+                                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                    showCustomAlert(message, alertType, imageUrl);
+                                };
+                            </script>
+
+                        }
+                        <div id="formError" class="alert alert-danger" style="display: none; position: fixed; top: 10%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; padding: 20px; background-color: white; border: 2px solid red; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <span id="formErrorMessage" style="color: black; font-size: 16px;">Please fill out all required fields.</span>
+                            <button type="button" class="close" id="dismissError" aria-label="Close" style="background: none; border: none; font-size: 20px; margin-left: 10px; cursor: pointer; color: black;">
+                                &times;
+                            </button>
+                        </div>
+                        @*<div id="formError" class="alert alert-danger" style="display: none;">
+                                Please fill out all required fields.
+                            </div>*@
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="text-primary mb-4">
+                                            Basic details
+                                        </h4>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+
+                                        @Html.HiddenFor(m => m.Fid_Encrypted)
+                                        @Html.HiddenFor(m => m.Fid)
+                                        @Html.HiddenFor(m => m.ClinicAdminFid_Encrypted)
+                                        @Html.HiddenFor(m => m.ClinicAdminFid)
+                                        <div class="form-group">
+                                            <label for="name" class="col-md-12 form-control-label">
+                                                Name
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.ClinicName, new { @class = "form-control", id = "name", placeholder = "Enter clinic name", required = "required", name = "name", type = "text", })
+                                            @*<input  id="name" placeholder="Enter clinic name" required="required"
+                                                name="name" type="text" class="form-control">*@
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="email" class="col-md-12 form-control-label">
+                                                Email
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.ClinicEmail, new { @class = "form-control", id = "email", placeholder = "Enter email address", required = "required", name = "email", type = "email", })
+                                            @*<input  id="email" placeholder="Enter email address"
+                                                required="required" name="email" type="email" class="form-control">*@
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="email" class="col-md-12 form-control-label">
+                                                Contact
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.ClinicContact, new { @class = "form-control", id = "ContactNumber", placeholder = "Enter Contact Number", required = "required", name = "Contact", type = "text", maxlength = "10" })
+                                            @*<input  id="email" placeholder="Enter email address"
+                                                required="required" name="email" type="email" class="form-control">*@
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="specialties" class="col-md-12 form-control-label">
+                                                        Specialties
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.DropDownListFor(m => m.Specialities, new SelectList(ViewBag.Specialties, "Name", "Name"),"Select", new { @class = "form-control", id = "SpecialtiasFId" })                                                    
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="status" class="col-md-12 form-control-label">
+                                                        Status
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                                         {
+                                                          new SelectListItem { Text="Active",Value="Active" },
+                                                          new SelectListItem { Text="Inactive",Value="Inactive" },
+                                                      }.Select(x =>
+                                                      {
+                                                          // Set the selected value based on ViewBag
+                                                          x.Selected = x.Value == (ViewBag.Status?.ToString() ?? "");
+                                                          return x;
+                                                      }), "Select Status", new { @class = "form-control custom-select", id = "status", @required = "required" })
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="kivicare-avatar-upload">
+                                                        @if (@ViewBag.ClinicImageFil != null)
+                                                        {
+                                                            <div class="kivicare-avatar-edit">
+                                                                <input type="hidden" name="PreviousClinicImageFil" value="@ViewBag.PraviousClinicImageFil" />                                                              
+                                                                <label for="file" title="Edit profile image">
+                                                                    <i class="fas fa-pencil-alt fa-2x">
+                                                                    </i>
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="kivicare-avatar-edit">                                                                
+                                                                <input id="file" name="file" type="file" class="p-2" style="color: transparent;" onchange="showImage(event, 'imagePreview')">
+                                                                <label for="file" title="Edit profile image">
+                                                                    <i class="fas fa-pencil-alt fa-2x">
+                                                                    </i>
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        <div class="kivicare-avatar-preview">
+                                                            <div id="imagePreview" style="background-image: url('@(ViewBag.ClinicImageFil ?? "https://demo.kivicare.io/g81t5x9qjwpcvmz/wp-content/plugins/kivicare-clinic-management-system/assets/images/kc-demo-img.png")');">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="address" class="col-md-12 form-control-label">
+                                                Address
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextAreaFor(m => m.ClinicAddress, new { @class = "form-control", id = "Clinicaddress", placeholder = "Enter  Address", required = "required", name = "ClinicAddress" })
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="city" class="col-md-12 form-control-label">
+                                                Country
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @*@Html.DropDownListFor(m => m.Country, new SelectList(""), new { @class = "form-control", id = "Country" })*@
+                                            @Html.TextBoxFor(m => m.Country, new { @class = "form-control", id = "Country", placeholder = "Enter Country Name", required = "required", name = "CountryName", })
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="country" class="col-md-12 form-control-label">
+                                                City
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @*@Html.DropDownListFor(m => m.CityName, new SelectList(""), new { @class = "form-control", id = "city" })*@
+                                            @Html.TextBoxFor(m => m.CityName, new { @class = "form-control", id = "city", placeholder = "Enter City Name", required = "required", name = "CityName", })
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="postal_code" class="col-md-12 form-control-label">
+                                                Postal code
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @*@Html.DropDownListFor(m => m.postalcode, new SelectList(""), new { @class = "form-control", id = "Postalcode" })*@
+                                            @Html.TextBoxFor(m => m.postalcode, new { @class = "form-control", id = "Postalcode", placeholder = "Enter Postal Code", required = "required", name = "Postalcode", })
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4 class="text-primary mb-4">
+                                            Clinic Admin Detail
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="first_name" class="form-control-label">
+                                                        First Name
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.TextBoxFor(m => m.ClinicAdminFName, new { @class = "form-control", id = "clinicAdminName", required = "required", type = "text", name = "ClinicAdminName" })
+
+                                                    <!---->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="last_name" class="col-md-12 form-control-label">
+                                                        Last Name
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.TextBoxFor(m => m.ClinicAdminLName, new { @class = "form-control", id = "clinicAdminLastName", required = "required", type = "text", name = "ClinicAdminLastName" })
+
+                                                    <!---->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="email" class="form-control-label">
+                                                        Email
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.TextBoxFor(m => m.ClinicAdminEmail, new { @class = "form-control", id = "clinicAdminEmail", required = "required", type = "email", name = "ClinicAdminEmail" })
+
+                                                    <!---->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="mobile_number" class="form-control-label">
+                                                        Contact no
+                                                        <span class="text-danger">
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    @Html.TextBoxFor(m => m.ClinicAdminContact, new { @class = "form-control", id = "clinicAdminContact", required = "required", type = "text", name = "ClinicAdminEmail", maxlength = "10" })
+                                                    <!---->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="dob" class="form-control-label">
+                                                        DOB.
+                                                    </label>
+                                                    @Html.TextBoxFor(m => m.ClinicAdminDOB, "{0:yyyy-MM-dd}", new { @class = "form-control", id = "ClinicAdminDOB", required = "required", type = "date", name = "ClinicAdminEmail" })
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <div>
+                                                        <label for="gender" class="form-control-label">
+                                                            Gender
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            @Html.RadioButtonFor(m => m.Gender, "male", new { @class = "custom-control-input", id = "male" })
+                                                            <label for="male" class="custom-control-label">Male</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            @Html.RadioButtonFor(m => m.Gender, "female", new { @class = "custom-control-input", id = "female" })
+                                                            <label for="female" class="custom-control-label">Female</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            @Html.RadioButtonFor(m => m.Gender, "other", new { @class = "custom-control-input", id = "other" })
+                                                            <label for="other" class="custom-control-label">Other</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div class="kivicare-avatar-upload">
+                                                        @if (ViewBag.ClinicAdminImage != null)
+                                                        {
+                                                            <div class="kivicare-avatar-edit">
+                                                                <input type="hidden" name="PreviousAdminImage" value="@ViewBag.PraviousAdminImage" />
+                                                                <label for="admin_file" title="Edit profile image">
+                                                                    <i class="fas fa-pencil-alt fa-2x">
+                                                                    </i>
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="kivicare-avatar-edit">
+                                                                <input id="admin_file" name="admin_file" type="file" class="p-2" style="color: transparent;" onchange="showImage(event,'adminImagePreview')">
+                                                                <label for="admin_file" title="Edit profile image">
+                                                                    <i class="fas fa-pencil-alt fa-2x">
+                                                                    </i>
+                                                                </label>
+                                                            </div>
+                                                        }
+
+                                                        <div class="kivicare-avatar-preview">
+                                                            @*<div id="adminImagePreview" style="background-image: url(&quot;https://demo.kivicare.io/g81t5x9qjwpcvmz/wp-content/plugins/kivicare-clinic-management-system/assets/images/kc-demo-img.png&quot;);">
+                                                            </div>*@
+                                                            <div id="adminImagePreview"  style="background-image: url('@(ViewBag.ClinicAdminImage ?? "https://demo.kivicare.io/g81t5x9qjwpcvmz/wp-content/plugins/kivicare-clinic-management-system/assets/images/kc-demo-img.png")');">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 p-0">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary rtl-ml-2">
+                                        <i class="fa fa-save">
+                                        </i>
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!---->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden');
+        $("#Back").click(function () {
+            debugger;
+            // Correct the URL assignment
+            var url = '@Url.Action("ClinicList", "AddClinic")'; // Ensure server-side helper is properly rendered
+            window.location.href = url; // Navigate to the new URL
+        });
+
+        $("#btnCancel").click(function () {
+            debugger;
+            // Correct the URL assignment
+            var url = '@Url.Action("ClinicList", "AddClinic")'; // Ensure server-side helper is properly rendered
+            window.location.href = url; // Navigate to the new URL
+        });
+    });
+ 
+
+
+</script>
+
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('clinicForm').addEventListener('submit', function (event) {
+        debugger;
+        var form = this;
+        var isValid = true;
+
+        var formError = document.getElementById('formError');
+        formError.style.display = 'none';
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        if (!isValid) {
+            event.preventDefault();
+            var message = 'Please fill out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+        } else {
+            const loader = document.getElementById('loader');
+
+            // Show the loader
+            loader.classList.remove('hidden');
+        }
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+    });
+</script>
+<script>
+    function showImage(event, previewElementId) {
+        debugger;
+        const file = event.target.files[0]; // Get the selected file
+        if (file) {
+            const reader = new FileReader(); // Create a FileReader to read the file
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById(previewElementId);
+                imagePreview.style.backgroundImage = `url(${e.target.result})`; // Set the background image
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+
+</script>
+
+

@@ -1,0 +1,242 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane p-20" id="ReportsTab" role="tabpanel">
+                                <style>
+                                    .rep-section {
+                                        margin-bottom: 1rem;
+                                        border: 1px solid #eee;
+                                        border-radius: 12px;
+                                        overflow: hidden;
+                                        background: #fff;
+                                    }
+                                    /* Header clickable style */
+                                    .rep-header {
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: space-between;
+                                        padding: 15px;
+                                        cursor: pointer;
+                                        transition: background 0.2s;
+                                        background: #fafafa;
+                                    }
+
+                                        .rep-header:hover {
+                                            background: #f0f0f0;
+                                        }
+
+                                    .rep-badge {
+                                        display: inline-flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                        padding: 6px 16px;
+                                        border-radius: 20px;
+                                        font-size: 14px;
+                                        font-weight: 600;
+                                    }
+
+                                    .rep-count {
+                                        font-size: 12px;
+                                        color: #666;
+                                        font-weight: normal;
+                                    }
+
+                                    /* Grid initially hidden via Bootstrap Collapse or custom CSS */
+                                    .rep-grid {
+                                        display: grid;
+                                        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                                        gap: 15px;
+                                        padding: 20px;
+                                        border-top: 1px solid #eee;
+                                        background: #fff;
+                                    }
+
+                                    .rep-card {
+                                        border: 1px solid #e0e0e0;
+                                        border-radius: 10px;
+                                        overflow: hidden;
+                                        transition: transform 0.2s;
+                                    }
+
+                                        .rep-card:hover {
+                                            transform: translateY(-3px);
+                                            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                                        }
+
+                                    .rep-card-thumb {
+                                        width: 100%;
+                                        height: 110px;
+                                        object-fit: cover;
+                                        border-bottom: 1px solid #eee;
+                                    }
+
+                                    .rep-card-placeholder {
+                                        width: 100%;
+                                        height: 110px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        background: #f8f9fa;
+                                    }
+
+                                    .rep-card-body {
+                                        padding: 10px;
+                                    }
+
+                                    .rep-card-title {
+                                        font-size: 13px;
+                                        font-weight: 500;
+                                        color: #333;
+                                        margin-bottom: 4px;
+                                    }
+
+                                    .rep-card-date {
+                                        font-size: 11px;
+                                        color: #888;
+                                    }
+
+                                    .rep-btn {
+                                        display: block;
+                                        margin: 5px;
+                                        padding: 4px;
+                                        text-align: center;
+                                        font-size: 11px;
+                                        border-radius: 4px;
+                                        border: 1px solid #ddd;
+                                        background: #fdfdfd;
+                                        color: #555;
+                                        text-decoration: none;
+                                    }
+                                </style>
+
+                                @if (Model.UserReports != null && Model.UserReports.Count > 0)
+                                {
+                                    var groupedReports = Model.UserReports
+                                        .GroupBy(r => string.IsNullOrEmpty(r.ReportType) ? "other" : r.ReportType.ToLower())
+                                        .ToList();
+
+                                    foreach (var group in groupedReports)
+                                    {
+                                        var typeLabel = "";
+                                        var badgeBg = "";
+                                        var badgeColor = "";
+                                        var groupId = "collapse_" + group.Key.Replace(" ", "_").Replace("-", "_"); // Unique ID for each folder
+
+                                        switch (group.Key)
+                                        {
+                                            case "x-ray": typeLabel = "X-Ray"; badgeBg = "#E6F1FB"; badgeColor = "#0C447C"; break;
+                                            case "mri": typeLabel = "MRI"; badgeBg = "#EEEDFE"; badgeColor = "#3C3489"; break;
+                                            case "ct-scan": typeLabel = "CT Scan"; badgeBg = "#FAEEDA"; badgeColor = "#633806"; break;
+                                            case "blood-test": typeLabel = "Blood Test"; badgeBg = "#FCEBEB"; badgeColor = "#A32D2D"; break;
+                                            case "prescription": typeLabel = "Prescription"; badgeBg = "#E1F5EE"; badgeColor = "#085041"; break;
+                                            case "lab": typeLabel = "Lab"; badgeBg = "#FCEBEB"; badgeColor = "#A32D2D"; break;
+                                            case "imaging": typeLabel = "Imaging"; badgeBg = "#E6F1FB"; badgeColor = "#0C447C"; break;
+                                            case "other": typeLabel = "Other"; badgeBg = "#F1EFE8"; badgeColor = "#5F5E5A"; break;
+                                            default: 
+                                                typeLabel = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(group.Key); 
+                                                badgeBg = "#F1EFE8"; 
+                                                badgeColor = "#5F5E5A"; 
+                                                break;
+                                        }
+
+                                        <div class="rep-section">
+                                            <div class="rep-header" data-toggle="collapse" data-target="#@groupId">
+                                                <span class="rep-badge" style="background:@badgeBg; color:@badgeColor;">
+                                                    <i class="fa fa-folder-open-o"></i> @typeLabel
+                                                </span>
+                                                <span class="rep-count">@group.Count() Reports <i class="fa fa-chevron-down ml-2"></i></span>
+                                            </div>
+
+                                            <div id="@groupId" class="collapse">
+                                                <div class="rep-grid">
+                                                    @foreach (var item in group)
+                                                    {
+                                                        var files = new[] { item.ReportFile1, item.ReportFile2, item.ReportFile3, item.ReportFile4, item.ReportFile5 };
+
+                                                        foreach (var file in files.Where(f => !string.IsNullOrEmpty(f)))
+                                                        {
+                                                            var relativePath = file.Replace("C:\\Wellness\\UserReports\\", "").Replace("\\", "/");
+                                                            var reportUrl = Url.Action("DownloadMobileReport", "AayurvedEHR", new { filePath = file });
+                                                            var ext = System.IO.Path.GetExtension(file).ToLower();
+
+                                                            <div class="rep-card">
+                                                                @if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
+                                                                {
+                                                                    <a href="@reportUrl" target="_blank">
+                                                                        <img src="@reportUrl" class="rep-card-thumb" />
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="rep-card-placeholder">
+                                                                        <i class="fa fa-file-pdf-o" style="font-size:24px; color:#ccc;"></i>
+                                                                    </div>
+                                                                    <a href="@reportUrl" target="_blank" class="rep-btn">View @ext.Replace(".", "").ToUpper()</a>
+                                                                }
+                                                                <div class="rep-card-body">
+                                                                    <div class="rep-card-title text-truncate">@item.ReportTitle</div>
+                                                                    <div class="rep-card-date">@Convert.ToDateTime(item.Date).ToString("dd-MM-yyyy")</div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="rep-empty">No reports found for this patient.</div>
+                                }
+                            </div>

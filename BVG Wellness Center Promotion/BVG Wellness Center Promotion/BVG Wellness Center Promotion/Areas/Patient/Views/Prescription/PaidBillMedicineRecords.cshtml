@@ -1,0 +1,1086 @@
+﻿
+@{
+    ViewBag.Title = "PaidBillMedicineRecords";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+     var PatientDetails = ViewBag.GetPatientEncounterDetails;
+    var FinalBill = ViewBag.FinalBill;
+    var Outstanding = ViewBag.GetOutstandingDetails;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/js/HtmlToPdf/html2pdf.bundle.min.js"></script>
+<style>
+    input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 10px;
+    opacity: 1;
+}
+    #bill-details-modal {
+        max-height: 100% !important; /* Maximum height for the modal */
+        overflow-y: auto !important; /* Enable vertical scrolling if content overflows */
+    }
+
+    #billingTable table tbody tr:last-child td {
+        color: inherit !important;
+        font-weight: normal !important;
+    }
+
+    @@media (max-width: 768px) {
+        .modal-content {
+            padding: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+        }
+    }
+</style>
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Counter Product Paid Bill List
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-sm btn-primary" id="btnUnPaidBillList">
+                                        @*<i class="fa fa-plus">
+                                            </i>*@
+                                        UnPaid Bill List
+                                    </button>
+
+                                    <button class="btn btn-sm btn-primary" id="btnBillList">
+
+                                        Outstanding Bill List
+                                    </button>
+
+
+                                    @*<button id="btnExport">Export to Excel</button>*@
+                                </div>
+                            </div>
+
+                        </div>
+                    </header>
+                    <div class="card-body p-0">
+                        <div class="row">
+                            @if (@PatientDetails != null && @PatientDetails != "")
+                            {
+                                <input hidden id="EncounterFid" value="@PatientDetails.EncounterFid " />
+                            }
+
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background">
+                                                @*<div class="vld-background" style="backdrop-filter: blur(2px);">*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="billingTable">
+                                    <div class="vgt-wrap ">
+                                        <!---->
+                                        <div class="vgt-inner-wrap">
+                                            <!---->
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-390878681313">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                @*<div class="magnifying-glass">
+                                                                    </div>*@
+                                                            </span>
+                                                            <span class="sr-only">
+                                                                Search
+                                                            </span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search bills data by id,Encounter ID, clinic, doctor, patient, total amount, discount ,amount due  and status(0 or 1)"
+                                                               class="vgt-input vgt-pull-left">
+
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-fixed-header">
+                                                <!---->
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="tblBillingRecords" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-11" class="vgt-left-align"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Action
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-10" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Status in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            @*<th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+            style="min-width: 130px; max-width: 130px; width: 130px;">
+            <span>
+                Encounter ID
+            </span>
+            <button>
+                <span class="sr-only">
+                    Sort table by Encounter ID in descending order
+                </span>
+            </button>
+        </th>*@
+
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Patient Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Patient Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Doctor Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Doctor Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Clinic Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Clinic Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Total
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Total in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Discount
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Discount in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+                                                                style="min-width: 130px; max-width: 130px; width: 130px;">
+                                                                <span>
+                                                                    Payable Amount
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Amount due in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            @*<th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+            style="min-width: 150px; max-width: 150px; width: 150px;">
+            <span>
+                Payment Mode
+            </span>
+            <button>
+                <span class="sr-only">
+                    Sort table by Amount due in descending order
+                </span>
+            </button>
+        </th>*@
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-9" class="vgt-left-align sortable"
+                                                                style="min-width: 160px; max-width: 160px; width: 160px;">
+                                                                <span>
+                                                                    Date
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Date in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <!---->
+                                                            <!---->
+                                                            @*<th class="filter-th">
+        </th>*@
+                                                            <th class="filter-th">
+
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <!---->
+                                                            </th>
+
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-patient_name" type="text" id="FilterByPatient" placeholder="Filter by patient name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-doctor_name" type="text" id="FilterByDoctor" placeholder="Filter by doctor"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_name" type="text" id="FilterByClinic" placeholder="Filter clinic name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-total_amount" id="filterByTotal" type="text" placeholder="Total"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-discount" type="text" id="FilterByDiscount" placeholder="Discount"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="text" id="FilterAmoutDue" placeholder="Payable Amount"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            @*<th class="filter-th">
+
+        </th>*@
+
+
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="date" id="FilterDate" placeholder="Date"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!---->
+                                                        <!---->
+                                                    </tbody>
+                                                    <tbody>
+                                                        @if (ViewBag.GetPaidBillList != null)
+                                                        {
+                                                            foreach (var item in ViewBag.GetPaidBillList)
+                                                            {
+                                                                <tr>
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <button title="Bill Details" class="btn btn-sm btn-outline-primary" id="BillDetails" onclick="GetPatientDetails('@item.PatientFid' , '@item.AppointmentFid','Paid')">
+                                                                                <i class="fa fa-file-invoice">
+                                                                                </i>
+                                                                            </button>
+                                                                            @*<a href="@Url.Action("PatientEncounter","Encounter",new { AppointmentFid=@item.AppointmentFid})" class="btn btn-sm btn-outline-primary"
+                   title="Encounter details" target="_self">
+                    <i class="fas fa-tachometer-alt">
+                    </i>
+                </a>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge badge-success">
+                                                                            @item.FinalBillStatus
+                                                                        </span>
+
+                                                                    </td>
+                                                                    @*<td>@item.EncounterFid</td>*@
+
+
+                                                                    <td>@item.PatientName</td>
+                                                                    <td>@item.DoctorName</td>
+                                                                    <td>@item.ClinicName</td>
+
+                                                                    <td>@item.TotalAmount</td>
+                                                                    <td>@item.DiscountAmt</td>
+                                                                    <td>
+                                                                        @Convert.ToDecimal(@item.PayableAmount).ToString("0.00")
+                                                                    </td>
+                                                                    @*<td>@item.PayableAmount</td>*@
+                                                                    @*<td>@item.PaymentMode</td>*@
+                                                                    <td>
+                                                                        @Convert.ToDateTime(item.FDate).ToString("dd/MM/yyyy")
+                                                                    </td>
+                                                                </tr>
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="12">
+                                                                    <div class="text-center mtb-100">
+                                                                        No Data Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (PatientDetails != null && PatientDetails != "")
+    {
+
+        <div id="bill-details-modal___BV_modal_outer_" style="position: absolute; z-index: 1040; display: none;">
+            <div id="bill-details-modal" role="dialog" aria-describedby="bill-details-modal___BV_modal_body_" class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <span tabindex="0"></span>
+                    <div id="bill-details-modal___BV_modal_content_" tabindex="-1" class="modal-content">
+                        <div id="bill-details-modal___BV_modal_body_" class="modal-body pt-0">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-between w-100">
+                                        <!-- Logo Section -->
+                                        <div class="mr-3">
+                                            @*<img src="~/assets/images/BVG.png" style="height: 50px;" />*@
+                                            <img src="~/assets/images/JnanaYugAyog.png" style="height: 71px;" />
+                                        </div>
+                                        <!-- Clinic Info Section -->
+                                        @*<div class="mr-3">
+                                                <h4 class="mb-0">BVG WELLNESS CLINIC & PATH LAB</h4>
+                                            </div>*@
+                                        <!-- Address & Payment Status Section -->
+                                        <div class="text-right ml-auto" style="margin-left:20px;">
+                                            @*<p class="mb-0 text-primary">BVG Life Science Limited</p>
+                                                <p class="mb-0">
+                                                    Sagar Complex,Opp.Kasarwadi Railway station,<br />Near Nashik Phata,Old Pune-Mumbai Road<br />
+                                                    Chichwad,Pune 411034,MAHARASHTRA,INDIA
+                                                </p>*@
+
+                                            <p class="mb-0 text-primary">Ayurvijnana Chikitsalay</p>
+                                            <p class="mb-0">
+                                                80/635 Nandraj Sankul Society,<br />Famous Chowk, Main Road,<br />
+                                                New Sangavi-411027,MAHARASHTRA,INDIA
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                    <hr class="my-3" style="border: 3px solid black;">
+                                    <header id="bill-details-modal___BV_modal_header_" class="modal-header" style="margin-top:-30px;">
+                                        <h2 class="text-primary w-100 text-center">
+                                            Invoice Details
+                                        </h2>
+                                    </header>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="d-flex align-items-center justify-content-between w-100">
+                                                <!-- Clinic Info Section -->
+                                                <div class="mr-3">
+                                                    <h5 class="mb-0"><span>Patient Name:</span> @PatientDetails.PatientName</h5>
+                                                    <h5 class="mb-0"><span>Age:</span> @PatientDetails.Age</h5>
+                                                    <h5 class="mb-0"><span>Gender:</span> @PatientDetails.Gender</h5>
+                                                    <h5 class="mb-0"><span>Patient Contact :</span> @PatientDetails.PatientContactNumber</h5>
+                                                    <h5 class="mb-0"><span>Doctor Name :</span> @PatientDetails.DoctorName</h5>
+                                                </div>
+                                                <div class="text-right ml-auto" style="margin-left:20px;">
+                                                    @*<h5 class="mb-0 font-weight-bold">
+                                                        Invoice id <span class="text-primary">#@PatientDetails.EncounterFid</span>
+                                                    </h5>*@
+                                                    <h5 class="mb-0"><span class="font-weight-bold">Created Date</span> @Convert.ToDateTime(@FinalBill.FDate).ToString("dd/MM/yyyy")</h5>
+                                                    @*<p class="mb-0 mt-2">
+                                                            Payment Status <span class="badge badge-danger">@FinalBill.Status</span>
+                                                        </p>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-sm-12">
+                                            <h3>Medicines</h3>
+                                            <table class="table custom-table">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>Sr no</th>
+                                                        <th>Medicine Name</th>
+                                                      
+                                                        <th>Price</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (ViewBag.GenerateBill != null)
+                                                    {
+                                                        int Count = 1;
+                                                        foreach (var item in ViewBag.GenerateBill)
+                                                        {
+                                                            TotalAmount += item.Total;
+                                                            <tr>
+                                                                <td>@Count</td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrEmpty(item.ServiceName))
+                                                                    {
+                                                                        @item.ServiceName
+                                                                    }
+                                                                    else if (!string.IsNullOrEmpty(item.MedicineName))
+                                                                    {
+                                                                        @item.MedicineName
+                                                                    }
+                                                                </td>
+                                                              
+                                                                <td>@item.Price</td>
+                                                                <td>@item.Quantity</td>
+                                                                <td>@item.Total</td>
+                                                            </tr>
+                                                            Count++;
+                                                        }
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Total</th>
+                                                        <th>@FinalBill.TotalAmount</th>
+                                                    </tr>
+                                                   @if (FinalBill.DiscountAmt != null && FinalBill.DiscountAmt > 0)
+                                                   {
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Discount in Percentage</th>
+                                                        <th>@FinalBill.DiscountAmt %</th>
+                                                    </tr>
+                                                   }
+
+                                                    @*<tr>
+                                                            @{
+                                                                TotalDiscount = TotalAmount * @FinalBill.DiscountAmt / 100;
+                                                            }
+                                                            <th colspan="4" class="text-right">Discount in Amount</th>
+                                                            <th>@TotalDiscount</th>
+                                                        </tr>*@
+
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Total Payable Amount</th>
+                                                        <th>@FinalBill.PayableAmount</th>
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Outstanding Amount</th>
+                                                        <th>@(Outstanding.RemainingAmount ?? 0)</th>
+
+
+                                                    </tr>
+
+
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Amount Paid</th>
+                                                        <th>@Convert.ToDecimal(@Outstanding.TotalPaid).ToString("0.00")</th>
+                                                        @*<th>@ViewBag.GetOutstandingDetails.TotalPaid</th>*@
+                                                    </tr>
+
+
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3>Payment Details</h3>
+                                            <div class="table-responsive">
+                                                <table class="table custom-table">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th>Sr no</th>
+                                                            <th>Paid Amount</th>
+                                                            <th>Payment Mode</th>
+                                                            <th>Refrence No</th>
+                                                            <th>Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @if (ViewBag.GetFinalbillDetails != null)
+                                                        {
+                                                            int Count = 1;
+                                                            foreach (var item in ViewBag.GetFinalbillDetails)
+                                                            {
+                                                                <tr>
+                                                                    <td>@Count</td>
+                                                                    <td>@item.Amount</td>
+                                                                    <td>@item.PaymentMode</td>
+                                                                    <td>@item.PaymentReferenceNumber</td>
+                                                                    <td>@Convert.ToDateTime(item.FDate).ToString("dd/MM/yyyy")</td>
+                                                                </tr>
+                                                                Count++;
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="d-flex justify-content-end align-items-center" id="PrintFooter">
+                                <button id="sendToPatient" title="Send to patient" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-paper-plane"></i> Send to patient
+                                </button>
+                                <button id="billPrint" title="Print" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-print"></i> Print
+                                </button>
+                                <button type="button" title="Cancel" class="btn btn-sm btn-primary" id="BillDetailsModelClose">
+                                    <i class="fa fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        var PatientDeatialsData = @Html.Raw(Json.Encode(ViewBag.GetPatientEncounterDetails));
+        if(PatientDeatialsData!=null || PatientDeatialsData!="")
+        {
+            $("#bill-details-modal___BV_modal_outer_")
+                 .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+                 .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+                 .addClass("show");
+        }
+
+        $("#CancelBillDetailsModel").click(function () {
+            debugger;
+            // Correct the URL assignment
+            const modalOuter = $("#bill-details-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            var url='@Url.Action("PaidBillMedicineRecords")';
+            //window.location.href = url;
+        });
+        $("#BillDetailsModelClose").click(function () {
+            debugger;
+
+            const modalOuter = $("#bill-details-modal___BV_modal_outer_");
+            // 1. Hide modal logic
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+
+            // 2. Dynamic Redirection Logic
+            var sourcePage = '@ViewBag.SourcePage'; // This comes from the Controller
+            var url = '';
+
+          if (sourcePage === 'Outstanding') {
+        // Jya .cshtml page var jayche aahe tyache Action naav taka
+        url = '@Url.Action("MedicineOutstandingBill")';
+    } else {
+        // Default page sathi
+        url = '@Url.Action("PaidBillMedicineRecords")';
+    }
+            // Hide modal and remove aria-modal attribute
+          //  modalOuter.css("display", "none").attr("aria-hidden", "true");
+          @*var url='@Url.Action("BillingRecordMedicine")';*@
+            window.location.href = url;
+
+        });
+
+
+        //$("#btnExport").click(function(){
+        //    debugger;
+        //    var table = document.getElementById("tblBillingRecords");
+        //    var wb = XLSX.utils.book_new();
+        //    var ws = XLSX.utils.table_to_sheet(table);
+
+        //    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+        //    // Save the file
+        //    XLSX.writeFile(wb, "table_data.xlsx");
+        //});
+
+        //$("#sendToPatient").click(function () {
+        //    debugger;
+        //    //let element = document.getElementById('bill-details-modal');
+        //    let modalContent= document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+        //    var clonedContent = modalContent.cloneNode(true);
+
+        //    // Remove the footer div with ID 'PrintFooter'
+        //    var footerNav = clonedContent.querySelector("#PrintFooter");
+        //    if (footerNav) {
+        //        footerNav.remove();
+        //    }
+
+        //    var element = clonedContent.innerHTML;
+
+        //    html2pdf().from(element).outputPdf('blob').then(function (pdfBlob) {
+        //        debugger;
+        //        // Convert Blob to File
+        //        let pdfFile = new File([pdfBlob], "Invoice.pdf", { type: "application/pdf" });
+
+        //        let formData = new FormData();
+        //        formData.append("pdfFile", pdfFile);
+
+        //        // Get CSRF token
+        //        //let token = $('input[name="__RequestVerificationToken"]').val();
+        //        //formData.append("__RequestVerificationToken", token);
+
+        //        // Send AJAX request
+        //        $.ajax({
+        //            url: '/BillingRecord/SendBillEmail',
+        //            type: 'POST',
+        //            data: formData,
+        //            contentType: false,  // Don't set content type (auto-set for FormData)
+        //            processData: false,  // Prevent jQuery from converting FormData into a string
+        //            success: function (response) {
+        //                alert(response.message);
+        //            },
+        //            error: function (xhr, status, error) {
+        //                console.error('Error:', error);
+        //            }
+        //        });
+        //    });
+        //});
+
+
+        $("#sendToPatient").click(function () {
+            debugger;
+            //let element = document.getElementById('bill-details-modal');
+            let modalContent= document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+            var clonedContent = modalContent.cloneNode(true);
+
+            // Remove the footer div with ID 'PrintFooter'
+            var footerNav = clonedContent.querySelector("#PrintFooter");
+            if (footerNav) {
+                footerNav.remove();
+            }
+
+            var element = clonedContent.innerHTML;
+
+            html2pdf().from(element).outputPdf('blob').then(function (pdfBlob) {
+                debugger;
+                // Convert Blob to File
+                let pdfFile = new File([pdfBlob], "Invoice.pdf", { type: "application/pdf" });
+
+                let formData = new FormData();
+                formData.append("pdfFile", pdfFile);
+
+                let encounterid = $("#EncounterFid").val(); // Ensure the ID is correct
+                formData.append("EncounterFid", encounterid);
+
+                $.ajax({
+                    url: '/BillingRecord/SendBillEmail',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,  // Don't set content type (auto-set for FormData)
+                    processData: false,  // Prevent jQuery from converting FormData into a string
+                    success: function (response) {
+                        debugger;
+                        @*var Url='@Url.Action("PaidBillRecords", "BillingRecord")';*@
+                        window.location.href=Url;
+                        var message = response.message;
+                        var alertType = 'success';
+                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                        showCustomAlert(message, alertType, imageUrl);
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+
+    });
+
+
+    $("#btnUnPaidBillList").click(function(){
+        var url = '@Url.Action("BillingRecordMedicine")';
+        window.location.href = url;
+    });
+    function GetPatientDetails(PatientFid ,  AppointmentFid, source) {
+        debugger;
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        // Correct the URL assignment
+        $("#bill-details-modal___BV_modal_outer_")
+         .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+         .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+         .addClass("show");
+
+        var url = '@Url.Action("PaidBillMedicineRecords")' + '?PatientFid=' + PatientFid + '&AppointmentFid=' + AppointmentFid+ '&source=' + source;
+        window.location.href = url;
+    }
+
+    //==============================Table Filter==============================================
+    function filterTable(inputId, tableId) {
+        debugger;
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+    filterTable('SearchInput', 'tblBillingRecords');
+    filterTable('FilterAmoutDue', 'tblBillingRecords');
+    filterTable('FilterByDiscount', 'tblBillingRecords');
+    filterTable('filterByTotal', 'tblBillingRecords');
+    filterTable('FilterByPatient', 'tblBillingRecords');
+    filterTable('FilterByClinic', 'tblBillingRecords');
+    filterTable('FilterByDoctor', 'tblBillingRecords');
+  //  filterTable('FilterDate', 'tblBillingRecords');
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblBillingRecords');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+        // Event listener for manual page input (Enter key)
+        currentPageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+
+                let enteredPage = parseInt(this.value);
+                let totalPages = Math.ceil(rows.length / rowsPerPage);
+
+                if (!isNaN(enteredPage) && enteredPage >= 1 && enteredPage <= totalPages) {
+                    currentPage = enteredPage;
+                    updateTable();
+                } else {
+                    alert("Invalid page number");
+                    this.value = currentPage;
+                }
+            }
+        });
+        // Initial call to display the table correctly
+        updateTable();
+    });
+    //==============================Table Filter==============================================
+
+</script>
+
+<script>
+    document.getElementById("billPrint").addEventListener("click", function() {
+        debugger; // Debugging line (remove if not needed)
+
+        // Get the modal content correctly
+        var modalContent = document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+        if (!modalContent) {
+            alert("Error: Bill details not found.");
+            return;
+        }
+
+        var clonedContent = modalContent.cloneNode(true);
+
+        // Remove the footer div with ID 'PrintFooter'
+        var footerNav = clonedContent.querySelector("#PrintFooter");
+        if (footerNav) {
+            footerNav.remove();
+        }
+
+        var printclinicaldetails = clonedContent.innerHTML; // Get modified content without footer
+
+
+        // Open a new print window
+        var printWindow = window.open("", "", "width=800,height=600");
+
+
+        printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print</title>
+            <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .hidden-print { display: none; } /* Hide buttons while printing */
+            </style>
+        </head>
+        <body>
+            ${printclinicaldetails}
+            <script>
+                window.onload = function() {
+                    window.print();
+                    window.close();
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+        // Close the document to complete rendering
+        printWindow.document.close();
+    });
+
+
+    @*$("#sendToPatient").click(function () {
+    debugger;
+
+         const jsPDF = window.jspdf.jsPDF;
+
+    var modalContent = document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+    html2canvas(modalContent).then(canvas => {
+        var imgData = canvas.toDataURL("image/png");
+        var pdf = new jsPDF(); // ✅ Now works correctly
+
+        var imgWidth = 210;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+        // Convert PDF to Blob
+        var pdfBlob = pdf.output("blob");
+
+        var formData = new FormData();
+        formData.append("pdfFile", pdfBlob, "BillDetails.pdf");
+
+        $.ajax({
+            url: '@Url.Action("SendBillEmail", "BillingRecord")',
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                alert("Email Sent Successfully!");
+            },
+            error: function (xhr, status, error) {
+                console.error("Error sending email:", error);
+            }
+        });
+    });
+});*@
+
+
+
+</script>
+
+<script>
+    $("#btnBillList").click(function(){
+        var url = '@Url.Action("MedicineOutstandingBill")';
+        window.location.href = url;
+    });
+</script>
+<script>
+    $("#FilterDate").on("change", function () {
+
+        let selectedDate = $(this).val(); // yyyy-MM-dd
+
+        if (!selectedDate) {
+            $("#tblBillingRecords tbody tr").show();
+            return;
+        }
+
+        $("#tblBillingRecords tbody tr").each(function () {
+
+            // 👉 DATE COLUMN = LAST COLUMN (correct index = 8)
+            let rowText = $(this).find("td").eq(8).text().trim();
+
+            // remove time if exists
+            let clean = rowText.split(" ")[0];
+
+            // convert 27/03/2026 → 2026-03-27
+            let p = clean.split("/");
+
+            if (p.length !== 3) return;
+
+            let rowDate = p[2] + "-" + p[1] + "-" + p[0];
+
+            if (rowDate === selectedDate) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+
+        });
+
+    });
+</script>

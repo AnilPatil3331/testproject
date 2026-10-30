@@ -1,0 +1,343 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.ClsTaxes
+@{
+    ViewBag.Title = "AddTax";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var categories = new[] { "Category 1", "Category 2", "Category 3" };
+}
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/js/select2.min.js"></script>
+
+
+
+<style>
+    .select2-container--default .select2-selection--multiple {
+        height: 45px; /* Adjust the height of the selection box */
+        padding: 8px; /* Optional: Increase padding if needed */
+    }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background: var(--primary, #0d6efd) !important;
+            color: whitesmoke;
+            border: none;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            border-right: none;
+            font-weight: none;
+            color: white;
+        }
+</style>
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div id="loader" class="loader hidden">
+        <img src="~/assets/images/favicon-1.ico" />
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            @*<form id="taxDataForm" novalidate="novalidate">*@
+            <form action="/Patient/Taxes/SaveTaxes" id="AddTaxForm" name="addTaxForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Add Tax
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary" id="btnBack">
+                                        <i class="fa fa-angle-double-left">
+                                        </i>
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        @if (TempData["Message"] != null)
+                        {
+                            <script>
+                                    window.onload = function () {
+                                        var message = '@TempData["Message"]';
+                                        var alertType = '@TempData["Icon"]';
+                                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                        showCustomAlert(message, alertType, imageUrl);
+                                    };
+                            </script>
+                        }
+                        <div class="row">
+                            @Html.HiddenFor(m => m.TaxFid)
+                            @Html.HiddenFor(m => m.TaxFid_Encrypted)
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label for="name" class="form-control-label">
+                                        Name
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.Tax_Name, new { @class = "form-control", id = "TaxName", @required = "required" })
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label for="tax_rate" class="form-control-label">
+                                        Tax Rate
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div role="group" class="input-group">
+                                        <!---->
+                                        @Html.TextBoxFor(m => m.Tax_Rate, new { @class = "form-control", id = "TaxRate", name = "tax", @required = "required" })
+                                        <div class="input-group-append">
+                                            @Html.DropDownListFor(m => m.TaxType, new List<SelectListItem>
+                                                         {
+                                                          new SelectListItem { Text="%",Value="percentage" },
+                                                          new SelectListItem { Text=" $",Value="doller" },
+                                                      }.Select(x =>
+                                                      {
+                                                          // Set the selected value based on ViewBag
+                                                          x.Selected = x.Value == (ViewBag.TaxType?.ToString() ?? "");
+                                                          return x;
+                                                      }), new { @class = "form-control", id = "TaxType" })
+                                        </div>
+                                        <!---->
+                                    </div>
+                                    <!---->
+                                    <!---->
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+
+                                <div class="form-group">
+                                    <label for="visit_type" class="form-control-label">
+                                        Clinic
+                                        <span class="text-danger">
+                                        </span>
+                                    </label>
+                                    <div tabindex="-1" role="combobox" aria-owns="listbox-visit_type"
+                                         class="multiselect">
+                                        @Html.DropDownListFor(m => m.ListClinicFid, new SelectList(ViewBag.ClinicName, "Id", "Name"), new { @class = "form-control select2 select2-multiple", multiple = "multiple", id = "ddlClinicFid", style = "width: 100%;" }
+                                                                    )
+                                    </div>
+                                    <span class="text-primary small">
+                                        <b>
+                                            Note: To apply tax to all Clinic, please leave the selection blank.
+                                        </b>
+                                    </span>
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label for="doctor_id" class="form-control-label">
+                                        Doctor
+                                    </label>
+                                    <div tabindex="-1" role="combobox" aria-owns="listbox-visit_type"
+                                         class="multiselect">
+                                        @Html.DropDownListFor(m => m.ListDoctorFid, new SelectList(ViewBag.GetDoctor, "Id", "Name"), new { @class = "form-control select2 select2-multiple", multiple = "multiple", id = "ddlDoctorFid", style = "width: 100%;" })
+                                    </div>
+                                    <span class="text-primary small">
+                                        <b>
+                                            Note: To apply tax to all doctors, please leave the selection blank.
+                                        </b>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label for="service_id" class="form-control-label">
+                                        Service
+                                    </label>
+                                    <div tabindex="-1" role="combobox" aria-owns="listbox-visit_type"
+                                         class="multiselect">
+                                        @Html.DropDownListFor(m => m.ListService, new List<SelectListItem>
+                                                         {
+                                                          new SelectListItem { Text="Telemed",Value="Telemed" },
+                                                          new SelectListItem { Text="Checkup",Value="Checkup" },
+                                                      }.Select(x =>
+                                                      {
+                                                          // Set the selected value based on ViewBag
+                                                          x.Selected = ViewBag.service != null && ((List<string>)ViewBag.service).Contains(x.Value);
+                                                          return x;
+                                                      }),
+                                                      new { @class = "form-control custom-select", id = "ddlService", multiple = "multiple", style = "width: 100%;" })
+                                    </div>
+                                    <span class="text-primary small">
+                                        <b>
+                                            Note: To apply tax to all services, please leave the selection blank.
+                                        </b>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label for="status" class="form-control-label">
+                                        Status
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                                         {
+                                                          new SelectListItem { Text="Active",Value="Active" },
+                                                          new SelectListItem { Text="Inactive",Value="Inactive" },
+                                                      }.Select(x =>
+                                                      {
+                                                          // Set the selected value based on ViewBag
+                                                          x.Selected = x.Value == (ViewBag.Status?.ToString() ?? "");
+                                                          return x;
+                                                      }), "Select Status", new { @class = "form-control custom-select", id = "status", @required = "required" })
+                                    <!---->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 p-0">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save">
+                                        </i>
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!---->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden');
+     
+        $("#btnBack").click(function () {
+            var url = '@Url.Action("Tax", "Taxes",new { area= "Patient" })';
+            window.location.href = url;
+        })
+        $("#btnCancel").click(function () {
+            var url = '@Url.Action("Tax", "Taxes",new { area= "Patient" })';
+            window.location.href = url;
+        })
+       
+    });
+</script>
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('AddTaxForm').addEventListener('submit', function (event) {
+        var form = this;
+        var isValid = true;
+
+        
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+            var message = 'Please out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+            //formError.style.display = 'block';
+        } else {
+            const loader = document.getElementById('loader');
+
+            // Show the loader
+            loader.classList.remove('hidden');
+        }
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+    });
+</script>
+<script>
+   
+    var GetClinicFid =  @Html.Raw(Json.Encode(ViewBag.ClinicFid)); 
+    var GetDoctorFid =  @Html.Raw(Json.Encode(ViewBag.DoctorFid)); 
+    var GetService =  @Html.Raw(Json.Encode(ViewBag.Service)); 
+    if (GetClinicFid && GetClinicFid.length > 0) {
+        debugger;      
+        //var clinicFidSet = new Set(GetClinicFid);                
+        $("#ddlClinicFid").val(GetClinicFid);
+        
+        $('#ddlClinicFid').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+        $("#ddlClinicFid").trigger('change');
+    }else{
+        $('#ddlClinicFid').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+    }
+   
+
+
+    if (GetDoctorFid!=null && GetDoctorFid.length > 0) {
+        debugger;               
+        $("#ddlDoctorFid").val(GetDoctorFid);          
+        $('#ddlDoctorFid').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+        $("#ddlDoctorFid").trigger('change');
+    }else{
+        $('#ddlDoctorFid').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+    }
+   
+
+
+    if (GetService!=null && GetService.length > 0) {
+        debugger;        
+        $("#ddlDoctorFid").val(GetService);    
+        $('#ddlService').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+        $("#ddlService").trigger('change');
+          
+    }else{
+        $('#ddlService').select2({
+            placeholder: "", // Optional placeholder
+            allowClear: true // Optional clear button
+        });
+    }
+   
+  
+</script>

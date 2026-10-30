@@ -1,0 +1,930 @@
+@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.DoctorSessions
+@{
+    ViewBag.Title = "DoctorSessionList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+
+
+<div class="container-fluid" style="padding-left:15px !important;">
+
+    <div class="row">
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                window.onload = function () {
+                    var message = '@TempData["Message"]';
+                    var alertType = '@TempData["Icon"]';
+                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                    showCustomAlert(message, alertType, imageUrl);
+                };
+            </script>
+
+        }
+        <div class="col-xl-12 col-lg-12 order-lg-1 order-2 col">
+            <form action="/Admin/AddDoctorSession/SaveDoctorSession" id="DoctorSessionFormSave" name="DoctorSessionForm" novalidate="novalidate"   method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                @*<form id="clinicDataForm" novalidate="novalidate">*@
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h3>
+                                    @ViewBag.Update
+                                </h3>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="d-flex justify-content-end">
+                                    <!---->
+                                    <!---->
+                                    <button type="button" class="btn float-right btn btn-sm btn-primary btn-primary" id="AddDoctorSession">
+                                        <i class="fa fa-plus">
+                                        </i>
+                                        Add Session
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="doctor-session-tab" class="mt-2" style="display:none;">
+                            <div class="row">
+                                @Html.HiddenFor(m => m.SessionFid)
+                                @Html.HiddenFor(m => m.SessionFid_Encrypted)
+                                <div class="col-md-3 form-group">
+                                    <label for="doctor_id" class="form-control-label">
+                                        Select Clinic
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.ClinicFid, new SelectList(ViewBag.ClinicName, "Id", "Name"), "--Select Doctor--", new { @class = "form-control", id = "ddlClinicFid", required = "required" })
+
+                                    <!---->
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <label for="clinicSessionDoctor" class="col-md-4 form-control-label">
+                                        Doctors
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div>
+                                        @Html.DropDownListFor(m => m.DoctorFid, new SelectList(ViewBag.GetDoctorName, "Id", "Name"), "--Select Doctor--", new { @class = "form-control", id = "ddlDoctorFid", required = "required" })
+                                        <!---->
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-3 form-group">
+                                    <label for="time_slot" class="form-control-label">
+                                        Time slot (in minute)
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div>
+                                        @Html.DropDownListFor(m => m.TimeSlot, new SelectList(new[] {
+                                                                   new { Value = "5", Text = "5" },
+                                                              new { Value="10", Text = "10" },
+                                                               new { Value="15", Text = "15" },
+                                                                new { Value="20", Text = "20" },
+                                                                new { Value="25", Text = "25" },
+                                                                  new { Value="30", Text = "30" },
+                                                                   new { Value="35", Text = "35" },
+                                                                     new { Value="40", Text = "40" },
+                                                                      new { Value="45", Text = "45" },
+                                                                        new { Value="50", Text = "50" },
+                                                                        new { Value="55", Text = "55" },
+                                                                        new { Value="60", Text = "60" },
+
+                                                             }, "Value", "Text"), "--Select--",
+                                                                 new { @id = "TimeSlot", @class = "form-control custom-select" })
+                                    </div>
+                                  
+                                </div>
+                                <!-- ✅ NEW Slot Count -->
+                                <div class="col-md-3 form-group">
+                                    <label class="form-control-label">
+                                        Slot Count <span class="text-danger">*</span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.SlotCount,
+            new SelectList(Enumerable.Range(1, 10)
+                .Select(x => new { Value = x, Text = x.ToString() }),
+                "Value", "Text", Model != null && Model.SlotCount > 0 ? Model.SlotCount : 1),  // ✅ Select value dynamically
+            "--Select--",
+            new { @id = "SlotCount", @class = "form-control custom-select", required = "required" })
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-control-label">
+                                        Morning session
+                                    </label>
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.MorningSession_From, new { @class = "form-control", id = "morningSession_From", type = "time", title = "Start Time" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label">
+                                        &nbsp;
+                                    </label>
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.MorningSession_To, new { @class = "form-control", id = "morningSession_To", type = "time", title = "End Time" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label">
+                                        Evening session
+                                    </label>
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.EveningSession_From, new { @class = "form-control", id = "eveningSession_From", type = "time", placeholder = "Start Time", title = "Start Time" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label">
+                                        &nbsp;
+                                    </label>
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(m => m.EveningSession_To, new { @class = "form-control", id = "eveningSession_To", type = "time", title = "End Time" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                @Html.HiddenFor(m => m.WeekDays, new { @class = "form-control", id = "SelectedDays"     })
+
+                                @if (ViewBag.selectDay != null)
+                                {
+
+                                    <div class="col-md-12" id="week_days_container">
+                                        <label for="week_days" class="form-control-label">
+                                            Week days
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div>
+                                            @if (ViewBag.SelectDaysCount != null)
+                                            {
+                                                <div id="week_days" class="custom-control custom-checkbox d-inline-block mr-2">
+                                                    <input id="All" value="All" name="check_all_days" type="checkbox" class="custom-control-input" onclick="toggleAll(this)" checked="checked">
+                                                    <label for="All" class="custom-control-label text-capitalize">
+                                                        All
+                                                    </label>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div id="week_days" class="custom-control custom-checkbox d-inline-block mr-2">
+                                                    <input id="All" value="All" name="check_all_days" type="checkbox" class="custom-control-input" onclick="toggleAll(this)">
+                                                    <label for="All" class="custom-control-label text-capitalize">
+                                                        All
+                                                    </label>
+                                                </div>
+                                            }
+
+
+                                            @foreach (var day in new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" })
+                                            {
+                                                var isChecked = Model.SelectedDays.Contains(day) ? "checked" : "";
+                                                <div class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                    <input id="@day" name="days[]" type="checkbox" class="custom-control-input" value="@day" @isChecked>
+                                                    <label for="@day" class="custom-control-label text-capitalize">
+                                                        @day
+                                                    </label>
+                                                </div>
+
+                                            }
+
+                                        </div>
+                                        <!---->
+                                        <!---->
+
+                                       
+
+                                    </div>
+
+                                }
+                                else
+                                {
+                                    <div class="col-md-12" id="week_days_container">
+                                        <label for="week_days" class="form-control-label">
+                                            Week days
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div>
+                                            <div id="week_days" class="custom-control custom-checkbox d-inline-block mr-2">
+                                                <input id="All" value="All" name="check_all_days" type="checkbox" class="custom-control-input" onclick="toggleAll(this)">
+                                                <label for="All" class="custom-control-label text-capitalize">
+                                                    All
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Monmon" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Mon">
+                                                <label for="Monmon" class="custom-control-label text-capitalize">
+                                                    Mon
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Tuetue" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Tue">
+                                                <label for="Tuetue" class="custom-control-label text-capitalize">
+                                                    Tue
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Wedwed" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Wed">
+                                                <label for="Wedwed" class="custom-control-label text-capitalize">
+                                                    Wed
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Thuthu" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Thu">
+                                                <label for="Thuthu" class="custom-control-label text-capitalize">
+                                                    Thu
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Frifri" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Fri">
+                                                <label for="Frifri" class="custom-control-label text-capitalize">
+                                                    Fri
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Satsat" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Sat">
+                                                <label for="Satsat" class="custom-control-label text-capitalize">
+                                                    Sat
+                                                </label>
+                                            </div>
+                                            <div id="week_days" class="custom-control custom-checkbox kc-custom-control d-inline-block mr-2">
+                                                <input id="Sunsun" name="days[]" type="checkbox" class="custom-control-input"
+                                                       value="Sun">
+                                                <label for="Sunsun" class="custom-control-label text-capitalize">
+                                                    Sun
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                        <!---->
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary rtl-ml-2">
+                                            <i class="fa fa-save">
+                                            </i>
+                                            Save Session
+                                        </button>
+                                        <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-0 doctor-session-tbl">
+                                            <div id="clinicSessionPrint">
+                                                <div class="mb-0">
+                                                    <div class="vgt-wrap ">
+                                                        <!---->
+                                                        <div class="vgt-inner-wrap">
+                                                            <!---->
+                                                            <div class="vgt-global-search vgt-clearfix">
+                                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                                    <form role="search">
+                                                                        <label for="vgt-search-755307139917">
+                                                                            <span aria-hidden="true" class="input__icon">
+                                                                                <div class="magnifying-glass">
+                                                                                </div>
+                                                                            </span>
+                                                                            <span class="sr-only">
+                                                                                Search
+                                                                            </span>
+                                                                        </label>
+                                                                        <input id="SearchInput" type="text" placeholder="Search Table"
+                                                                               class="vgt-input vgt-pull-left">
+                                                                    </form>
+                                                                </div>
+                                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                                    <div>
+                                                                        <div class="row">
+                                                                            <div id="export_1734948517631">
+                                                                                <button title="Export CSV" class="btn btn-sm">
+                                                                                    <i class="fas fa-file-csv">
+                                                                                    </i>
+                                                                                </button>
+                                                                            </div>
+                                                                            <button title="Export Excel" class="btn btn-sm mr-0">
+                                                                                <i class="fa fa-file-excel">
+                                                                                </i>
+                                                                            </button>
+                                                                            <button title="Export PDF" class="btn btn-sm">
+                                                                                <i class="fa fa-file-pdf">
+                                                                                </i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!---->
+                                                            <div class="vgt-fixed-header">
+                                                                <!---->
+                                                            </div>
+                                                            <div class="vgt-responsive">
+                                                                <table id="tblDoctorSessionList" class="vgt-table striped vgt-compact">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <!---->
+                                                                            <!---->
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align"
+                                                                                style="min-width: 50px; max-width: 50px; width: 50px;">
+                                                                                <span>
+                                                                                    Action
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                                style="min-width: 50px; max-width: 50px; width: 50px;">
+                                                                                <span>
+                                                                                    Sr.
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Sr. in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Doctor
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Doctor in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Clinic Name
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Clinic Name in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align"
+                                                                                style="min-width: 200px; max-width: 200px; width: 200px;">
+                                                                                <span>
+                                                                                    Days
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align"
+                                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                                <span>
+                                                                                    Time Slot
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Morning Session
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Evening Session
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>                                                                           
+                                                                        </tr>
+
+
+                                                                        @*<tr>
+                                                                          
+                                                                            <th class="filter-th">
+                                                                              
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                              
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                                <div>
+                                                                                    <input name="vgt-doctor_name" id="FilterByName" type="text" placeholder="Filter doctor session by name"
+                                                                                           class="vgt-input">
+                                                                                  
+                                                                                </div>
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                                <div>
+                                                                                    <input name="vgt-clinic_name" id="FilterByClinicName" type="text" placeholder="Filter Clinic Name"
+                                                                                           class="vgt-input">
+                                                                                 
+                                                                                </div>
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                                <div>
+                                                                                 
+                                                                                    <select name="vgt-days" id="filterByDays" class="vgt-select">
+                                                                                        <option value="">
+                                                                                            Filter Days
+                                                                                        </option>
+                                                                                        <option value="mon">
+                                                                                            Mon
+                                                                                        </option>
+                                                                                        <option value="tue">
+                                                                                            Tue
+                                                                                        </option>
+                                                                                        <option value="wed">
+                                                                                            Wed
+                                                                                        </option>
+                                                                                        <option value="thu">
+                                                                                            Thu
+                                                                                        </option>
+                                                                                        <option value="fri">
+                                                                                            Fri
+                                                                                        </option>
+                                                                                        <option value="sat">
+                                                                                            Sat
+                                                                                        </option>
+                                                                                        <option value="sun">
+                                                                                            Sun
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                         
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                             
+                                                                            </th>
+                                                                            <th class="filter-th">
+                                                                              
+                                                                            </th>
+                                                                            
+                                                                        </tr>*@
+
+
+
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <!---->
+                                                                        @if (ViewBag.DoctorSessionList != null)
+                                                                        {
+                                                                            int count = 1;
+                                                                            foreach (var item in ViewBag.DoctorSessionList)
+                                                                            {
+                                                                                <tr class="">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                                        <div class="btn-group">
+                                                                                            <a href="@Url.Action("DoctorSessionList", "AddDoctorSession", new { SessionFid_Encrypted = @item.SessionFid_Encrypted })" class="btn btn-sm btn-outline-primary"
+                                                                                               title="Edit">
+                                                                                                <i class="fa fa-pen-alt">
+                                                                                                </i>
+                                                                                            </a>
+                                                                                            @*<a href="@Url.Action("DeleteSession", "AddDoctorSession", new { SessionFid_Encrypted = @item.SessionFid_Encrypted })" class="btn btn-outline-danger btn-sm"
+                                                                                                   title="Delete">
+                                                                                                    <i class="fa fa-trash">
+                                                                                                    </i>
+                                                                                                </a>*@
+                                                                                            <button title="Delete" id="deleteDoctorSession" class="btn btn-outline-danger btn-sm" onclick="DeleteDoctorSession('@item.SessionFid_Encrypted')">
+                                                                                                <i class="fa fa-trash">
+                                                                                                </i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td data-label="Sr." class="vgt-left-align">
+                                                                                        <div>
+                                                                                            @count
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td data-label="Doctor" class="vgt-left-align">
+                                                                                        <span>
+                                                                                            @item.DoctorName
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td data-label="Clinic Name" class="vgt-left-align">
+                                                                                        <span>
+                                                                                            @item.ClinicName
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td data-label="Days" class="vgt-left-align">
+                                                                                        <div>
+                                                                                            @item.WeekDays
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td data-label="Time Slot" class="vgt-left-align">
+                                                                                        <span>
+                                                                                            @item.TimeSlot
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td data-label="Morning Session" class="vgt-left-align">
+                                                                                        <span>
+                                                                                            @item.MorningSession
+                                                                                        </span>
+                                                                                    </td>
+                                                                                    <td data-label="Evening Session" class="vgt-left-align">
+                                                                                        <span>
+                                                                                            @item.EveningSession
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                count++;
+                                                                            }
+                                                                        }
+                                                                        <!---->
+                                                                    </tbody>
+                                                                    <!---->
+                                                                </table>
+                                                            </div>
+                                                            <!---->
+                                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                                <div class="footer__row-count vgt-pull-left">
+                                                                    <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                                    <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                                        <option value="10">10</option>
+                                                                        <option value="20">20</option>
+                                                                        <option value="30">30</option>
+                                                                        <option value="40">40</option>
+                                                                        <option value="50">50</option>
+                                                                        <option value="-1">ALL</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="footer__navigation vgt-pull-right">
+                                                                    <div class="footer__navigation__page-info">
+                                                                        <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                            <span>Page</span>
+                                                                            <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                            <span>of <span id="total-pages">1</span></span>
+                                                                        </label>
+                                                                    </div>
+                                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                                        <span class="chevron left"></span><span>Prev</span>
+                                                                    </button>
+                                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                                        <span>Next</span><span class="chevron right"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        debugger;
+
+        var CheckUpdate = @Html.Raw(Json.Encode(ViewBag.CheckUpdate));
+        if(CheckUpdate!=null)
+        {
+            $("#doctor-session-tab").show();
+            $("#AddDoctorSession").html('<i class="fa fa-times"></i> Close Form');
+
+        }
+
+        $("#ddlClinicFid").change(function () {
+            debugger;
+            $("#ddlDoctorFid").find("option").remove();
+            var ClinicFid = $("#ddlClinicFid").val();
+            $.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetDoctor", "AddDoctorSession")',
+                data: { ClinicFid: ClinicFid },
+                success: function (data) {
+                    debugger;
+                    if (data != null) {
+                        var data1 = data.data;
+                        $("#ddlDoctorFid").append("<option value=''>--Select-- </option>");
+                        $.each(data1, function (i, p) {
+                            $("#ddlDoctorFid").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                        });
+                    }
+                    else {
+                        $('#ErrorESSPassword').html(" ");
+                    }
+                }
+            })
+        });
+    });
+
+
+</script>
+
+@*------Validate Form---------*@
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('DoctorSessionFormSave').addEventListener('submit', function (event) {
+        debugger;
+        var form = this;
+        var isValid = true;
+
+
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+
+            var message = 'Please fill out all required fields';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+
+            //setTimeout(() => {
+            //    formError.style.display = "none";
+            //}, 1000);
+        }
+
+        //if (!isValid) {
+        //    event.preventDefault(); // Prevent form submission if fields are invalid
+        //    formError.style.display = 'block'; // Show the error message div
+
+        //}
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+
+    });
+</script>
+
+
+<script>
+    $("#AddDoctorSession").click(function () {
+        debugger;
+        // Toggle the visibility of the bill item add form
+        $("#doctor-session-tab").slideToggle(function () {
+            // Change button text based on the updated state of the form
+            if ($("#doctor-session-tab").is(":visible")) {
+                // If the form is visible, change the button text to "Close"
+                $("#AddDoctorSession").html('<i class="fa fa-times"></i> Close Form');
+            } else {
+                // If the form is hidden, change the button text back to "Add Bill Item"
+                $("#AddDoctorSession").html('<i class="fa fa-plus"></i> Add Session');
+            }
+        });
+    });
+
+    $("#btnCancel").click(function () {
+        debugger;
+        // Toggle the visibility of the bill item add form
+        $("#doctor-session-tab").slideToggle(function () {
+            // Change button text based on the updated state of the form
+            if ($("#doctor-session-tab").is(":visible")) {
+                // If the form is visible, change the button text to "Close"
+                $("#AddDoctorSession").html('<i class="fa fa-times"></i> Close Form');
+                var url = '@Url.Action("DoctorSessionList", "AddDoctorSession")';
+                window.location.href = url;
+            } else {
+                // If the form is hidden, change the button text back to "Add Bill Item"
+                $("#AddDoctorSession").html('<i class="fa fa-plus"></i> Add Session');
+                var url = '@Url.Action("DoctorSessionList", "AddDoctorSession")'; // Ensure server-side helper is properly rendered
+                window.location.href = url; // Navigate to the new URL
+            }
+        });
+    });
+
+
+    function toggleAll(allCheckbox) {
+        debugger;
+        // Get all checkboxes with the name "days[]"
+        const checkboxes = document.querySelectorAll('input[name="days[]"]');
+
+        // Set their checked state to match the "All" checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = allCheckbox.checked;
+        });
+    }
+
+
+</script>
+
+@*For Get WeeksDays as Comma Seperate into single Varaible*@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll("#week_days_container input[type='checkbox']");
+        const hiddenField = document.getElementById("SelectedDays");
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                // Gather all checked values
+                const selectedValues = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(",");
+
+                // Update hidden input field
+                hiddenField.value = selectedValues;
+            });
+        });
+    });
+</script>
+
+<script>
+    function DeleteDoctorSession(SessionFid_Encrypted) {
+        debugger;
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                var url = '@Url.Action("DeleteSession", "AddDoctorSession")' + '?SessionFid_Encrypted=' + SessionFid_Encrypted;
+                window.location.href = url;
+            }
+        });
+    }
+</script>
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('SearchInput', 'tblDoctorSessionList'); //Type any for filter
+    filterTable('FilterByClinicName', 'tblDoctorSessionList');  // Filter by clinic Name
+    filterTable('FilterByName', 'tblDoctorSessionList');  // Filter by Doctor Name
+
+
+
+
+    document.getElementById('filterByDays').addEventListener('change', function () {
+        debugger;
+        const selectedValue = this.value; // Get the selected value from the dropdown
+        const table = document.getElementById('tblDoctorSessionList'); // Get the table by ID
+        const rows = table.querySelectorAll('tbody tr'); // Get all table rows
+
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(7)'); // Assuming status is in the 8th column (Status column)
+
+            // Get the text content of the badge (either "Active" or "Inactive")
+            const statusValue = statusCell ? statusCell.querySelector('span').textContent.trim() : "";
+
+            // Show row if the selected value matches the status value or if no value is selected
+            if (selectedValue === "" || statusValue.toLowerCase() === selectedValue.toLowerCase()) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblDoctorSessionList');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+
+
+
+

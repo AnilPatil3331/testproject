@@ -1,0 +1,467 @@
+@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model IPD_StayBookingModel
+@{
+    ViewBag.Title = "New Admission";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var settings = ViewBag.Settings as IPD_HospitalSettingModel;
+    var floors = ViewBag.Floors as List<IPD_FloorModel>;
+    var wards = ViewBag.Wards as List<IPD_WardModel>;
+    var categories = ViewBag.Categories as List<IPD_CategoryModel>;
+    var rooms = ViewBag.Rooms as List<IPD_RoomModel>;
+    var foodPlans = ViewBag.FoodPlans as List<IPD_FoodPlanModel>;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+    .page-title { font-size:1rem; font-weight:700; color:#1e3a5f; display:flex; align-items:center; gap:8px; }
+    .fs-card { background:#fff; border-radius:8px; padding:14px 16px; margin-bottom:10px; box-shadow:0 1px 4px rgba(0,0,0,0.07); border-left:3px solid #2563eb; }
+    .fs-card h6 { font-weight:700; font-size:0.8rem; color:#374151; margin-bottom:10px; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:0.3px; }
+    .form-label { font-size:0.79rem; font-weight:600; color:#4b5563; margin-bottom:3px; }
+    .form-control, .form-select { font-size:0.83rem; padding:5px 10px; background-color:#eef5fb; border-color:#c8dff0; border-radius:5px; height:auto; color:#1e3a5f; }
+    .form-control:focus, .form-select:focus { background-color:#ddeefa; border-color:#2563eb; box-shadow:0 0 0 2px rgba(37,99,235,0.15); color:#1e3a5f; outline:none; }
+    .charge-item { background:#f8fafc; border-radius:6px; padding:8px 12px; margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; border-left:3px solid #e5e7eb; }
+    .charge-comp { border-left-color:#ef4444; }
+    .charge-opt { border-left-color:#22c55e; }
+    .charge-badge-comp { background:#fef2f2; color:#dc2626; font-size:0.68rem; padding:2px 7px; border-radius:4px; font-weight:700; }
+    .charge-badge-opt { background:#f0fdf4; color:#16a34a; font-size:0.68rem; padding:2px 7px; border-radius:4px; font-weight:700; }
+    .est-box { background:linear-gradient(135deg,#eff6ff,#f0f9ff); border:1px solid #bfdbfe; border-radius:10px; padding:14px; }
+    .est-row { display:flex; justify-content:space-between; padding:4px 0; font-size:0.82rem; }
+    .est-total { border-top:2px solid #3b82f6; margin-top:6px; padding-top:8px; font-weight:800; font-size:0.95rem; color:#1e3a5f; }
+    .admit-btn { background:linear-gradient(135deg,#16a34a,#22c55e); color:#fff; border:none; padding:9px 28px; border-radius:7px; font-size:0.9rem; font-weight:700; width:100%; transition:all 0.2s; }
+    .admit-btn:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(22,163,74,0.35); }
+    .patient-dropdown { position:absolute; z-index:999; background:#fff; border:1px solid #e5e7eb; border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:100%; max-height:180px; overflow-y:auto; top:100%; left:0; }
+    .patient-option { padding:8px 12px; cursor:pointer; font-size:0.83rem; border-bottom:1px solid #f3f4f6; }
+    .patient-option:hover { background:#eff6ff; }
+    .patient-option-name { font-weight:600; color:#1e3a5f; }
+    .patient-option-info { font-size:0.72rem; color:#6b7280; }
+    #patientWrapper { position:relative; }
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+<div class="container-fluid" style="padding-left:10px; padding-right:10px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="page-title">
+            <i class="fas fa-user-plus text-success"></i> New Patient Admission
+        </div>
+        <a href="/IPD/IPD_Booking/BedDashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-th-large me-1"></i>Bed View</a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+
+            <div class="fs-card">
+                <h6><i class="fas fa-user text-primary"></i> Patient &amp; Type</h6>
+                <div class="row g-2">
+                    <div class="col-md-12">
+                        <label class="form-label">Patient <span class="text-danger">*</span></label>
+                        <div id="patientWrapper">
+                            <input type="text" id="patientSearch" class="form-control" placeholder="Search by name or mobile..." autocomplete="off">
+                            <input type="hidden" id="PatientFid" name="PatientFid">
+                            <div id="patientDropdown" class="patient-dropdown" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Admission Type</label>
+                        <select id="AdmissionType" class="form-select">
+                            <option value="Planned">Planned</option>
+                            <option value="Emergency">Emergency</option>
+                            <option value="DayCare">Day Care</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Admitting Doctor</label>
+                        <select id="DoctorId" class="form-select">
+                            <option value="">-- Select Doctor --</option>
+                            @if(ViewBag.Doctors != null)
+                            {
+                                foreach(var d in (List<SelectListItem>)ViewBag.Doctors)
+                                {
+                                    <option value="@d.Value">@d.Text</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Referred By</label>
+                        <input type="text" id="ReferredBy" class="form-control" placeholder="Optional">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Remarks</label>
+                        <input type="text" id="Remarks" class="form-control" placeholder="Optional notes...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fs-card">
+                <h6><i class="fas fa-calendar-alt text-primary"></i> Dates</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Admission Date &amp; Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="AdmissionDate" class="form-control"
+                               value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" onchange="calcEstimate()">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Expected Discharge <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="ExpectedDischarge" class="form-control"
+                               value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm")" onchange="calcEstimate()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fs-card">
+                <h6><i class="fas fa-map-marker-alt text-primary"></i> Bed Location</h6>
+                <div class="row g-2">
+                    @if (settings != null && settings.UseFloor && floors != null)
+                    {
+                        <div class="col-md-4">
+                            <label class="form-label">Floor</label>
+                            <select id="FloorId" class="form-select" onchange="filterWardsNA()">
+                                <option value="">-- All Floors --</option>
+                                @foreach (var f in floors)
+                                {
+                                    <option value="@f.FloorId">@f.FloorName</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    @if (settings != null && settings.UseWard && wards != null)
+                    {
+                        <div class="col-md-4">
+                            <label class="form-label">Ward</label>
+                            <select id="WardId" class="form-select" onchange="filterCategoriesNA()">
+                                <option value="">-- All Wards --</option>
+                                @foreach (var w in wards)
+                                {
+                                    <option value="@w.WardId" data-floor="@w.FloorId">@w.WardName</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    @if (settings != null && settings.UseCategory && categories != null)
+                    {
+                        <div class="col-md-4">
+                            <label class="form-label">Category</label>
+                            <select id="CategoryId" class="form-select" onchange="loadRooms()">
+                                <option value="">-- All Categories --</option>
+                                @foreach (var c in categories)
+                                {
+                                    <option value="@c.CategoryId" data-floor="@c.FloorId" data-ward="@c.WardId">@c.CategoryName</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    <div class="col-md-6">
+                        <label class="form-label">Room <span class="text-danger">*</span></label>
+                        <select id="RoomId" class="form-select" onchange="roomSelected()">
+                            <option value="">-- Select Room --</option>
+                            @if (rooms != null)
+                            {
+                                foreach (var r in rooms)
+                                {
+                                    <option value="@r.RoomId" data-charge="@r.RoomChargePerDay">@r.RoomNumber &ndash; &#8377;@r.RoomChargePerDay/day</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Bed <span class="text-danger">*</span></label>
+                        <select id="BedId" class="form-select" onchange="calcEstimate()">
+                            <option value="">-- Select Room First --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fs-card" id="chargesSection" style="display:none">
+                <h6><i class="fas fa-receipt text-primary"></i> Room Charges</h6>
+                <div id="chargesList"></div>
+            </div>
+
+            @if (settings != null && settings.FoodModuleEnabled && foodPlans != null)
+            {
+                <div class="fs-card">
+                    <h6><i class="fas fa-utensils text-primary"></i> Food Plan</h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Food Plan @(settings.FoodMandatory ? "*" : "(Optional)")</label>
+                            <select id="FoodPlanId" class="form-select" onchange="foodSelected()">
+                                <option value="">-- No Food --</option>
+                                @foreach (var fp in foodPlans)
+                                {
+                                    <option value="@fp.FoodPlanId" data-charge="@fp.DailyCharge">@fp.PlanName &ndash; &#8377;@fp.DailyCharge/day</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <div class="text-muted small" id="foodChargeDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (settings != null && settings.AdvanceRequired)
+            {
+                <div class="fs-card">
+                    <h6><i class="fas fa-money-bill-wave text-primary"></i> Advance Payment</h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Advance Amount <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">&#8377;</span>
+                                <input type="number" id="AdvanceAmount" class="form-control" placeholder="0.00" min="0" onchange="calcEstimate()">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Mode</label>
+                            <select id="AdvancePayMode" class="form-select">
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="UPI">UPI</option>
+                                <option value="Cheque">Cheque</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div style="position:sticky; top:80px;">
+                <div class="est-box mb-3">
+                    <div class="fw-bold text-primary mb-2" style="font-size:0.82rem;"><i class="fas fa-calculator me-1"></i> Charge Estimate</div>
+                    <div class="est-row"><span>Duration</span><span id="eDays">-- days</span></div>
+                    <div class="est-row"><span>Room Rate/day</span><span id="eRoomRate">&#8377;0</span></div>
+                    <div class="est-row"><span>Room Total</span><span id="eRoomTotal">&#8377;0</span></div>
+                    <div class="est-row text-danger"><span>Compulsory</span><span id="eCompulsory">&#8377;0</span></div>
+                    <div class="est-row text-success"><span>Optional (selected)</span><span id="eOptional">&#8377;0</span></div>
+                    <div class="est-row text-info"><span>Food</span><span id="eFood">&#8377;0</span></div>
+                    <div class="est-row est-total"><span>Estimated Total</span><span id="eTotal">&#8377;0</span></div>
+                    <div class="est-row text-muted"><span>Advance</span><span id="eAdvance">&#8377;0</span></div>
+                    <div class="est-row fw-bold text-primary" style="font-size:0.9rem;">
+                        <span>Balance Est.</span><span id="eBalance">&#8377;0</span>
+                    </div>
+                </div>
+                <button class="admit-btn" onclick="submitAdmission()">
+                    <i class="fas fa-hospital-user me-2"></i> ADMIT PATIENT
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var roomChargePerDay = 0, compulsoryPerDay = 0, optionalPerDay = 0, foodPerDay = 0;
+    function fmt(n) { return '\u20B9' + parseFloat(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0 }); }
+    function daysBetween(d1, d2) { var diff = (new Date(d2) - new Date(d1)) / (1000 * 60 * 60 * 24); return Math.max(1, Math.ceil(diff)); }
+
+    function calcEstimate() {
+        var d1 = document.getElementById('AdmissionDate').value;
+        var d2 = document.getElementById('ExpectedDischarge').value;
+        if (!d1 || !d2) return;
+        var days = daysBetween(d1, d2);
+        var advance = parseFloat(document.getElementById('AdvanceAmount') ? document.getElementById('AdvanceAmount').value : 0) || 0;
+        var total = (roomChargePerDay + compulsoryPerDay + optionalPerDay + foodPerDay) * days;
+        document.getElementById('eDays').textContent = days + ' day(s)';
+        document.getElementById('eRoomRate').textContent = fmt(roomChargePerDay);
+        document.getElementById('eRoomTotal').textContent = fmt(roomChargePerDay * days);
+        document.getElementById('eCompulsory').textContent = fmt(compulsoryPerDay * days);
+        document.getElementById('eOptional').textContent = fmt(optionalPerDay * days);
+        document.getElementById('eFood').textContent = fmt(foodPerDay * days);
+        document.getElementById('eTotal').textContent = fmt(total);
+        document.getElementById('eAdvance').textContent = fmt(advance);
+        document.getElementById('eBalance').textContent = fmt(total - advance);
+    }
+
+    function filterWardsNA() {
+        var floorId = document.getElementById('FloorId') ? document.getElementById('FloorId').value : null;
+        var wardSelect = document.getElementById('WardId');
+        if(wardSelect){
+            var options = wardSelect.querySelectorAll('option:not([value=""])');
+            var firstVisible = "";
+            options.forEach(opt => {
+                var fl = opt.getAttribute('data-floor');
+                if (!floorId || fl == floorId) {
+                    opt.style.display = 'block';
+                    if(!firstVisible) firstVisible = opt.value;
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+            if(wardSelect.value && wardSelect.querySelector('option[value="'+wardSelect.value+'"]').style.display === 'none') {
+                wardSelect.value = firstVisible;
+            }
+            filterCategoriesNA();
+        } else {
+            loadRooms();
+        }
+    }
+
+    function filterCategoriesNA() {
+        var floorId = document.getElementById('FloorId') ? document.getElementById('FloorId').value : null;
+        var wardId = document.getElementById('WardId') ? document.getElementById('WardId').value : null;
+        var catSelect = document.getElementById('CategoryId');
+        if(catSelect){
+            var options = catSelect.querySelectorAll('option:not([value=""])');
+            var firstVisible = "";
+            options.forEach(opt => {
+                var fl = opt.getAttribute('data-floor');
+                var wd = opt.getAttribute('data-ward');
+                
+                var show = true;
+                if(floorId && fl != floorId) show = false;
+                if(wardId && wd != wardId) show = false;
+                
+                if (show) {
+                    opt.style.display = 'block';
+                    if(!firstVisible) firstVisible = opt.value;
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+            if(catSelect.value && catSelect.querySelector('option[value="'+catSelect.value+'"]').style.display === 'none') {
+                catSelect.value = firstVisible;
+            }
+        }
+        loadRooms();
+    }
+
+    function loadRooms() {
+        var floorId = document.getElementById('FloorId') ? document.getElementById('FloorId').value : '';
+        var wardId = document.getElementById('WardId') ? document.getElementById('WardId').value : '';
+        var catId = document.getElementById('CategoryId') ? document.getElementById('CategoryId').value : '';
+        fetch('/IPD/IPD_Room/GetRooms?floorId=' + floorId + '&wardId=' + wardId + '&categoryId=' + catId)
+            .then(r => r.json()).then(rooms => {
+                var sel = document.getElementById('RoomId');
+                sel.innerHTML = '<option value="">-- Select Room --</option>';
+                rooms.forEach(r => {
+                    sel.innerHTML += '<option value="' + r.RoomId + '" data-charge="' + r.RoomChargePerDay + '">' + r.RoomNumber + ' \u2013 \u20B9' + r.RoomChargePerDay + '/day</option>';
+                });
+                document.getElementById('BedId').innerHTML = '<option value="">-- Select Room First --</option>';
+                document.getElementById('chargesSection').style.display = 'none';
+            });
+    }
+
+    function roomSelected() {
+        var sel = document.getElementById('RoomId');
+        var opt = sel.options[sel.selectedIndex];
+        roomChargePerDay = parseFloat(opt.dataset.charge || 0);
+        var roomId = sel.value;
+        if (!roomId) { calcEstimate(); return; }
+        fetch('/IPD/IPD_Room/GetAvailableBeds?roomId=' + roomId)
+            .then(r => r.json()).then(beds => {
+                var bSel = document.getElementById('BedId');
+                bSel.innerHTML = '<option value="">-- Select Bed --</option>';
+                beds.forEach(b => { bSel.innerHTML += '<option value="' + b.BedId + '">\u2705 ' + b.BedNumber + ' (Available)</option>'; });
+                if (beds.length === 0) bSel.innerHTML = '<option value="">No available beds</option>';
+            });
+        fetch('/IPD/IPD_Room/GetRoomCharges?roomId=' + roomId)
+            .then(r => r.json()).then(charges => {
+                compulsoryPerDay = 0; optionalPerDay = 0;
+                var html = '';
+                if (charges.length === 0) { document.getElementById('chargesSection').style.display = 'none'; calcEstimate(); return; }
+                charges.forEach(c => {
+                    var type = c.IsCompulsory ? 'comp' : 'opt';
+                    var badge = c.IsCompulsory ? '<span class="charge-badge-comp">Compulsory</span>' : '<span class="charge-badge-opt">Optional</span>';
+                    var cb = c.IsCompulsory
+                        ? '<input type="checkbox" class="opt-charge me-2" data-amount="' + c.ChargeAmount + '" data-id="' + c.ChargeId + '" checked disabled>'
+                        : '<input type="checkbox" class="opt-charge me-2" data-amount="' + c.ChargeAmount + '" data-id="' + c.ChargeId + '" onchange="optionalChanged()">';
+                    html += '<div class="charge-item charge-' + type + '">' + cb + '<span class="me-auto">' + c.ChargeName + '</span>' + badge + '<strong class="ms-2">\u20B9' + c.ChargeAmount + '/day</strong></div>';
+                    if (c.IsCompulsory) compulsoryPerDay += c.ChargeAmount;
+                });
+                document.getElementById('chargesList').innerHTML = html;
+                document.getElementById('chargesSection').style.display = 'block';
+                calcEstimate();
+            });
+    }
+
+    function optionalChanged() {
+        optionalPerDay = 0;
+        document.querySelectorAll('.opt-charge:not([disabled]):checked').forEach(cb => { optionalPerDay += parseFloat(cb.dataset.amount || 0); });
+        calcEstimate();
+    }
+
+    function foodSelected() {
+        var sel = document.getElementById('FoodPlanId');
+        if (!sel) return;
+        var opt = sel.options[sel.selectedIndex];
+        foodPerDay = parseFloat(opt.dataset.charge || 0);
+        var el = document.getElementById('foodChargeDisplay');
+        if (el) el.textContent = foodPerDay > 0 ? '\u20B9' + foodPerDay + '/day added' : '';
+        calcEstimate();
+    }
+
+    function submitAdmission() {
+        var patientId = document.getElementById('PatientFid').value;
+        var roomId = document.getElementById('RoomId').value;
+        var bedId = document.getElementById('BedId').value;
+        if (!patientId) { alert('Please select a patient'); return; }
+        if (!roomId) { alert('Please select a room'); return; }
+        if (!bedId) { alert('Please select a bed'); return; }
+        var selIds = [];
+        document.querySelectorAll('.opt-charge:not([disabled]):checked').forEach(cb => selIds.push(cb.dataset.id));
+        var data = {
+            PatientFid: patientId,
+            DoctorId: document.getElementById('DoctorId') ? document.getElementById('DoctorId').value || null : null,
+            ReferredBy: document.getElementById('ReferredBy') ? document.getElementById('ReferredBy').value : '',
+            AdmissionDate: document.getElementById('AdmissionDate').value,
+            ExpectedDischarge: document.getElementById('ExpectedDischarge').value,
+            AdmissionType: document.getElementById('AdmissionType').value,
+            FloorId: document.getElementById('FloorId') ? document.getElementById('FloorId').value || null : null,
+            WardId: document.getElementById('WardId') ? document.getElementById('WardId').value || null : null,
+            CategoryId: document.getElementById('CategoryId') ? document.getElementById('CategoryId').value || null : null,
+            RoomId: roomId, BedId: bedId,
+            RoomChargeSnapshot: roomChargePerDay,
+            FoodPlanId: document.getElementById('FoodPlanId') ? document.getElementById('FoodPlanId').value || null : null,
+            FoodDailyCharge: foodPerDay,
+            AdvanceAmount: document.getElementById('AdvanceAmount') ? document.getElementById('AdvanceAmount').value || 0 : 0,
+            AdvancePayMode: document.getElementById('AdvancePayMode') ? document.getElementById('AdvancePayMode').value : 'Cash',
+            Remarks: document.getElementById('Remarks').value
+        };
+        fetch('/IPD/IPD_Booking/SaveAdmission', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ ...data, selectedChargeIds: selIds.join(',') })
+        }).then(r => r.json()).then(res => {
+            if (res.success) {
+                alert(res.message);
+                window.location.href = '/IPD/IPD_Booking/ActiveBookings';
+            } else {
+                alert('Error: ' + res.message);
+            }
+        });
+    }
+
+    // Patient autocomplete
+    var searchTimeout;
+    document.getElementById('patientSearch').addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        var term = this.value;
+        var dropdown = document.getElementById('patientDropdown');
+        if (term.length < 2) { dropdown.style.display = 'none'; return; }
+        searchTimeout = setTimeout(() => {
+            fetch('/IPD/IPD_Booking/SearchPatient?term=' + encodeURIComponent(term))
+                .then(r => r.json()).then(patients => {
+                    if (patients.length === 0) { dropdown.style.display = 'none'; return; }
+                    dropdown.innerHTML = '';
+                    patients.forEach(p => {
+                        var div = document.createElement('div');
+                        div.className = 'patient-option';
+                        div.innerHTML = '<div class="patient-option-name">' + p.Name + '</div>';
+                        div.onclick = function () {
+                            document.getElementById('patientSearch').value = p.Name;
+                            document.getElementById('PatientFid').value = p.Id;
+                            dropdown.style.display = 'none';
+                        };
+                        dropdown.appendChild(div);
+                    });
+                    dropdown.style.display = 'block';
+                });
+        }, 300);
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!document.getElementById('patientWrapper').contains(e.target)) {
+            document.getElementById('patientDropdown').style.display = 'none';
+        }
+    });
+</script>

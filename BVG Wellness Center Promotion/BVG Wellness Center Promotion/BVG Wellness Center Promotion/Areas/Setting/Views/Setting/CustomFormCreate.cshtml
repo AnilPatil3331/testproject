@@ -1,0 +1,679 @@
+﻿
+@{
+    ViewBag.Title = "CustomFormCreate";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+
+<<div class="container-fluid" style="padding-left:15px !important;">
+     <div class="row">
+         <div class="col-12 col-md-3">
+             <div>
+                 <div class="card">
+                     <div class="card-header d-flex justify-content-between align-items-center">
+                         <h2>
+                             <i class="fas fa-chevron-left text-primary">
+                             </i>
+                         </h2>
+                         <h2 class="text-center text-primary">
+                             Form settings
+                         </h2>
+                         <h2>
+                             <i class="fas fa-chevron-right text-primary">
+                             </i>
+                         </h2>
+                     </div>
+                     <!---->
+                     <!---->
+                     <!---->
+                     <div class="card-body">
+                         <div class="card-container">
+                             <div class="col-md-12">
+                                 <div class="form-group">
+                                     <label for="module_type" class="form-control-label">
+                                         Module type
+                                         <span class="text-danger">
+                                             *
+                                         </span>
+                                     </label>
+                                     <div class="kivi-pr">
+                                         <div tabindex="-1" role="combobox" aria-owns="listbox-module_type" class="multiselect">
+                                             <div class="multiselect__select">
+                                             </div>
+                                             <div class="multiselect__tags">
+                                                 <div class="multiselect__tags-wrap" style="display: none;">
+                                                 </div>
+                                                 <!---->
+                                                 <div class="multiselect__spinner" style="display: none;">
+                                                 </div>
+                                                 <input name="" id="module_type" type="text" autocomplete="off" spellcheck="false"
+                                                        placeholder="Module type" tabindex="0" aria-controls="listbox-module_type"
+                                                        class="multiselect__input" style="width: 0px; position: absolute; padding: 0px;">
+                                                 <span class="multiselect__single">
+                                                     Appointment module
+                                                 </span>
+                                                 <!---->
+                                             </div>
+                                             <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                 <ul role="listbox" id="listbox-module_type" class="multiselect__content"
+                                                     style="display: inline-block;">
+                                                     <!---->
+                                                     <li id="module_type-0" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option multiselect__option--highlight">
+                                                             <span>
+                                                                 Doctor Module
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="module_type-1" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Patient Module
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="module_type-2" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Patient Encounter Module
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="module_type-3" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option multiselect__option--selected">
+                                                             <span>
+                                                                 Appointment Module
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             No elements found. Consider changing the search query.
+                                                         </span>
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             List is empty.
+                                                         </span>
+                                                     </li>
+                                                 </ul>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="col-md-12">
+                                 <div class="form-group">
+                                     <label for="field_status" class="form-control-label">
+                                         Status
+                                         <span class="text-danger">
+                                             *
+                                         </span>
+                                     </label>
+                                     <div class="kivi-pr">
+                                         <div tabindex="-1" role="combobox" aria-owns="listbox-field_status" class="multiselect">
+                                             <div class="multiselect__select">
+                                             </div>
+                                             <div class="multiselect__tags">
+                                                 <div class="multiselect__tags-wrap" style="display: none;">
+                                                 </div>
+                                                 <!---->
+                                                 <div class="multiselect__spinner" style="display: none;">
+                                                 </div>
+                                                 <input name="" id="field_status" type="text" autocomplete="off" spellcheck="false"
+                                                        placeholder="Select status" tabindex="0" aria-controls="listbox-field_status"
+                                                        class="multiselect__input" style="width: 0px; position: absolute; padding: 0px;">
+                                                 <span class="multiselect__single">
+                                                     Active
+                                                 </span>
+                                                 <!---->
+                                             </div>
+                                             <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                 <ul role="listbox" id="listbox-field_status" class="multiselect__content"
+                                                     style="display: inline-block;">
+                                                     <!---->
+                                                     <li id="field_status-0" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option multiselect__option--highlight multiselect__option--selected">
+                                                             <span>
+                                                                 Active
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="field_status-1" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Inactive
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             No elements found. Consider changing the search query.
+                                                         </span>
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             List is empty.
+                                                         </span>
+                                                     </li>
+                                                 </ul>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="col-md-12">
+                                 <div class="form-group">
+                                     <label for="form_icon" class="form-control-label">
+                                         Form icon
+                                     </label>
+                                     <div class="kivi-pr">
+                                         <input id="form_icon" placeholder="Enter font icon class" class="form-control">
+                                     </div>
+                                 </div>
+                             </div>
+                             <div>
+                                 <div class="col-md-12">
+                                     <div class="form-group">
+                                         <label for="field_status" class="form-control-label">
+                                             Show if Appointment status
+                                             <span class="text-danger">
+                                                 *
+                                             </span>
+                                         </label>
+                                         <div class="kivi-pr">
+                                             <div tabindex="-1" role="combobox" aria-owns="listbox-show_mode" class="multiselect">
+                                                 <div class="multiselect__select">
+                                                 </div>
+                                                 <div class="multiselect__tags">
+                                                     <div class="multiselect__tags-wrap">
+                                                         <span class="multiselect__tag">
+                                                             <span>
+                                                                 Booked
+                                                             </span>
+                                                             <i tabindex="1" class="multiselect__tag-icon">
+                                                             </i>
+                                                         </span>
+                                                         <span class="multiselect__tag">
+                                                             <span>
+                                                                 Check out
+                                                             </span>
+                                                             <i tabindex="1" class="multiselect__tag-icon">
+                                                             </i>
+                                                         </span>
+                                                         <span class="multiselect__tag">
+                                                             <span>
+                                                                 Check in
+                                                             </span>
+                                                             <i tabindex="1" class="multiselect__tag-icon">
+                                                             </i>
+                                                         </span>
+                                                     </div>
+                                                     <!---->
+                                                     <div class="multiselect__spinner" style="display: none;">
+                                                     </div>
+                                                     <input name="" id="show_mode" type="text" autocomplete="off" spellcheck="false"
+                                                            placeholder="Show if Appointment status" tabindex="0" aria-controls="listbox-show_mode"
+                                                            class="multiselect__input" style="width: 0px; position: absolute; padding: 0px;">
+                                                     <!---->
+                                                     <!---->
+                                                 </div>
+                                                 <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                     <ul role="listbox" id="listbox-show_mode" class="multiselect__content"
+                                                         style="display: inline-block;">
+                                                         <!---->
+                                                         <li id="show_mode-0" role="option" class="multiselect__element">
+                                                             <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                                   class="multiselect__option multiselect__option--highlight multiselect__option--selected">
+                                                                 <span>
+                                                                     Booked
+                                                                 </span>
+                                                             </span>
+                                                             <!---->
+                                                         </li>
+                                                         <li id="show_mode-1" role="option" class="multiselect__element">
+                                                             <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                                   class="multiselect__option multiselect__option--selected">
+                                                                 <span>
+                                                                     Check out
+                                                                 </span>
+                                                             </span>
+                                                             <!---->
+                                                         </li>
+                                                         <li id="show_mode-2" role="option" class="multiselect__element">
+                                                             <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                                   class="multiselect__option multiselect__option--selected">
+                                                                 <span>
+                                                                     Check in
+                                                                 </span>
+                                                             </span>
+                                                             <!---->
+                                                         </li>
+                                                         <li style="display: none;">
+                                                             <span class="multiselect__option">
+                                                                 No elements found. Consider changing the search query.
+                                                             </span>
+                                                         </li>
+                                                         <li style="display: none;">
+                                                             <span class="multiselect__option">
+                                                                 List is empty.
+                                                             </span>
+                                                         </li>
+                                                     </ul>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-12">
+                                     <div class="form-group">
+                                         <label for="show_mode" class="form-control-label">
+                                             Show in
+                                             <span class="text-danger">
+                                                 *
+                                             </span>
+                                         </label>
+                                         <div class="kivi-pr">
+                                             <div tabindex="-1" role="combobox" aria-owns="listbox-show_mode" class="multiselect">
+                                                 <div class="multiselect__select">
+                                                 </div>
+                                                 <div class="multiselect__tags">
+                                                     <div class="multiselect__tags-wrap">
+                                                         <span class="multiselect__tag">
+                                                             <span>
+                                                                 Encounter
+                                                             </span>
+                                                             <i tabindex="1" class="multiselect__tag-icon">
+                                                             </i>
+                                                         </span>
+                                                         <span class="multiselect__tag">
+                                                             <span>
+                                                                 Appointment
+                                                             </span>
+                                                             <i tabindex="1" class="multiselect__tag-icon">
+                                                             </i>
+                                                         </span>
+                                                     </div>
+                                                     <!---->
+                                                     <div class="multiselect__spinner" style="display: none;">
+                                                     </div>
+                                                     <input name="" id="show_mode" type="text" autocomplete="off" spellcheck="false"
+                                                            placeholder="Show in" tabindex="0" aria-controls="listbox-show_mode" class="multiselect__input"
+                                                            style="width: 0px; position: absolute; padding: 0px;">
+                                                     <!---->
+                                                     <!---->
+                                                 </div>
+                                                 <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                     <ul role="listbox" id="listbox-show_mode" class="multiselect__content"
+                                                         style="display: inline-block;">
+                                                         <!---->
+                                                         <li id="show_mode-0" role="option" class="multiselect__element">
+                                                             <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                                   class="multiselect__option multiselect__option--highlight multiselect__option--selected">
+                                                                 <span>
+                                                                     Encounter
+                                                                 </span>
+                                                             </span>
+                                                             <!---->
+                                                         </li>
+                                                         <li id="show_mode-1" role="option" class="multiselect__element">
+                                                             <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                                   class="multiselect__option multiselect__option--selected">
+                                                                 <span>
+                                                                     Appointment
+                                                                 </span>
+                                                             </span>
+                                                             <!---->
+                                                         </li>
+                                                         <li style="display: none;">
+                                                             <span class="multiselect__option">
+                                                                 No elements found. Consider changing the search query.
+                                                             </span>
+                                                         </li>
+                                                         <li style="display: none;">
+                                                             <span class="multiselect__option">
+                                                                 List is empty.
+                                                             </span>
+                                                         </li>
+                                                     </ul>
+                                                 </div>
+                                             </div>
+                                             <span class="text-primary">
+                                                 <small>
+                                                     Note: If encounter is selected, form will only be displayed if there has
+                                                     been an appointment encounter
+                                                 </small>
+                                             </span>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="col-md-12">
+                                 <div class="form-group">
+                                     <label for="show_mode" class="form-control-label">
+                                         Clinics
+                                         <span class="text-danger">
+                                             *
+                                         </span>
+                                     </label>
+                                     <div class="kivi-pr">
+                                         <div tabindex="-1" role="combobox" aria-owns="listbox-show_mode" class="multiselect">
+                                             <div class="multiselect__select">
+                                             </div>
+                                             <div class="multiselect__tags">
+                                                 <div class="multiselect__tags-wrap" style="display: none;">
+                                                 </div>
+                                                 <!---->
+                                                 <div class="multiselect__spinner" style="display: none;">
+                                                 </div>
+                                                 <input name="" id="show_mode" type="text" autocomplete="off" spellcheck="false"
+                                                        placeholder="Clinics" tabindex="0" aria-controls="listbox-show_mode" class="multiselect__input"
+                                                        style="width: 0px; position: absolute; padding: 0px;">
+                                                 <!---->
+                                                 <span class="multiselect__placeholder">
+                                                     Clinics
+                                                 </span>
+                                             </div>
+                                             <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                 <ul role="listbox" id="listbox-show_mode" class="multiselect__content"
+                                                     style="display: inline-block;">
+                                                     <!---->
+                                                     <li id="show_mode-0" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option multiselect__option--highlight">
+                                                             <span>
+                                                                 Valley Clinic
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             No elements found. Consider changing the search query.
+                                                         </span>
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             List is empty.
+                                                         </span>
+                                                     </li>
+                                                 </ul>
+                                             </div>
+                                         </div>
+                                         <span class="text-primary">
+                                             <small>
+                                                 Note: To show form to all clinics, please leave the selection blank.
+                                             </small>
+                                         </span>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="col-md-12">
+                                 <div class="form-group">
+                                     <label for="show_role" class="form-control-label">
+                                         Roles
+                                         <span class="text-danger">
+                                             *
+                                         </span>
+                                     </label>
+                                     <div class="kivi-pr">
+                                         <div tabindex="-1" role="combobox" aria-owns="listbox-show_role" class="multiselect">
+                                             <div class="multiselect__select">
+                                             </div>
+                                             <div class="multiselect__tags">
+                                                 <div class="multiselect__tags-wrap" style="display: none;">
+                                                 </div>
+                                                 <!---->
+                                                 <div class="multiselect__spinner" style="display: none;">
+                                                 </div>
+                                                 <input name="" id="show_role" type="text" autocomplete="off" spellcheck="false"
+                                                        placeholder="Roles" tabindex="0" aria-controls="listbox-show_role" class="multiselect__input"
+                                                        style="width: 0px; position: absolute; padding: 0px;">
+                                                 <!---->
+                                                 <span class="multiselect__placeholder">
+                                                     Roles
+                                                 </span>
+                                             </div>
+                                             <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                 <ul role="listbox" id="listbox-show_role" class="multiselect__content"
+                                                     style="display: inline-block;">
+                                                     <!---->
+                                                     <li id="show_role-0" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option multiselect__option--highlight">
+                                                             <span>
+                                                                 Administrator
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="show_role-1" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Clinic admin
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="show_role-2" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Doctor
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="show_role-3" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Patient
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li id="show_role-4" role="option" class="multiselect__element">
+                                                         <span data-select="Press enter to select" data-selected="Selected" data-deselect="Press enter to remove"
+                                                               class="multiselect__option">
+                                                             <span>
+                                                                 Receptionist
+                                                             </span>
+                                                         </span>
+                                                         <!---->
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             No elements found. Consider changing the search query.
+                                                         </span>
+                                                     </li>
+                                                     <li style="display: none;">
+                                                         <span class="multiselect__option">
+                                                             List is empty.
+                                                         </span>
+                                                     </li>
+                                                 </ul>
+                                             </div>
+                                         </div>
+                                         <span class="text-primary">
+                                             <small>
+                                                 Note: To show form to all roles, please leave the selection blank.
+                                             </small>
+                                         </span>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-12 col-md-9">
+             <div class="row">
+                 <!---->
+                 <div class="col-sm-12">
+                     <form id="customFormDataForm" novalidate="novalidate">
+                         <div class="card p-0 shadow">
+                             <!---->
+                             <header class="card-header">
+                                 <div class="row">
+                                     <div class="col-sm-12 col-md-8 col-lg-8">
+                                         <h3 class="mb-0">
+                                             Add custom form
+                                         </h3>
+                                     </div>
+                                     <div class="col-sm-12 col-md-4 col-lg-4">
+                                         <div class="d-flex justify-content-end align-items-center">
+                                             <button type="button" class="btn btn-sm btn-primary d-flex justify-content-center align-items-center">
+                                                 <i class="fa fa-cogs">
+                                                 </i>
+                                                 Form setting
+                                             </button>
+                                             <!---->
+                                             <button type="button" class="btn btn-sm btn-primary d-flex justify-content-center align-items-center">
+                                                 <i class="fa fa-eye">
+                                                 </i>
+                                             </button>
+                                             <button type="button" class="btn btn-sm btn-primary d-flex justify-content-center align-items-center" id="BtnBack">
+                                                 <i class="fa fa-angle-double-left">
+                                                 </i>
+                                                 Back
+                                             </button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </header>
+                             <div class="card-body">
+                                 <!---->
+                                 <!---->
+                                 <div class="p-2  field-border">
+                                     <div class="row">
+                                         <div class="col-12 d-flex justify-content-end">
+                                             <i role="button" class="fa fa-edit text-primary cursor-pointer">
+                                             </i>
+                                         </div>
+                                     </div>
+                                     <h2 class="text-primary text-center mb-2">
+                                         Form name&nbsp;
+                                         <span>
+                                             <i class="fa fa-edit text-primary">
+                                             </i>
+                                         </span>
+                                     </h2>
+                                     <div class="mt-2">
+                                         <div class="row mb-2">
+                                             <div class="col-md-6 ">
+                                                 <div class="form-group">
+                                                     <div class="d-flex justify-content-between align-items-center">
+                                                         <label for="custom-form-field-1_0">
+                                                             Example field 1
+                                                             <span class="text-danger">
+                                                                 *
+                                                             </span>
+                                                         </label>
+                                                         <span>
+                                                             <i class="fa fa-edit text-primary cursor-pointer">
+                                                             </i>
+                                                             &nbsp;
+                                                             <i class="fa fa-trash text-danger cursor-pointer">
+                                                             </i>
+                                                         </span>
+                                                     </div>
+                                                     <input id="custom-form-field-1_0" placeholder="Enter field 1" type="text"
+                                                            class="form-control">
+                                                 </div>
+                                             </div>
+                                             <div class="col-md-6 ">
+                                                 <div class="form-group">
+                                                     <div class="d-flex justify-content-between align-items-center">
+                                                         <label for="custom-form-field-2_1">
+                                                             example field 2
+                                                             <span class="text-danger">
+                                                                 *
+                                                             </span>
+                                                         </label>
+                                                         <span>
+                                                             <i class="fa fa-edit text-primary cursor-pointer">
+                                                             </i>
+                                                             &nbsp;
+                                                             <i class="fa fa-trash text-danger cursor-pointer">
+                                                             </i>
+                                                         </span>
+                                                     </div>
+                                                     <div>
+                                                         <div class="custom-control custom-checkbox custom-control-inline">
+                                                             <input type="checkbox" id="custom-form-field-2_0" name="custom_field_undefined"
+                                                                    class="custom-control-input">
+                                                             <label for="custom-form-field-2_0" class="custom-control-label">
+                                                                 Yes
+                                                             </label>
+                                                         </div>
+                                                         <div class="custom-control custom-checkbox custom-control-inline">
+                                                             <input type="checkbox" id="custom-form-field-2_1" name="custom_field_undefined"
+                                                                    class="custom-control-input">
+                                                             <label for="custom-form-field-2_1" class="custom-control-label">
+                                                                 No
+                                                             </label>
+                                                         </div>
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                             <div class="col-md-6 d-flex justify-content-start align-items-center mt-2">
+                                                 <i class="fa fa-plus text-primary cursor-pointer">
+                                                     &nbsp;Add
+                                                 </i>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <footer class="card-footer">
+                                 <div class="row">
+                                     <div class="col-md-12 p-0">
+                                         <div class="d-flex justify-content-end">
+                                             <button type="submit" class="btn btn-primary rtl-ml-2">
+                                                 <i class="fa fa-save">
+                                                 </i>
+                                                 Save
+                                             </button>
+                                             <button type="button" class="btn btn-outline-danger">
+                                                 Cancel
+                                             </button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </footer>
+                             <!---->
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
+     </div>
+    </div>
+<script>
+    $(document).ready(function () {
+        // Attach a click event handler to the button with ID "BtnBack"
+        $("#BtnBack").click(function () {
+            // Define the URL using Razor syntax to generate the action link
+            var url = '@Url.Action("CustomForm", "Setting")';
+            // Navigate to the specified URL
+            window.location.href = url;
+        });
+    });
+</script>
+

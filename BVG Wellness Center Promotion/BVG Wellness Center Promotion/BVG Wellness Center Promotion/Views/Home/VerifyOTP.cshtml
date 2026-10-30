@@ -1,0 +1,72 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/assets/css/app.min.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome-all.min.css" rel="stylesheet" />
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="~/assets/js/CustomeAlert/customAlert.js?v=1.1"></script>
+
+
+<div class="container-fluid" style="background-image: url('/images/BackGroundImage.jpg'); background-size: cover; background-position: center; height: 100vh;">
+    <div class="row justify-content-center align-items-center" style="height: 100%; width:100%">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4" style="margin-left: 64%;">
+            <div class="card shadow border-0">
+                <div class="card-header text-center" style="background-color: #5881ed; color: white; padding: 15px;">
+                    <h5 class="mb-0" style="font-weight: bold; color:white;">Verify OTP</h5>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p class="small text-muted mb-4">OTP sent to <b>@Session["ResetEmail"]</b></p>
+
+                    <form action="/Home/VerifyOTP" method="post">
+                        <div class="form-group mb-4">
+                            <input type="text" name="UserOTP" class="form-control text-center" required
+                                   maxlength="4" placeholder="0 0 0 0"
+                                   style="height: 60px; font-size: 28px; letter-spacing: 15px; font-weight: bold; border: 2px solid #5881ed; color: #5881ed;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: #5881ed; border:none; height: 45px; font-weight:bold;">
+                            Verify & Proceed
+                        </button>
+                    </form>
+
+                    <!-- Resend OTP Link & Countdown Timer -->
+                    <div class="mt-4">
+                        <span id="timerText" class="text-muted small">Didn't receive the OTP? Resend in <b id="countdown">30</b>s</span>
+                        <a href="@Url.Action("ResendOTP", "Home")" id="resendLink" class="text-primary font-weight-bold d-none" style="text-decoration: none; font-size: 0.9rem;">
+                            <i class="fa fa-redo"></i> Resend OTP
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["Message"] != null)
+{
+    <script>
+        $(document).ready(function() {
+            showCustomAlert('@TempData["Message"]', '@TempData["Icon"]', "");
+        });
+    </script>
+}
+
+<script>
+    $(document).ready(function () {
+        var timeLeft = 30; // ३० सेकंदांचा टाइमर
+        var timer = setInterval(function () {
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                $('#timerText').addClass('d-none');
+                $('#resendLink').removeClass('d-none');
+            } else {
+                $('#countdown').text(timeLeft);
+            }
+            timeLeft -= 1;
+        }, 1000);
+    });
+</script>

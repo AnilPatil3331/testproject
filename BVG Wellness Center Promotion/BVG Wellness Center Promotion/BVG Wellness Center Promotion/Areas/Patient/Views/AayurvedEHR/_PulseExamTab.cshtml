@@ -1,0 +1,1510 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane" id="PulseExam" role="tabpanel">
+                                <div class="PulseExam-wrapper">
+
+
+                                    <form action="@Url.Action("PulseExam", "AayurvedEHR", new { area = "Patient" })" method="post" novalidate>
+
+                                        <div class="p-1 mt-2">
+                                            <div class="section">
+                                                <div class="section-heading">
+                                                    <h4 class="card-title">नाडीपरीक्षा PulseExam  </h4>
+                                                    <div>
+                                                        <button type="button"
+                                                                class="btn btn-md toggle-btn"
+                                                                onclick="toggleSection(this)">
+                                                            -
+                                                        </button>
+
+
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group"></div>
+                                                    <div class="col-md-9 form-group">
+
+                                                        @Html.HiddenFor(m => m.Fid)
+                                                        <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                                        <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+
+
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="custom-control custom-radio mr-4">
+                                                                @Html.RadioButtonFor(m => m.Condition, "प्राकृत Normal", new { @class = "custom-control-input", id = "Normalप्राकृत", name = "condition" })
+                                                                <label class="custom-control-label" for="Normalप्राकृत"> प्राकृत (Normal)</label>
+                                                            </div>
+
+
+                                                            <div class="custom-control custom-radio ml-4">
+                                                                @Html.RadioButtonFor(m => m.Condition, "विकृत Abnormal", new { @class = "custom-control-input", id = "Abnormalविकृत", name = "condition" })
+                                                                <label class="custom-control-label" for="Abnormalविकृत"> विकृत (Abnormal)</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <!-- Spacer column -->
+                                                    </div>
+
+                                                    <div class="col-md-4 form-group row">
+                                                        @Html.TextBoxFor(m => m.PulseRate, new
+                                                         {
+                                                             @class = "form-control col-8",
+                                                             @id = "pulseRate",
+                                                             @readonly = "readonly",
+                                                             oninput = "this.value=this.value.slice(0,3); syncPulse(this.value);"
+                                                         })
+                                                        <span class="input-group-supportx col-3">/ Min</span>
+                                                        <label class="floating-label" for="pulseRate"> नाडीगती Pulse Rate   </label>
+                                                        <div class="hint-text">Normal: 60-100 bpm</div>
+                                                    </div>
+
+                                                    <div class="col-md-6 form-group row">
+
+                                                        <div class="col-md-7">
+                                                            <div class="row">
+                                                                @Html.TextBoxFor(m => m.BloodPressureSys, new
+                                                                  {
+                                                                      @class = "form-control col-8",
+                                                                      @id = "BPSys2",
+                                                                      @readonly = "readonly",
+                                                                      oninput = "this.value=this.value.slice(0,3); syncAllBP('top');"
+                                                                  })
+                                                                <span class="input-group-supportx col-4">
+                                                                    mm of Hg
+                                                                </span>
+                                                                <label class="floating-label" for="BPSys">
+                                                                    रक्तभार  BP  (Sys)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-5">
+                                                            <div class="row">
+                                                                @Html.TextBoxFor(m => m.BloodPressureDia, new
+                                                                 {
+                                                                     @class = "form-control col-10",
+                                                                     @id = "BPDia2",
+                                                                     @readonly = "readonly",
+                                                                     oninput = "this.value=this.value.slice(0,3); syncAllBP('top');"
+                                                                 })
+                                                                <span class="input-group-supportx col-2">/</span>
+                                                                <label class="floating-label" for="BPDia">
+                                                                    रक्तभार  BP  (Dia)
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="hint-text" style="padding-left: 15px;">Normal: 120/80 mm Hg</div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row mt-3">
+                                                    <div class="col-md-2 form-group">
+                                                        <!-- Spacer column -->
+                                                    </div>
+                                                    <div class="col-md-4 form-group row">
+                                                        @Html.TextBoxFor(m => m.Weight, new
+                                                         {
+                                                             @class = "form-control col-8",
+                                                             @id = "PulseExamWeight",
+                                                             @readonly = "readonly",
+                                                             oninput = "this.value=this.value.slice(0,5); syncWeight(this.value);"
+                                                         })
+                                                        <span class="input-group-supportx col-3">kg</span>
+                                                        <label class="floating-label" for="PulseExamWeight"> शरीरभार Weight </label>
+                                                    </div>
+                                                </div>
+
+                                                <hr>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">दोष Dosh </div>
+                                                    </div>
+                                                    <div class="col-md-9 form-group pl-3">
+
+                                                        <!-- Row 1 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Vat, new { @id = "वातV", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वातV">वात V</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Vataf, new { @id = "वातकफVK", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वातकफVK">वातकफ VK</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Vatpit, new { @id = "वातपित्तVP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वातपित्तVP">वातपित्त VP</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.VarKafPit, new { @id = "वातकफपित्तVKP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वातकफपित्तVKP">वातकफपित्त VKP</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.VatPitKaf, new { @id = "वातपित्तकफVPK", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वातपित्तकफVPK">वातपित्तकफ VPK</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Row 2 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Leech, new { @id = "जलौकाLeech", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="जलौकाLeech">जलौका Leech</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Snake, new { @id = "सर्पSnake", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="सर्पSnake">सर्प Snake</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Row 3 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Pitta, new { @id = "पित्तP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पित्तP">पित्त P</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.PittaKaf, new { @id = "पित्तकफPK", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पित्तकफPK">पित्तकफ PK</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.PittaVat, new { @id = "पित्तवातPV", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पित्तवातPV">पित्तवात PV</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.PottaKafVat, new { @id = "पित्तकफवातPKV", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पित्तकफवातPKV">पित्तकफवात PKV</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.PittaVatKaf, new { @id = "पित्तवातकफPVK", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पित्तवातकफPVK">पित्तवातकफ PVK</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Row 4 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Sparrow, new { @id = "कुलिंगSparrow", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कुलिंगSparrow">कुलिंग Sparrow</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Crow, new { @id = "काकCrow", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="काकCrow">काक Crow</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Monkey, new { @id = "हरीMonkey", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="हरीMonkey">हरी Monkey</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Frog, new { @id = "भेकमण्डूकFrog", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="भेकमण्डूकFrog">भेक- मण्डूक Frog</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Row 5 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.kaf, new { @id = "कफk", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कफk">कफ k</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.KaffPitta, new { @id = "कफपित्तKP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कफपित्तKP">कफपित्त KP</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Kaffvtta, new { @id = "कफवातKV", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कफवातKV">कफवात KV</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.KafPittaVat, new { @id = "कफपित्तवातKPV", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कफपित्तवातKPV">कफपित्तवात KPV</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.KVP, new { @id = "कफवातपित्तKVP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="कफवातपित्तKVP">कफवातपित्त KVP</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Row 6 -->
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Swan, new { @id = "हंसSwan", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="हंसSwan">हंस Swan</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Pigeon, new { @id = "पारावतPigeon", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="पारावतPigeon">पारावत Pigeon</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.Peacock, new { @id = "मयूरPeacock", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="मयूरPeacock">मयूर Peacock</label>
+                                                            </div>
+
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.SaniPat, new { @id = "सन्निपातजSP", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="सन्निपातजSP">सन्निपातज SP</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.BustardQuail, new { @id = "लावाBustardQuail", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="लावाBustardQuail">लावा Bustard Quail</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.GreyBird, new { @id = "तित्तिरGreyBird", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="तित्तिरGreyBird">तित्तिर Grey Bird</label>
+                                                            </div>
+                                                            <div class="col-md-4 mb-2">
+                                                                @Html.CheckBoxFor(m => m.ButtonQuai, new { @id = "वर्तकButtonQuai", @class = "form-check-input" })
+                                                                <label class="form-check-label" for="वर्तकButtonQuai">वर्तक Button Quail</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!-- Row 7 -->
+                                                    <!-- Row 8 -->
+
+
+                                                </div>
+                                            </div>
+
+                                            <hr>
+
+                                            <!-- सामताUndigested -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">सामता Undigested</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.SamataUndigested, "निरामNormal", new { id = "SamataNormal", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SamataNormal">निराम Normal</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.SamataUndigested, "अल्पMild", new { id = "SamataMild", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SamataMild">अल्प Mild</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.SamataUndigested, "अतिExtreme", new { id = "SamataExtreme", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SamataExtreme">अति Extreme</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- गतिMovement -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">गति Movement</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row">
+
+
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement1, "सरलStraight", new { id = "GatiStraight", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiStraight">सरल Straight</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement1, "तिर्यक्Obliquely", new { id = "GatiOblique", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiOblique">तिर्यक् Obliquely</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement1, "वक्रCurved", new { id = "GatiCurved", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiCurved">वक्र Curved</label>
+                                                    </div>
+
+
+
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement2, "दीर्घLong", new { id = "GatiLong", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiLong">दीर्घ Long</label>
+                                                    </div>
+
+
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement2, "ऱ्हस्वShort", new { id = "GatiShort", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiShort">ऱ्हस्व Short</label>
+                                                    </div>
+
+
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement3, "समEqual", new { id = "GatiEqual", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiEqual">सम Equal</label>
+                                                    </div>
+
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.GatiMovement3, "विषमUnequal", new { id = "GatiUnequal", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="GatiUnequal">विषम Unequal</label>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- वेग Speed -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">वेग Speed</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "मंदSlow", new { id = "SpeedSlow", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedSlow">मंद Slow</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "चपलFast", new { id = "SpeedChapalFast", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedChapalFast">चपल Fast</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "वेगवतीQuick", new { id = "SpeedQuick", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedQuick">वेगवती Quick</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "शीघ्रRapid", new { id = "SpeedRapid", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedRapid">शीघ्र Rapid</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "तीव्रAcute", new { id = "SpeedAcute", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedAcute">तीव्र Acute</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "नियमितRegular", new { id = "SpeedRegular", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedRegular">नियमित Regular</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Speed, "अनियमितIrregular", new { id = "SpeedIrregular", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="SpeedIrregular">अनियमित Irregular</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- लय Rhythm -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">लय Rhythm</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "कम्पनTrembling", new { id = "RhythmTrembling", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmTrembling">कम्पन Trembling</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "स्फुरणVibration", new { id = "RhythmVibration", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmVibration">स्फुरण Vibration</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "स्पंदनPulsation", new { id = "RhythmPulsation", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmPulsation">स्पंदन Pulsation</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "स्थिरStable", new { id = "RhythmStable", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmStable">स्थिर Stable</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "अस्थिरUnstable", new { id = "RhythmUnstable", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmUnstable">अस्थिर Unstable</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "चञ्चलUnsteady", new { id = "RhythmUnsteady", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmUnsteady">चञ्चल Unsteady</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "सूक्ष्मMicro", new { id = "RhythmMicro", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmMicro">सूक्ष्म Micro</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "गंभीरDeep", new { id = "RhythmDeep", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmDeep">गंभीर Deep</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "स्निग्धSticky", new { id = "RhythmSticky", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmSticky">स्निग्ध Sticky</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "शुष्कDry", new { id = "RhythmDry", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmDry">शुष्क Dry</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "कठीणHard", new { id = "RhythmHard", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmHard">कठीण Hard</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Rhythm, "मृदुSoft", new { id = "RhythmSoft", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="RhythmSoft">मृदु Soft</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- बल Strength -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">बल Strength</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Strength, "क्षीणWeak", new { id = "StrengthWeak", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="StrengthWeak">क्षीण Weak</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Strength, "मध्यबलBalanced", new { id = "StrengthModerate", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="StrengthModerate">मध्यबल Balanced</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Strength, "प्रबलStrong", new { id = "StrengthStrong", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="StrengthStrong">प्रबल Strong</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- ध्वनि Volume -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">घनफल Volume/Density</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Volume, "लघुLight", new { id = "VolumeLow", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="VolumeLow">लघु Light</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Volume, "मध्यMedium", new { id = "VolumeMedium", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="VolumeMedium">मध्य Medium</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Volume, "गुरुHeavy", new { id = "VolumeHigh", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="VolumeHigh">गुरु Heavy</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- ताप Temperature -->
+                                            <div class="form-row">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">ताप Temperature</div>
+                                                </div>
+                                                <div class="col-md-9 form-group pl-3 row align-items-center">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Temperature, "शीतCold", new { id = "TempCold", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="TempCold">शीत Cold</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Temperature, "समNormal", new { id = "TempNormal", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="TempNormal">सम Normal</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.Temperature, "उष्णHot", new { id = "TempHot", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="TempHot">उष्ण Hot</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                        </div>
+
+                                        <hr>
+
+
+                                        <div class="section">
+                                            <div class="section-heading">
+                                                <h4 class="card-title">मूत्रपरीक्षा Urine Exam</h4>
+                                                <div>
+                                                    <button type="button"
+                                                            class="btn btn-md toggle-btn"
+                                                            onclick="toggleSection(this)">
+                                                        -
+                                                    </button>
+
+
+                                                </div>
+
+
+
+                                            </div>
+
+                                            <!-- प्राकृतसम S -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">प्राकृतसम S</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrinePrakritasama, "Normalप्राकृत", new { id = "UrinePrakritasama", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrinePrakritasama">Normal प्राकृत</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrinePrakritasama, "Abnormalविकृत", new { id = "UrinePrakritasamaOthers", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrinePrakritasamaOthers">Abnormal विकृत</label>
+                                                    </div>
+                                                    @*<div class="col-6">
+                                                            @Html.TextBoxFor(m => m.UrinePrakritasamaOtherText, new { @class = "form-control", placeholder = "Specify if Others" })
+                                                        </div>*@
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- वात V -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">वात V</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineVata, "पाण्डुरं", new { id = "UrineVataPanduram", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineVataPanduram">पाण्डुरं</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineVata, "अल्प", new { id = "UrineVataAlpa", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineVataAlpa">अल्प</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineVata, "रुक्ष", new { id = "UrineVataRuksha", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineVataRuksha">रुक्ष</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineVata, "नील", new { id = "UrineVataNeela", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineVataNeela">नील</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- पित्त P -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">पित्त P</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrinePitta, "तांबूस", new { id = "UrinePittaTambusa", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrinePittaTambusa">तांबूस</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrinePitta, "पिवळी", new { id = "UrinePittaPiwali", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrinePittaPiwali">पिवळी</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrinePitta, "तैलवत", new { id = "UrinePittaTailavat", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrinePittaTailavat">तैलवत</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- रक्त R -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">रक्त R</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineRakta, "स्निग्ध", new { id = "UrineRaktaSnigdha", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineRaktaSnigdha">स्निग्ध</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineRakta, "उष्ण", new { id = "UrineRaktaUshna", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineRaktaUshna">उष्ण</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineRakta, "रक्तवर्ण", new { id = "UrineRaktaRaktavarna", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineRaktaRaktavarna">रक्तवर्ण</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- कफ K -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">कफ K</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineKapha, "श्वेत", new { id = "UrineKaphaShweta", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineKaphaShweta">श्वेत</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineKapha, "फेन", new { id = "UrineKaphaPhena", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineKaphaPhena">फेन</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineKapha, "बहु", new { id = "UrineKaphaBahu", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineKaphaBahu">बहु</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineKapha, "स्निग्ध", new { id = "UrineKaphaSnigdha", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineKaphaSnigdha">स्निग्ध</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineKapha, "अविल", new { id = "UrineKaphaAvila", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineKaphaAvila">अविल</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr />
+
+                                            <!-- त्रिदोष TR -->
+                                            <div class="form-row align-items-center">
+                                                <div class="col-md-2 form-group">
+                                                    <div class="form-title">त्रिदोष TR</div>
+                                                </div>
+                                                <div class="col-md-10 form-group row align-items-center mb-2">
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineTridosha, "कृष्ण", new { id = "UrineTridoshaKrishna", @class = "custom-control-input" })
+                                                        <label class="custom-control-label" for="UrineTridoshaKrishna">कृष्ण</label>
+                                                    </div>
+                                                    <div class="custom-control custom-radio col-md-4 mb-3">
+                                                        @Html.RadioButtonFor(m => m.UrineTridosha, "Other", new { id = "UrineTridoshaOther", @class = "custom-control-input ", data_target = "UrineTridoshaOtherText" })
+                                                        <label class="custom-control-label" for="UrineTridoshaOther">Other</label>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        @Html.TextBoxFor(m => m.UrineTridoshaOtherText, new { @class = "form-control onlyChar", placeholder = "Specify if Other", maxlength = "20", id = "UrineTridoshaOtherText" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
+                                </div>
+                                <hr />
+                                <!-- Stool Examination Section -->
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">मलपरीक्षा Stool Exam</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Natural State -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">प्राकृतसम S</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolNaturalState, "Normalप्राकृत", new { @id = "StoolNatural_Prakarita", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolNatural_Prakarita">Normal प्राकृत</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolNaturalState, "Abnormalविकृत", new { @id = "StoolNatural_Others", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolNatural_Others">Abnormal विकृत</label>
+                                            </div>
+                                            @*<div class="col-4">
+                                                    @Html.TextBoxFor(m => m.StoolNaturalOtherText, new { @class = "form-control", placeholder = "Specify other" })
+                                                </div>*@
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Vata (Checkbox Group) -->
+                                    <div class="form-row mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">वात V</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataKrishna, new { @id = "StoolVata_Krishna", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Krishna">कृष्ण</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataDrudha, new { @id = "StoolVata_Drudha", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Drudha">दृढ</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataShushka, new { @id = "StoolVata_Shushka", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Shushka">शुष्क</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataTrutita, new { @id = "StoolVata_Trutita", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Trutita">त्रुटित</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataPhena, new { @id = "StoolVata_Phena", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Phena">फेन</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataRuksha, new { @id = "StoolVata_Ruksha", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Ruksha">रुक्ष</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataDhumra, new { @id = "StoolVata_Dhumra", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Dhumra">धूम्र</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataPravahana, new { @id = "StoolVata_Pravahana", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Pravahana">प्रवाहन</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataAdhmana, new { @id = "StoolVata_Adhmana", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Adhmana">आध्मान</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataUdarshul, new { @id = "StoolVata_Udarshul", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Udarshul">उदरशूल Abdominal pain</label>
+                                            </div>
+                                            <div class="form-check col-md-4 mb-3">
+                                                @Html.CheckBoxFor(m => m.StoolVataKatishul, new { @id = "StoolVata_Katishul", @class = "form-check-input" })
+                                                <label class="form-check-label" for="StoolVata_Katishul">कटीशूल Low-back pain</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Kapha -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">कफ K</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKapha, "पांढरा", new { @id = "StoolKapha_Pandhara", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolKapha_Pandhara">पांढरा</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKapha, "Other", new { @id = "StoolKapha_Other", @class = "custom-control-input other-radio", data_target = "StoolKaphaOtherText" })
+                                                <label class="custom-control-label" for="StoolKapha_Other">Other</label>
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.TextBoxFor(m => m.StoolKaphaOtherText, new { @class = "form-control onlyChar", id = "StoolKaphaOtherText", placeholder = "Specify other", maxlength = "20" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Pitta -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">पित्त P</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolPitta, "पिवळा", new { @id = "StoolPitta_Pivala", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolPitta_Pivala">पिवळा</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolPitta, "Other", new { @id = "StoolPitta_Other", @class = "custom-control-input other-radio", data_target = "StoolPittaOtherText" })
+                                                <label class="custom-control-label" for="StoolPitta_Other">Other</label>
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.TextBoxFor(m => m.StoolPittaOtherText, new { @class = "form-control onlyChar", placeholder = "Specify other", maxlength = "20", id = "StoolPittaOtherText" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Vata-Kapha -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">वातकफ VK</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataKapha, "कृष्ण", new { @id = "StoolVataKapha_Krishna", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataKapha_Krishna">कृष्ण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataKapha, "ताम्र", new { @id = "StoolVataKapha_Tamra", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataKapha_Tamra">ताम्र</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Vata-Pitta -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">वातपित्त VP</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataPitta, "ग्रंथित", new { @id = "StoolVataPitta_Granthit", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataPitta_Granthit">ग्रंथित</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataPitta, "अल्प", new { @id = "StoolVataPitta_Alpa", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataPitta_Alpa">अल्प</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataPitta, "पित", new { @id = "StoolVataPitta_Pitta", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataPitta_Pitta">पित</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolVataPitta, "कृष्ण", new { @id = "StoolVataPitta_Krishna", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolVataPitta_Krishna">कृष्ण</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Kapha-Pitta -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">कफपित्त KP</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKaphaPitta, "पित", new { @id = "StoolKaphaPitta_Pitta", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolKaphaPitta_Pitta">पित</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKaphaPitta, "कृष्ण", new { @id = "StoolKaphaPitta_Krishna", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolKaphaPitta_Krishna">कृष्ण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKaphaPitta, "घन", new { @id = "StoolKaphaPitta_Ghana", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolKaphaPitta_Ghana">घन</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolKaphaPitta, "पिच्छिल", new { @id = "StoolKaphaPitta_Picchila", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolKaphaPitta_Picchila">पिच्छिल</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- Tridosha -->
+                                    <div class="form-row align-items-center mb-3">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">त्रिदोष TR</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolTridosha, "कृष्ण", new { @id = "StoolTridosha_Krishna", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolTridosha_Krishna">कृष्ण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolTridosha, "मुहूर्मुहू", new { @id = "StoolTridosha_MuhurMuhu", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolTridosha_MuhurMuhu">मुहूर्मुहू</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolTridosha, "अल्प", new { @id = "StoolTridosha_Alpa", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolTridosha_Alpa">अल्प</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolTridosha, "ग्रंथित", new { @id = "StoolTridosha_Granthit", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolTridosha_Granthit">ग्रंथित</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.StoolTridosha, "श्वेत", new { @id = "StoolTridosha_Shweta", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="StoolTridosha_Shweta">श्वेत</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+                                <!-- जिव्हा–परीक्षाTongueExam -->
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">जिव्हा–परीक्षा Tongue Exam</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Natural State -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">प्राकृतसम</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateTongue, "Normalप्राकृत", new { id = "NaturalState_PrakrutSam", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalState_PrakrutSam">Normal प्राकृत</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateTongue, "Abnormalविकृत", new { id = "NaturalState_OthersTongue", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalState_OthersTongue">Abnormal विकृत</label>
+                                            </div>
+                                            @*<div class="col-4">
+                                                    @Html.TextBoxFor(m => m.NaturalStateOther, new { @class = "form-control", placeholder = "Specify other" })
+                                                </div>*@
+                                        </div>
+                                    </div>
+
+                                    <!-- Ruksha-Snigdha -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">रुक्ष / स्निग्ध</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.RukshaSnigdha, "रुक्ष", new { id = "RukshaSnigdha_Ruksha", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="RukshaSnigdha_Ruksha">रुक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.RukshaSnigdha, "स्निग्ध", new { id = "RukshaSnigdha_Snigdha", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="RukshaSnigdha_Snigdha">स्निग्ध</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sama-Nirama-Alpasama -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">साम / निराम / अल्पसाम</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.SamaNiramaAlpasama, "साम", new { id = "SamaNirama_Sama", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="SamaNirama_Sama">साम</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.SamaNiramaAlpasama, "निराम", new { id = "SamaNirama_Nirama", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="SamaNirama_Nirama">निराम</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.SamaNiramaAlpasama, "अल्पसाम", new { id = "SamaNirama_Alpasama", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="SamaNirama_Alpasama">अल्पसाम</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vata -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">वात</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataCharacteristics, "रुक्ष", new { id = "Vata_Ruksha", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Vata_Ruksha">रुक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataCharacteristics, "स्फुटित", new { id = "Vata_Sphutita", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Vata_Sphutita">स्फुटित</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pitta -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">पित्त</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaCharacteristics, "रक्त", new { id = "Pitta_Rakta", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Pitta_Rakta">रक्त</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaCharacteristics, "कृष्ण", new { id = "Pitta_Krishna", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Pitta_Krishna">कृष्ण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaCharacteristics, "Other", new { id = "Pitta_OtherTounge", @class = "custom-control-input", data_target = "PittaOther" })
+                                                <label class="custom-control-label" for="Pitta_OtherTounge">Other</label>
+                                            </div>
+
+
+
+
+                                            <div class="col-4">
+                                                @Html.TextBoxFor(m => m.PittaOther, new { @class = "form-control onlyChar", placeholder = "Specify other", maxlength = "20", id = "PittaOther" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Kapha -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">कफ</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaCharacteristics, "आर्द्र", new { id = "Kapha_Ardra", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Kapha_Ardra">आर्द्र</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaCharacteristics, "शुभ्र", new { id = "Kapha_Shubhra", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Kapha_Shubhra">शुभ्र</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaCharacteristics, "चिपचिपाहट", new { id = "Kapha_ChipChipahat", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Kapha_ChipChipahat">चिपचिपाहट</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaCharacteristics, "अतिपिच्छिल", new { id = "Kapha_AtiPichchhila", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Kapha_AtiPichchhila">अतिपिच्छिल</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tridosha -->
+                                    <div class="form-row">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">त्रिदोष</div>
+                                        </div>
+                                        <div class="col-md-10 form-group row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.TridoshaCharacteristics, "जली", new { id = "Tridosha_Jali", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Tridosha_Jali">जली</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.TridoshaCharacteristics, "रुक्ष", new { id = "Tridosha_Ruksha", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Tridosha_Ruksha">रुक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.TridoshaCharacteristics, "कृष्ण", new { id = "Tridosha_KrishnaTounge", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Tridosha_KrishnaTounge">कृष्ण</label>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <!-- शब्द-स्वर VoiceExam  -->
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">शब्द-स्वर VoiceExam</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- प्राकृतसमS (Natural State) -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">प्राकृतसम S</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateVoiceExam, "Normalप्राकृत", new { @id = "NaturalState1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalState1">Normal प्राकृत</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateVoiceExam, "Abnormalविकृत", new { @id = "NaturalStateOthers", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalStateOthers">Abnormal विकृत</label>
+                                            </div>
+                                            @*<div class="col-4">
+                                                    <input type="text" class="form-control" id="NaturalStateOtherText" placeholder="Specify other">
+                                                </div>*@
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- कफK -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">कफ K</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaVoiceExam, "जडत्व", new { @id = "Kapha1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Kapha1">जडत्व</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaVoiceExam, "Others", new { @id = "KaphaOthers", @class = "custom-control-input other-radio", data_target = "KaphaOtherText" })
+                                                <label class="custom-control-label" for="KaphaOthers">Others</label>
+                                            </div>
+                                            <div class="col-4">
+                                                <input type="text" class="form-control onlyChar" id="KaphaOtherText" placeholder="Specify other" maxlength="20">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- पित्तP -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">पित्त P</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaVoiceExam, "स्पष्ट", new { @id = "Pitta1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Pitta1">स्पष्ट</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaVoiceExam, "कण्ठरोग", new { @id = "Pitta2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Pitta2">कण्ठरोग</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <!-- वातV -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group">
+                                            <div class="form-title">वात V</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataVoiceExam, "रुक्ष", new { @id = "Vata1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Vata1">रुक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataVoiceExam, "स्फुटित", new { @id = "Vata2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="Vata2">स्फुटित</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- स्पर्श Touch Section3 -->
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">स्पर्श Touch</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Natural State -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">प्राकृतसम S</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateTouch, "Normalप्राकृत", new { @id = "NaturalStateTouch", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalStateTouch">Normal प्राकृत</label>
+                                            </div>
+
+
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.NaturalStateTouch, "Abnormalविकृत", new { @id = "NaturalStateOtherRadio", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="NaturalStateOtherRadio">Abnormal विकृत</label>
+                                            </div>
+                                            @*<div class="col-4">
+                                                    @Html.TextBox("NaturalStateOther", null, new { @class = "form-control", placeholder = "Specify other" })
+                                                </div>*@
+                                        </div>
+                                    </div>
+
+                                    <!-- Pitta -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">पित्त P</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaTouch, "उष्ण", new { @id = "PittaTouch", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="PittaTouch">उष्ण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.PittaTouch, "Others", new { @id = "PittaOtherRadioTouch", @class = "custom-control-input other-radio", data_target = "PittaOther1" })
+                                                <label class="custom-control-label" for="PittaOtherRadioTouch">Others</label>
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.TextBox("PittaOther", null, new { @class = "form-control onlyChar", placeholder = "Specify other", maxlength = "20", id = "PittaOther1" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vata -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">वात V</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataTouch, "थंड", new { @id = "VataPittaTouch", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="VataPittaTouch">थंड</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.VataTouch, "Others", new { @id = "VataOtherRadioTouch", @class = "custom-control-input other-radio", data_target = "VataOther" })
+                                                <label class="custom-control-label" for="VataOtherRadioTouch">Others</label>
+                                            </div>
+                                            <div class="col-4">
+                                                @Html.TextBox("VataOther", null, new { @class = "form-control onlyChar", placeholder = "Specify other", maxlength = "20", id = "VataOther" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Kapha -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">कफ K</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaTouch, "आर्द्र", new { @id = "KaphaTouch", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="KaphaTouch">आर्द्र</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.KaphaTouch, "चिपचिपाहट", new { @id = "KaphaTouchfor", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="KaphaTouchfor">चिपचिपाहट</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+                                </div>
+                                <!--नेत्रपरीक्षा EyeExam Section4 -->
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">नेत्रपरीक्षा EyeExam</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Eye: Natural State -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-3 form-group pr-4 mb-2"><div class="form-title">प्राकृतसम S</div></div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeNaturalState, "Normalप्राकृत", new { @id = "EyeNaturalState1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeNaturalState1">प्राकृत Normal </label>
+                                            </div>
+
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeNaturalState, "Abnormalविकृत", new { @id = "EyeNaturalState2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeNaturalState2">विकृत Abnormal</label>
+                                            </div>
+
+                                            @*<div class="col-4">
+                                                    @Html.TextBox("EyeNaturalOtherText", null, new { @class = "form-control", placeholder = "Specify other" })
+                                                </div>*@
+                                        </div>
+                                    </div>
+
+                                    <!-- Eye: Vata -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-3 form-group pr-4 mb-2"><div class="form-title">वात V</div></div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeVata, "रूक्ष", new { @id = "EyeVata1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeVata1">रूक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeVata, "अरुण", new { @id = "EyeVata2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeVata2">अरुण</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeVata, "कृष्णरक्त", new { @id = "EyeVata3", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeVata3">कृष्णरक्त</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeVata, "चंचल", new { @id = "EyeVata4", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeVata4">चंचल</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Eye: Pitta -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-3 form-group pr-4 mb-2"><div class="form-title">पित्त P</div></div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyePitta, "हरिद्रा", new { @id = "EyePitta1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyePitta1">हरिद्रा</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyePitta, "आरक्त", new { @id = "EyePitta2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyePitta2">आरक्त</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyePitta, "दीप-प्रकाशद्वेषी", new { @id = "EyePitta3", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyePitta3">दीप-प्रकाशद्वेषी</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyePitta, "दाह", new { @id = "EyePitta4", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyePitta4">दाह</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Eye: Kapha -->
+                                    <div class="form-row align-items-center">
+                                        <div class="col-md-3 form-group pr-4 mb-2"><div class="form-title">कफ K</div></div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeKapha, "नेत्रस्त्राव", new { @id = "EyeKapha1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeKapha1">नेत्रस्त्राव</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeKapha, "चिपचिपाहट", new { @id = "EyeKapha2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeKapha2">चिपचिपाहट</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeKapha, "जल", new { @id = "EyeKapha3", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeKapha3">जल</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.EyeKapha, "श्वेत", new { @id = "EyeKapha4", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="EyeKapha4">श्वेत</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <!-- आकृति AppearanceExam Section5 -->
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">आकृति AppearanceExam</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Appearance: Natural State -->
+                                    <div class="form-row align-items-center mb-2">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">प्राकृतसम S</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceNaturalState, "Normalप्राकृत", new { @id = "AppearanceNatural1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceNatural1">प्राकृत Normal </label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceNaturalState, "Abnormalविकृत", new { @id = "AppearanceNaturalOther", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceNaturalOther">विकृत Abnormal</label>
+                                            </div>
+                                            @*<div class="col-4">
+                                                    @Html.TextBox("AppearanceNaturalOtherText", null, new { @class = "form-control", placeholder = "Specify other" })
+                                                </div>*@
+                                        </div>
+                                    </div>
+
+                                    <!-- Appearance: Vata -->
+                                    <div class="form-row align-items-center mb-2">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">वात V</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceVata, "मलयुक्त", new { @id = "AppearanceVata1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceVata1">मलयुक्त</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceVata, "रुक्ष", new { @id = "AppearanceVata2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceVata2">रुक्ष</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceVata, "अस्थिर", new { @id = "AppearanceVata3", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceVata3">अस्थिर</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Appearance: Pitta -->
+                                    <div class="form-row align-items-center mb-2">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">पित्त P</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearancePitta, "गौर", new { @id = "AppearancePitta1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearancePitta1">गौर</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearancePitta, "आरक्त", new { @id = "AppearancePitta2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearancePitta2">आरक्त</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Appearance: Kapha -->
+                                    <div class="form-row align-items-center mb-2">
+                                        <div class="col-md-2 form-group mb-2">
+                                            <div class="form-title">कफ K</div>
+                                        </div>
+                                        <div class="col-md-9 form-group pl-3 row">
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceKapha, "सौम्य", new { @id = "AppearanceKapha1", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceKapha1">सौम्य</label>
+                                            </div>
+                                            <div class="custom-control custom-radio col-md-4 mb-3">
+                                                @Html.RadioButtonFor(m => m.AppearanceKapha, "पुष्ट", new { @id = "AppearanceKapha2", @class = "custom-control-input" })
+                                                <label class="custom-control-label" for="AppearanceKapha2">पुष्ट</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+                                <div class="btnBx">
+                                    <button type="button" id="submitBtn" class="btn btn-md btn-success mr-1" onclick="this.form.submit();">Submit</button>
+                                    @*<button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                                        <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action("AUList", "reception")'">List</button>*@
+
+                                </div>
+
+
+                                </form>
+                            </div>

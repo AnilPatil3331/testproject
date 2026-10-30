@@ -1,0 +1,96 @@
+﻿@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model List<IPD_StayBookingModel>
+@{
+    ViewBag.Title = "Active Admissions";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<style>
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; margin-top:4px; }
+    .page-title { font-size:1.05rem; font-weight:700; color:#1e3a5f; display:flex; align-items:center; gap:8px; }
+    .badge-status-active { background:#dcfce7; color:#15803d; padding:2px 9px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .badge-days { background:#fff7ed; color:#c2410c; padding:2px 9px; border-radius:20px; font-size:0.72rem; font-weight:600; }
+    .tbl-ipd th { font-size:0.74rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.3px; border-top:none; background:#f8fafc; padding:7px 10px; white-space:nowrap; }
+    .tbl-ipd td { font-size:0.82rem; padding:7px 10px; vertical-align:middle; border-color:#f1f5f9; }
+    .tbl-ipd tbody tr:hover { background:#f0f9ff; }
+    .loc-room { font-weight:700; color:#1e3a5f; }
+    .loc-bed { color:#2563eb; font-size:0.78rem; }
+    .loc-meta { color:#94a3b8; font-size:0.72rem; }
+    .act-btn { font-size:0.72rem; padding:3px 9px; border-radius:4px; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:3px; margin:1px; border:1px solid transparent; transition:all 0.15s; }
+    .act-transfer { background:#fff7ed; color:#9a3412; border-color:#fed7aa; }
+    .act-transfer:hover { background:#9a3412; color:#fff; }
+    .act-discharge { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+    .act-discharge:hover { background:#991b1b; color:#fff; }
+    .rupee-amt { font-family:'Courier New',monospace; font-weight:700; color:#166534; }
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+<div class="container-fluid" style="padding-left:10px; padding-right:10px;">
+    <div class="page-header">
+        <div class="page-title">
+            <i class="fas fa-procedures text-primary"></i>
+            Active Admissions
+            <span class="badge bg-primary rounded-pill" style="font-size:0.72rem;">@Model.Count</span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/IPD/IPD_Booking/BedDashboard" class="btn btn-outline-secondary btn-sm"><i class="fas fa-th-large me-1"></i>Bed View</a>
+            <a href="/IPD/IPD_Booking/NewAdmission" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Admission</a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table id="tblBookings" class="table tbl-ipd mb-0">
+                <thead>
+                    <tr>
+                        <th>Booking #</th>
+                        <th>Patient ID</th>
+                        <th>Location</th>
+                        <th>Admitted</th>
+                        <th>Expected DC</th>
+                        <th>Days</th>
+                        <th>Rate/Day</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td><strong class="text-primary">@b.BookingNo</strong></td>
+                            <td><span class="badge bg-light text-dark border">@b.PatientFid</span></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(b.FloorName)) { <span class="loc-meta">@b.FloorName &rsaquo; </span> }
+                                @if (!string.IsNullOrEmpty(b.WardName)) { <span class="loc-meta">@b.WardName &rsaquo; </span> }
+                                <span class="loc-room">@b.RoomNumber</span>
+                                <span class="loc-bed"> / Bed @b.BedNumber</span>
+                                @if (!string.IsNullOrEmpty(b.CategoryName)) { <br /><span class="badge bg-light text-secondary border" style="font-size:0.68rem;">@b.CategoryName</span> }
+                            </td>
+                            <td><small>@b.AdmissionDate.ToString("dd-MMM-yy HH:mm")</small></td>
+                            <td><small>@b.ExpectedDischarge.ToString("dd-MMM-yy")</small></td>
+                            <td><span class="badge-days">@b.DaysCount d</span></td>
+                            <td><span class="rupee-amt">&#8377;@b.RoomChargeSnapshot.ToString("N0")</span></td>
+                            <td><span class="badge-status-active">Active</span></td>
+                            <td>
+                                <a href="/IPD/IPD_Booking/Discharge?bookingId=@b.BookingId" class="act-btn act-discharge">
+                                    <i class="fas fa-sign-out-alt"></i> Discharge
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    .ready(function () {
+        #tblBookings.DataTable({ pageLength: 25, order: [[0, 'desc']], language: { search: "Search bookings:" } });
+    });
+</script>

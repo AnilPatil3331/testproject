@@ -1,0 +1,240 @@
+﻿@{
+    ViewBag.Title = "IPD Stay Booking List";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var bookings = ViewBag.BookingList as List<BVG_Wellness_Center_Promotion.Areas.IPD.Models.StayBookingModel> ?? new List<BVG_Wellness_Center_Promotion.Areas.IPD.Models.StayBookingModel>();
+    string clinicId = Session["ClinicFid"] != null ? Session["ClinicFid"].ToString() : "";
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/js/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%);
+        min-height: 100vh;
+    }
+
+    .card.shadow {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        padding: 15px 20px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        color: white;
+    }
+
+    .card-header h3 {
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 1.25rem;
+        margin: 0;
+    }
+
+    .card-header .btn-new-booking {
+        background-color: #ffffff !important;
+        color: #1e3a8a !important;
+        border: none;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        text-decoration: none;
+        display: inline-block;
+    }
+    .card-header .btn-new-booking:hover {
+        background-color: #f1f5f9 !important;
+        color: #1d4ed8 !important;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .table th {
+        background-color: #f1f5f9 !important;
+        color: #312e81;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0 !important;
+    }
+
+    .table td {
+        vertical-align: middle !important;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 0.9rem;
+        color: #475569;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 6px;
+        border: 1px solid #cbd5e1;
+        padding: 4px 10px;
+        outline: none;
+    }
+    
+    .dataTables_wrapper .dataTables_filter input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important; margin-top:20px;">
+    <div class="row">
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                window.onload = function () {
+                    var message = '@TempData["Message"]';
+                    var alertType = '@TempData["Icon"]';
+                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                    showCustomAlert(message, alertType, imageUrl);
+                };
+            </script>
+        }
+        
+        <div class="col-sm-12">
+            <div class="card p-0 shadow">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-sm-6 col-md-8 col-lg-8">
+                            <h3 class="h3 mb-0">IPD Stay Bookings</h3>
+                        </div>
+                        <div class="col-sm-6 col-md-6 col-lg-6 text-right">
+                            <a href="/IPD/IPD/RoomBillingList" class="btn btn-sm btn-info me-2" style="background-color: #17a2b8; border-color: #17a2b8; color: #fff;">
+                                <i class="fa fa-list"></i> Billing Records
+                            </a>
+                            <a href="/IPD/IPD/RoomBooking" class="btn btn-sm btn-new-booking">
+                                <i class="fa fa-plus"></i> New Booking
+                            </a>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="tblBookingList" class="table table-hover w-100">
+                            <thead>
+                                <tr>
+                                    <th style="width: 100px;">Action</th>
+                                    <th>Booking ID</th>
+                                    <th>Patient Details</th>
+                                    <th>Room Details</th>
+                                    <th>Stay Dates</th>
+                                    <th>Occupants</th>
+                                    <th>Charges</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (bookings.Count > 0)
+                                {
+                                    foreach (var item in bookings)
+                                    {
+                                        string statusClass = item.BookingStatus == "CheckedIn" ? "badge-success" : 
+                                                             (item.BookingStatus == "CheckedOut" ? "badge-secondary" : 
+                                                             (item.BookingStatus == "Cancelled" ? "badge-danger" : "badge-primary"));
+
+                                        <tr>
+                                            <td>
+                                                <div class="btn-group">
+                                                    @if (item.BookingStatus != "Cancelled" && item.BookingStatus != "CheckedOut")
+                                                    {
+                                                        <a href="/IPD/IPD/RoomBooking/@item.BookingId" class="btn btn-sm btn-outline-primary" title="Edit Booking">
+                                                            <i class="fa fa-pen-alt"></i>
+                                                        </a>
+                                                        <button class="btn btn-outline-danger btn-sm" title="Cancel Booking" onclick="cancelBooking(@item.BookingId)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted" style="font-size: 0.8rem;"><i class="fa fa-lock"></i> Locked</span>
+                                                    }
+                                                    
+                                                    @if (item.BillStatus == "Success")
+                                                    {
+                                                        <a href="/IPD/IPD/PrintRoomBill?paymentId=@item.PaymentId" target="_blank" class="btn btn-sm btn-outline-success" title="Print Bill">
+                                                            <i class="fa fa-print"></i>
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="/IPD/IPD/RoomBilling?bookingId=@item.BookingId" class="btn btn-sm btn-outline-success" title="Pay Bill">
+                                                            <i class="fa fa-money-bill-wave"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong>#@item.BookingId</strong>
+                                            </td>
+                                            <td>
+                                                <strong style="color: #1e293b;">@item.GuestFullName</strong><br />
+                                                <span class="text-muted" style="font-size:0.85rem;"><i class="fa fa-phone-alt" style="font-size:10px;"></i> @item.Mobile</span>
+                                            </td>
+                                            <td>
+                                                <span style="color: #4338ca; font-weight:600;">@item.RoomName</span>
+                                            </td>
+                                            <td>
+                                                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 8px; display: inline-block; font-size: 0.85rem;">
+                                                    <strong>@item.CheckInDate.ToString("dd MMM yyyy")</strong>
+                                                    <i class="fa fa-arrow-right mx-1 text-muted" style="font-size:10px;"></i>
+                                                    <strong>@item.CheckOutDate.ToString("dd MMM yyyy")</strong>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="font-size: 0.85rem;">
+                                                    <i class="fa fa-user" title="Adults"></i> @item.NoOfPersons &nbsp;
+                                                    <i class="fa fa-child" title="Children"></i> @item.NoOfChildren
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <strong style="color: #059669;">₹@item.TotalAmount</strong>
+                                            </td>
+                                            <td>
+                                                <span class="badge @statusClass">@item.BookingStatus</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Initialize DataTables with custom styling integration
+        $('#tblBookingList').DataTable({
+            "pageLength": 10,
+            "ordering": true,
+            "info": true,
+            "lengthChange": true,
+            "language": {
+                "search": "Filter Bookings: "
+            }
+        });
+    });
+
+    function cancelBooking(id) {
+        if (confirm("Are you sure you want to cancel this booking?")) {
+            window.location.href = "/IPD/IPD/DeleteBooking?id=" + id;
+        }
+    }
+</script>

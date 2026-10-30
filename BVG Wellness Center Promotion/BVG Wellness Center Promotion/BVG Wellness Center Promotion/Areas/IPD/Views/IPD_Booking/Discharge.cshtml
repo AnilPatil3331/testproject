@@ -1,0 +1,252 @@
+@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model IPD_StayBookingModel
+@{
+    ViewBag.Title = "Discharge Patient";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var settings = ViewBag.Settings as IPD_HospitalSettingModel;
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+    .page-title { font-size:1rem; font-weight:700; color:#1e3a5f; }
+    .fs-card { background:#fff; border-radius:8px; padding:16px 18px; margin-bottom:12px; box-shadow:0 1px 4px rgba(0,0,0,0.07); border-left:3px solid #dc2626; }
+    .fs-card h6 { font-weight:700; font-size:0.82rem; color:#374151; margin-bottom:12px; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:0.3px; }
+    .info-lbl { font-size:0.72rem; color:#9ca3af; font-weight:600; text-transform:uppercase; }
+    .info-val { font-size:0.88rem; font-weight:700; color:#111827; }
+    .bill-block { border-radius:6px; padding:10px 12px; margin-bottom:8px; }
+    .bill-room { background:#eff6ff; border-left:3px solid #3b82f6; }
+    .bill-compulsory { background:#fef2f2; border-left:3px solid #ef4444; }
+    .bill-optional { background:#faf5ff; border-left:3px solid #a855f7; }
+    .bill-food { background:#f0fdf4; border-left:3px solid #22c55e; }
+    .bill-block strong { font-size:0.78rem; color:#374151; }
+    .bill-row { display:flex; justify-content:space-between; padding:3px 0; font-size:0.8rem; }
+    .bill-subtotal { font-weight:700; border-top:1px solid rgba(0,0,0,0.08); margin-top:4px; padding-top:4px; }
+    .summary-box { background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border-radius:10px; padding:18px; position:sticky; top:80px; }
+    .summary-box h6 { font-size:0.78rem; font-weight:700; opacity:0.7; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:14px; }
+    .sum-row { display:flex; justify-content:space-between; padding:5px 0; font-size:0.83rem; }
+    .sum-divider { border-top:1px solid rgba(255,255,255,0.2); margin:6px 0; }
+    .sum-net { font-size:1.15rem; font-weight:800; }
+    .sum-advance { color:#fde047; }
+    .form-label { font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:3px; }
+    .form-control, .form-select { font-size:0.83rem; padding:5px 10px; background-color:#eef5fb; border-color:#c8dff0; border-radius:5px; height:auto; color:#1e3a5f; }
+    .form-control:focus, .form-select:focus { background-color:#ddeefa; border-color:#2563eb; box-shadow:0 0 0 2px rgba(37,99,235,0.15); color:#1e3a5f; outline:none; }
+    
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+@if (Model == null) {
+    <div class="alert alert-danger">Booking not found.</div>
+    return;
+}
+
+<div class="container-fluid mt--5">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="page-title d-flex align-items-center gap-2">
+            <i class="fas fa-sign-out-alt text-danger"></i>
+            Discharge &mdash; <span class="text-danger">@Model.BookingNo</span>
+        </div>
+        <a href="/IPD/IPD_Booking/ActiveBookings" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i> Back
+        </a>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-lg-7">
+
+            <div class="fs-card">
+                <h6><i class="fas fa-info-circle text-danger"></i> Booking Info</h6>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="info-lbl">Patient ID</div>
+                        <div class="info-val">@Model.PatientFid</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="info-lbl">Admission Date</div>
+                        <div class="info-val">@Model.AdmissionDate.ToString("dd-MMM-yyyy")</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="info-lbl">Current Location</div>
+                        <div class="info-val">@Model.RoomNumber &frasl; Bed @Model.BedNumber</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="info-lbl">Days So Far</div>
+                        <div class="info-val">@Model.DaysCount days</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fs-card">
+                <h6><i class="fas fa-calendar-check text-danger"></i> Discharge Details</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Discharge Date &amp; Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="DischargeDate" class="form-control"
+                               value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" onchange="generateBill()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="fs-card">
+                <h6><i class="fas fa-percent text-danger"></i> Discount Details</h6>
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <label class="form-label">Discount Type</label>
+                        <select id="DiscountType" class="form-select" onchange="generateBill()">
+                            <option value="None">None</option>
+                            <option value="Flat">Flat Amount</option>
+                            <option value="Percentage">Percentage (%)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Discount Value</label>
+                        <input type="number" id="DiscountValue" class="form-control" value="0" min="0" onkeyup="generateBill()" onchange="generateBill()">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Reason</label>
+                        <input type="text" id="DiscountReason" class="form-control" placeholder="Optional">
+                    </div>
+                </div>
+            </div>
+
+            <div id="billContainer" style="display:none">
+                <div class="fs-card">
+                    <h6><i class="fas fa-receipt text-danger"></i> Bill Breakdown</h6>
+                    <div id="billRoomRent" class="bill-block bill-room" style="display:none">
+                        <strong><i class="fas fa-bed me-1"></i> Room Rent</strong>
+                        <div id="billRoomRentLines" class="mt-2"></div>
+                        <div class="bill-row bill-subtotal"><span>Room Rent Total</span><span id="billRoomRentTotal"></span></div>
+                    </div>
+                    <div id="billCompulsory" class="bill-block bill-compulsory" style="display:none">
+                        <strong><i class="fas fa-lock me-1"></i> Compulsory Charges</strong>
+                        <div id="billCompulsoryLines" class="mt-2"></div>
+                        <div class="bill-row bill-subtotal"><span>Compulsory Total</span><span id="billCompulsoryTotal"></span></div>
+                    </div>
+                    <div id="billOptional" class="bill-block bill-optional" style="display:none">
+                        <strong><i class="fas fa-check-circle me-1"></i> Optional Charges</strong>
+                        <div id="billOptionalLines" class="mt-2"></div>
+                        <div class="bill-row bill-subtotal"><span>Optional Total</span><span id="billOptionalTotal"></span></div>
+                    </div>
+                    <div id="billFood" class="bill-block bill-food" style="display:none">
+                        <strong><i class="fas fa-utensils me-1"></i> Food Charges</strong>
+                        <div id="billFoodLines" class="mt-2"></div>
+                        <div class="bill-row bill-subtotal"><span>Food Total</span><span id="billFoodTotal"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-2">
+                <button class="btn btn-primary btn-sm" onclick="generateBill()">
+                    <i class="fas fa-calculator me-1"></i> Generate Bill
+                </button>
+                <button class="btn btn-danger btn-sm d-none" id="confirmDischargeBtn" onclick="confirmDischarge()">
+                    <i class="fas fa-sign-out-alt me-1"></i> Confirm Discharge
+                </button>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div id="billTotalBox" style="display:none">
+                <div class="summary-box">
+                    <h6>Final Bill Summary</h6>
+                    <div class="sum-row"><span>Room Rent</span><span id="tRoomRent">&#8377;0</span></div>
+                    <div class="sum-row"><span>Compulsory Charges</span><span id="tCompulsory">&#8377;0</span></div>
+                    <div class="sum-row"><span>Optional Charges</span><span id="tOptional">&#8377;0</span></div>
+                    <div class="sum-row"><span>Food Charges</span><span id="tFood">&#8377;0</span></div>
+                    <div class="sum-divider"></div>
+                    <div class="sum-row"><span>Subtotal</span><span id="tSubtotal">&#8377;0</span></div>
+                    <div class="sum-row text-warning" id="discountRow" style="display:none"><span>Discount</span><span id="tDiscount">-&#8377;0</span></div>
+                    <div class="sum-row" id="gstRow" style="display:none"><span>GST (<span id="gstRate"></span>%)</span><span id="tGST">&#8377;0</span></div>
+                    <div class="sum-row fw-bold"><span>Gross Total</span><span id="tGross">&#8377;0</span></div>
+                    <div class="sum-divider"></div>
+                    <div class="sum-row sum-advance"><span>(-) Advance Paid</span><span id="tAdvance">&#8377;0</span></div>
+                    <div class="sum-divider"></div>
+                    <div class="sum-row sum-net"><span>NET PAYABLE</span><span id="tNet">&#8377;0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fmt(n) { return '\u20B9' + parseFloat(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
+    function generateBill() {
+        var dDate = document.getElementById('DischargeDate').value;
+        fetch('/IPD/IPD_Booking/GenerateBill', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'bookingId=@Model.BookingId&dischargeDate=' + encodeURIComponent(dDate)
+                  + '&discountType=' + encodeURIComponent(document.getElementById('DiscountType').value)
+                  + '&discountValue=' + encodeURIComponent(document.getElementById('DiscountValue').value || 0)
+        }).then(r => r.json()).then(res => {
+            if (!res.success) { return; }
+            var bill = res.bill;
+            function renderLines(lines, containerId, section) {
+                var filtered = lines.filter(l => l.BillSection === section);
+                if (filtered.length === 0) return;
+                var html = '';
+                filtered.forEach(l => {
+                    html += '<div class="bill-row"><span>' + l.Description + '</span><span>\u20B9' + l.RatePerDay + '/day &times; ' + l.Days + ' = ' + fmt(l.Amount) + '</span></div>';
+                });
+                document.getElementById(containerId + 'Lines').innerHTML = html;
+                document.getElementById(containerId).style.display = 'block';
+            }
+            ['billRoomRent','billCompulsory','billOptional','billFood'].forEach(id => { document.getElementById(id).style.display='none'; });
+            renderLines(bill.Lines, 'billRoomRent', 'RoomRent');
+            renderLines(bill.Lines, 'billCompulsory', 'CompulsoryCharge');
+            renderLines(bill.Lines, 'billOptional', 'OptionalCharge');
+            renderLines(bill.Lines, 'billFood', 'FoodCharge');
+            document.getElementById('billRoomRentTotal').textContent = fmt(bill.RoomRentTotal);
+            document.getElementById('billCompulsoryTotal').textContent = fmt(bill.CompulsoryTotal);
+            document.getElementById('billOptionalTotal').textContent = fmt(bill.OptionalTotal);
+            document.getElementById('billFoodTotal').textContent = fmt(bill.FoodTotal);
+            document.getElementById('tRoomRent').textContent = fmt(bill.RoomRentTotal);
+            document.getElementById('tCompulsory').textContent = fmt(bill.CompulsoryTotal);
+            document.getElementById('tOptional').textContent = fmt(bill.OptionalTotal);
+            document.getElementById('tFood').textContent = fmt(bill.FoodTotal);
+            document.getElementById('tSubtotal').textContent = fmt(bill.Subtotal);
+            if (bill.DiscountAmount > 0) {
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('tDiscount').textContent = '-' + fmt(bill.DiscountAmount);
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+            }
+            
+            if (bill.GSTEnabled) {
+                document.getElementById('gstRow').style.display = 'flex';
+                document.getElementById('gstRate').textContent = bill.GSTRate;
+                document.getElementById('tGST').textContent = fmt(bill.GSTAmount);
+            } else {
+                document.getElementById('gstRow').style.display = 'none';
+            }
+            document.getElementById('tGross').textContent = fmt(bill.GrossTotal);
+            document.getElementById('tAdvance').textContent = fmt(bill.AdvancePaid);
+            document.getElementById('tNet').textContent = fmt(bill.NetPayable);
+
+            document.getElementById('billContainer').style.display = 'block';
+            document.getElementById('billTotalBox').style.display = 'block';
+            document.getElementById('confirmDischargeBtn').classList.remove('d-none');
+        });
+    }
+
+    function confirmDischarge() {
+        if (!confirm('Confirm discharge? This action is permanent.')) return;
+        fetch('/IPD/IPD_Booking/ConfirmDischarge', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'bookingId=@Model.BookingId&dischargeDate=' + encodeURIComponent(document.getElementById('DischargeDate').value)
+                  + '&discountType=' + encodeURIComponent(document.getElementById('DiscountType').value)
+                  + '&discountValue=' + encodeURIComponent(document.getElementById('DiscountValue').value || 0)
+                  + '&discountReason=' + encodeURIComponent(document.getElementById('DiscountReason').value || '')
+        }).then(r => r.json()).then(res => {
+            if (res.success) {
+                alert(res.message);
+                window.location.href = '/IPD/IPD_Booking/DischargedBookings';
+            } else {
+                alert('Error: ' + res.message);
+            }
+        });
+    }
+
+    window.onload = function() { generateBill(); };
+</script>

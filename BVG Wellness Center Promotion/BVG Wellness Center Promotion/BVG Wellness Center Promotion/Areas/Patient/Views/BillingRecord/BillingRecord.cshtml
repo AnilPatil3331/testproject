@@ -1,0 +1,2891 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.ClsPrescription
+@{
+
+    ViewBag.Title = "BillingRecord";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    var PatientDetails = ViewBag.GetPatientEncounterDetails;
+    var FinalBill = ViewBag.FinalBill;
+    // double TotalAmount = 0;
+    double TotalDiscount = 0;
+    int count = 1;
+    double TotalAmount = 0;
+
+}
+<style>
+      input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 10px;
+    opacity: 1;
+}
+    .dynamic-btn {
+        margin-top: 3rem !important;
+    }
+
+    #ddlServiceName + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlServiceName + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlServiceName + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+
+    #bill-modal {
+        max-height: 100%; /* Maximum height for the modal */
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    }
+
+    #bill-details-modal {
+        max-height: 100% !important; /* Maximum height for the modal */
+        overflow-y: auto !important; /* Enable vertical scrolling if content overflows */
+    }
+
+    #billingTable table tbody tr:last-child td {
+        color: inherit !important;
+        font-weight: normal !important;
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Dispensing Unpaid Bill List
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-sm btn-primary" id="btnPaidBillList">
+                                        @*<i class="fa fa-plus">
+                                            </i>*@
+                                        Paid Bill List
+                                    </button>
+
+
+                                    <button class="btn btn-sm btn-primary" id="btnBillList">
+
+                                        Outstanding Bill List
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body p-0">
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background">
+                                                @*<div class="vld-background" style="backdrop-filter: blur(2px);">*@
+                                            </div>
+                                            <div class="vld-icon">
+                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                     height="64" stroke="var(--primary)">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                            </circle>
+                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                                </animateTransform>
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="billingTable">
+                                    <div class="vgt-wrap ">
+                                        <!---->
+                                        <div class="vgt-inner-wrap">
+                                            <!---->
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-390878681313">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                <div class="magnifying-glass">
+                                                                </div>
+                                                            </span>
+                                                            <span class="sr-only">
+                                                                Search
+                                                            </span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search bills data by id,Encounter ID, clinic, doctor, patient, total amount, discount ,amount due  and status(0 or 1)"
+                                                               class="vgt-input vgt-pull-left">
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-fixed-header">
+                                                <!---->
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="tblBillingRecords" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-11" class="vgt-left-align"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Action
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-10" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Status in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            @*<th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                    style="min-width: 130px; max-width: 130px; width: 130px;">
+                                                                    <span>
+                                                                        Encounter ID
+                                                                    </span>
+                                                                    <button>
+                                                                        <span class="sr-only">
+                                                                            Sort table by Encounter ID in descending order
+                                                                        </span>
+                                                                    </button>
+                                                                </th>*@
+
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Patient Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Patient Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Doctor Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Doctor Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Clinic Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Clinic Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Total
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Total in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Discount
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Discount in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+                                                                style="min-width: 130px; max-width: 130px; width: 130px;">
+                                                                <span>
+                                                                    Amount due
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Amount due in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-9" class="vgt-left-align sortable"
+                                                                style="min-width: 160px; max-width: 160px; width: 160px;">
+                                                                <span>
+                                                                    Date
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Date in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <!---->
+                                                            <!---->
+                                                            <th class="filter-th">
+                                                            </th>
+                                                            <th class="filter-th">
+
+                                                            </th>
+
+
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-patient_name" type="text" id="FilterByPatient" placeholder="Filter by patient name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+
+
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-doctor_name" type="text" id="FilterByDoctor" placeholder="Filter by doctor"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_name" type="text" id="FilterByClinic" placeholder="Filter clinic name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+
+                                                            @*<th class="filter-th">
+                                                                    <div>
+                                                                        <input name="vgt-service_name" type="text" id="FilterByService" placeholder="Filter service by name"
+                                                                               class="vgt-input">
+                                                                        <!---->
+                                                                        <!---->
+                                                                    </div>
+                                                                </th>*@
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-total_amount" id="filterByTotal" type="text" placeholder="Total"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-discount" type="text" id="FilterByDiscount" placeholder="Discount"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="text" id="FilterAmoutDue" placeholder="Amount due"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="date" id="FilterDate" placeholder="Date"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                @*<div>
+                                                                        <!---->
+                                                                        <!---->
+                                                                        <select name="vgt-status" class="vgt-select">
+                                                                            <option value="">
+                                                                                Filter by status
+                                                                            </option>
+                                                                            <option value="1">
+                                                                                Unpaid
+                                                                            </option>
+                                                                            <option value="0">
+                                                                                Paid
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>*@
+                                                            </th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!---->
+                                                        <!---->
+                                                    </tbody>
+                                                    <tbody>
+                                                        @if (ViewBag.GetUnPaid != null)
+                                                        {
+                                                            foreach (var item in ViewBag.GetUnPaid)
+                                                            {
+                                                                <tr>
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <button title="Edit" class="btn btn-sm btn-outline-primary" id="EditBill" onclick="OpenBillModel('@item.Bill_Fid', '@item.AppointmentFid')">
+                                                                                <i class="fa fa-pen-alt">
+                                                                                </i>
+                                                                            </button>
+
+                                                                            <button title="Bill Details" class="btn btn-sm btn-outline-primary" id="BillDetails" onclick="GetPatientDetails('@item.AppointmentFid')">
+                                                                                <i class="fa fa-file-invoice">
+                                                                                </i>
+                                                                            </button>
+
+
+
+                                                                            @*<a href="@Url.Action("PatientEncounter","Encounter",new { EncountrFid=@item.EncounterFid})" class="btn btn-sm btn-outline-primary"
+                                                                                   title="Encounter details" target="_self">
+                                                                                    <i class="fas fa-tachometer-alt">
+                                                                                    </i>
+                                                                                </a>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge badge-danger">
+                                                                            @item.FinalBillStatus
+                                                                        </span>
+
+                                                                    </td>
+                                                                    @*<td>@item.EncounterFid</td>*@
+                                                                    <td>@item.PatientName</td>
+                                                                    <td>@item.DoctorName</td>
+                                                                    <td>@item.ClinicName</td>
+                                                                    <td>@item.TotalAmount</td>
+                                                                    <td>@item.DiscountAmt %</td>
+                                                                    <td>@($"{item.PayableAmount:F2}")</td>
+                                                                    <td>
+                                                                        @Convert.ToDateTime(@item.GeneratedBillDate).ToString("dd/MM/yyyy")
+
+                                                                </tr>
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="12">
+                                                                    <div class="text-center mtb-100">
+                                                                        No Data Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                    <!---->
+                </div>
+                <!---->
+            </div>
+        </div>
+    </div>
+
+    @*//Bill Model Start*@
+    <div id="bill-modal___BV_modal_outer_" style="position: absolute; z-index: 1040; display: none;">
+        <div id="bill-modal" role="dialog" aria-describedby="bill-modal___BV_modal_body_"
+             class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <span tabindex="0">
+                </span>
+                <div id="bill-modal___BV_modal_content_" tabindex="-1" class="modal-content">
+                    <header id="bill-modal___BV_modal_header_" class="modal-header">
+                        <h2 class="text-primary w-100 text-center">
+                            Generate invoice
+                        </h2>
+                        <button type="button" aria-label="Close" class="close" id="Closemodel">
+                            ×
+                        </button>
+                    </header>
+                    <div id="bill-modal___BV_modal_body_" class="modal-body pt-0">
+                        <form id="patientBillDataForm" novalidate="novalidate">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    @*<button type="button" class="btn btn-sm btn-primary float-right" id="addBill">
+                                        <i class="fa fa-plus">
+                                        </i>
+                                        Add Bill Item
+                                    </button>*@
+                                </div>
+                            </div>
+                            <div id="bill-item-add" style="display: none;">
+                                <div class="row">
+                                    @*<div class="col-md-2">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" id="CHKService">
+                                                <label for="CHKService" class="form-check-label">Service</label>
+                                            </div>
+                                        </div>*@
+
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="CHKPrescription">
+                                            <label for="CHKPrescription" class="form-check-label">Select From prescription</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+
+                                    <input type="hidden" id="AppointmentFid" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                    <input type="hidden" id="PatientFid" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+                                    @Html.HiddenFor(m => m.EncounterFid, new { id = "txtEncounterFid" })
+                                    @Html.HiddenFor(m => m.AppointmentFid, new { id = "txtAppointmentFid" })
+                                    @Html.HiddenFor(m => m.Bill_Fid, new { id = "txtBill_Fid" })
+                                    @Html.HiddenFor(m => m.Bill_Fid_Encrapted, new { id = "txtBill_Fid_Encrapted" })
+                                    <input hidden name="Service_Fid" id="Service_Fid" />
+                                    <div class="col-md-4">
+                                        <div class="form-group w-100">
+                                            <!-- Added w-100 for full width -->
+                                            <label for="ddlServiceName" class="form-control-label" id="MedicineName">
+                                                <span class="text-danger">*</span>
+                                            </label>
+
+                                            @Html.DropDownListFor(m => m.ServiceFid, new SelectList(ViewBag.Service, "Id", "Name"), "Select", new { @class = "form-control", @id = "ddlServiceName", @style = "width: 100%;" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="price" class="form-control-label">
+                                                Price
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <div role="group" class="input-group input-group-md">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        <i class="fa fa-rupee-sign"></i>
+                                                    </div>
+                                                </div>
+                                                @Html.TextBoxFor(m => m.Price, new { @class = "form-control", id = "txtPrice", placeholder = "Price", autocomplete = "off" })
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        /-
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="qty" class="form-control-label">
+                                                Quantity
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.Quantity, new { @class = "form-control", id = "txtQuantity", placeholder = "Quantity", autocomplete = "off" })
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="total" class="form-control-label">
+                                                Total
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.TextBoxFor(m => m.Total, new { @class = "form-control", id = "txtTotal", placeholder = "$0/-", autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="float-right">
+                                            <button type="button" class="btn btn-sm btn-primary" id="BtnSaveBill">
+                                                <i class="fa fa-plus">
+                                                </i>
+                                                Save
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="cancel">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="collapse" static-id="-1" id="__BVID__332" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="item_id" class="form-control-label">
+                                                Service
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <div tabindex="-1" role="combobox" aria-owns="listbox-item_id" class="multiselect">
+                                                <div class="multiselect__select">
+                                                </div>
+                                                <div class="multiselect__tags">
+                                                    <div class="multiselect__tags-wrap" style="display: none;">
+                                                    </div>
+                                                    <!---->
+                                                    <div class="multiselect__spinner" style="display: none;">
+                                                    </div>
+                                                    <input name="" id="item_id" type="text" autocomplete="off" spellcheck="false"
+                                                           placeholder="Services" tabindex="0" aria-controls="listbox-item_id" class="multiselect__input"
+                                                           style="width: 0px; position: absolute; padding: 0px;">
+                                                    <!---->
+                                                    <span class="multiselect__placeholder">
+                                                        Services
+                                                    </span>
+                                                </div>
+                                                <div tabindex="-1" class="multiselect__content-wrapper" style="max-height: 300px; display: none;">
+                                                    <ul role="listbox" id="listbox-item_id" class="multiselect__content" style="display: inline-block;">
+                                                        <!---->
+                                                        <li id="item_id-0" role="option" class="multiselect__element">
+                                                            <span data-select="" data-selected="Selected" data-deselect="" class="multiselect__option multiselect__option--highlight">
+                                                                <span>
+                                                                    Telemed
+                                                                </span>
+                                                            </span>
+                                                            <!---->
+                                                        </li>
+                                                        <li id="item_id-1" role="option" class="multiselect__element">
+                                                            <span data-select="" data-selected="Selected" data-deselect="" class="multiselect__option">
+                                                                <span>
+                                                                    Checkup
+                                                                </span>
+                                                            </span>
+                                                            <!---->
+                                                        </li>
+                                                        <li style="display: none;">
+                                                            <span class="multiselect__option">
+                                                                No elements found. Consider changing the search query.
+                                                            </span>
+                                                        </li>
+                                                        <li style="display: none;">
+                                                            <span class="multiselect__option">
+                                                                List is empty.
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <span class="text-primary small">
+                                                <b>
+                                                    Type and press enter to create new service
+                                                </b>
+                                            </span>
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="price" class="form-control-label">
+                                                Price
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <div role="group" class="input-group input-group-md">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        $
+                                                    </div>
+                                                </div>
+                                                <input name="first_name" type="number" placeholder="Price" required="required"
+                                                       min="0" aria-required="true" class="form-control form-control" id="__BVID__337">
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        /-
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="qty" class="form-control-label">
+                                                Quantity
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <input id="qty" placeholder="Quantity" min="0" required="required" name="first_name"
+                                                   type="number" class="form-control">
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="total" class="form-control-label">
+                                                Total
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <label id="total" class="form-control">
+                                                $0/-
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="col-md-12">
+                                        <div class="float-right">
+                                            <button type="button" class="btn btn-sm btn-primary">
+                                                <i class="fa fa-plus">
+                                                </i>
+                                                Save
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 table-responsive">
+                                    <table class="table table-sm text-center table-bordered custom-table" id="tblGenerateBillRecord">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>
+                                                    Sr no
+                                                </th>
+                                                <th>
+                                                    Services
+                                                </th>
+                                                <th>
+                                                    Price
+                                                </th>
+                                                <th>
+                                                    Quantity
+                                                </th>
+                                                <th>
+                                                    Total
+                                                </th>
+                                                @*<th>
+                                                    Action
+                                                </th>*@
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.GenerateBill != null)
+                                            {
+                                              
+                                                foreach (var item in ViewBag.GenerateBill)
+                                                {
+                                                    TotalAmount += item.Total;
+                                                    <tr>
+                                                        <td>@count</td>
+
+                                                        <td>
+                                                            @if (@item.ServiceName != null && @item.ServiceName != "")
+                                                            {
+                                                        @item.ServiceName
+                                                            }
+                                                            else
+                                                            {
+                                                        @item.MedicineName
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @item.Price
+                                                        </td>
+                                                        <td>
+                                                            @item.Quantity
+                                                        </td>
+                                                        <td>
+                                                            @item.Total
+                                                        </td>
+                                                        <td>
+
+                                                            @*<div role="group" class="btn-group btn-group-sm">
+                                                                <button title="Edit" type="button" class="btn btn-sm btn-outline-primary" onclick="UpdateBill('@item.Bill_Fid_Encrapted')">
+                                                                    <i class="fa fa-pen-alt"></i>
+                                                                </button>
+                                                                <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('@item.Bill_Fid_Encrapted','@item.AppointmentFid')">
+                                                                    <i class="fa fa-trash"></i>
+                                                                </button>
+                                                            </div>*@
+                                                        </td>
+                                                      
+                                                    </tr>
+                                                    count++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="6">
+                                                        <h4 class="text-primary mb-0">
+                                                            No records found
+                                                        </h4>
+                                                    </td>
+                                                </tr>
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                    <!---->
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row">
+                                <div class="col-md-12 table-responsive">
+                                    <table class="table table-sm text-center table-bordered custom-table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>
+                                                    Sr no
+                                                </th>
+                                                <th>
+                                                    Tax Name
+                                                </th>
+                                                <th>
+                                                    Charges
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <h4 class="text-primary mb-0">
+                                                        No tax found
+                                                    </h4>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="total_amount" class="form-control-label">
+                                            Total
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        <div>
+                                            <div role="group" class="input-group input-group-md">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        Rs
+                                                    </div>
+                                                </div>
+                                                @Html.TextBoxFor(m => m.finalAmount, new { @class = "form-control", id = "txtFinalTotal", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+                                                @*<input id="total_amount" name="total_amount" type="text" disabled="disabled"
+                                                    placeholder="Enter total_amount" required="required" readonly="readonly"
+                                                    aria-required="true" class="form-control form-control">*@
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        /-
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!---->
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="discount" class="form-control-label">
+                                            Discount
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                            <span class="text-primary">
+                                                <small>
+                                                    Discount in Parcentage
+                                                </small>
+                                            </span>
+                                        </label>
+                                        <div>
+                                            <div role="group" class="input-group input-group-md">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        Rs
+                                                    </div>
+                                                </div>
+                                                @*@Html.TextBoxFor(m => m.Discount, new { @class = "form-control", id = "txtDiscount", placeholder = "Enter discount", autocomplete = "off"})*@
+                                                @Html.TextBoxFor(m => m.Discount, new { @class = "form-control", id = "txtDiscount", placeholder = "Enter discount", autocomplete = "off",
+                                               type = "number",
+                                               min = "0",
+                                               max = "100"
+                                             
+                                           })
+
+                                                @*<input id="discount" name="discount" type="number" disabled="disabled"
+                                                    placeholder="Enter discount" required="required" min="0" aria-required="true"
+                                                    class="form-control form-control">*@
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        %
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label for="actual_amount" class="form-control-label">
+                                            Payable Amount
+                                        </label>
+                                        <div>
+                                            <div role="group" class="input-group input-group-md">
+                                                <div class="input-group-prepend">
+                                                    <div class="input-group-text">
+                                                        Rs
+                                                    </div>
+                                                </div>
+                                                @Html.TextBoxFor(m => m.FinalPaybalAmount, new { @class = "form-control", id = "txtFinalPaybalAmount", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+
+                                                @*<input id="actual_amount" name="discount" type="number" disabled="disabled"
+                                                    placeholder="Enter discount" required="required" readonly="readonly" min="0"
+                                                    aria-required="true" class="form-control form-control">*@
+                                                <div class="input-group-append">
+                                                    <div class="input-group-text">
+                                                        /-
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <div id="paymentRowsContainer">
+                                <!-- First payment row (default) -->
+                                <div class="row payment-row align-items-end">
+                                    <div class="col-md-4">
+                                        <label class="form-control-label mt-1">
+                                            Payment Type
+                                        </label>
+                                        @Html.DropDownListFor(m => m.PaymentType, new SelectList(
+                                                            new[] {
+                                                            new { Value = "", Text = "Select Status" },
+                                                            new { Value="UPI", Text = "UPI" },
+                                                            new { Value = "Cash", Text = "Cash" },
+                                                            new { Value = "CreditCard", Text = "Credit Card" },
+                                                            new { Value = "DebitCard", Text = "Debit Card" }
+
+                                                            }, "Value", "Text"),
+                                                            new { @id = "ddlPaymentType", @class = "form-control custom-select paymentType" })
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-control-label mt-1">
+                                            Reference
+                                        </label>
+                                        @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control referenceNumber", id = "txtReference" })
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-control-label mt-1">
+                                            Amount
+                                        </label>
+                                        @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control amount", id = "txtAmount", min = "1", type = "number", })
+                                    </div>
+                                    <div class="col-md-1 d-flex align-items-end">
+                                        <button type="button" class="btn btn-success btn-primary" title="Add Row" id="BtnAddRow">+</button>
+                                   
+                                    </div>
+                                 </div>
+                            </div>
+                            <br />
+                            <div id="payment-status-section" class="row">
+                               
+                            
+                            </div>
+                            <div id="payment-status-section" class="row">
+                                <span class="text-center small text-danger" id="idmismatchAmount">
+
+                                </span>
+                                <div class="offset-md-7 col-md-5 float-right mb-3">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label class="form-control-label mt-1">
+                                                Payment Status
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div role="radiogroup" tabindex="-1" class="bv-no-focus-ring" id="__BVID__341">
+                                                <div class="custom-control custom-control-inline custom-radio">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Paid", new { @class = "custom-control-input", id = "paidRadio", name = "PaymentStatus" })
+                                                    @*<input type="radio" class="custom-control-input" value="paid" id="paidRadio" name="paymentStatus">*@
+                                                    <label class="custom-control-label" for="paidRadio">
+                                                        Paid
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-control-inline custom-radio">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Unpaid", new { @class = "custom-control-input", id = "unpaidRadio", name = "PaymentStatus" })
+                                                    @*<input type="radio" class="custom-control-input" value="unpaid" id="unpaidRadio" name="paymentStatus">*@
+                                                    @*<label class="custom-control-label" for="unpaidRadio">
+                                                        Unpaid
+                                                    </label>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="float-left">
+                                        <h4 class="text-center small text-danger">
+                                            Note: To close the encounter, invoice payment is mandatory
+                                        </h4>
+                                    </div>
+                                    <div class="float-right">
+                                        <button type="submit" class="btn btn-primary" id="submitButton">
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn btn-outline-primary btn-secondary" id="Cancel">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!---->
+                </div>
+                <span tabindex="0">
+                </span>
+            </div>
+        </div>
+        <div id="bill-modal___BV_modal_backdrop_" class="modal-backdrop">
+        </div>
+    </div>
+    @*//Bill Model End*@
+
+
+
+    @*bill details pfd model view start *@
+
+    @if (PatientDetails != null && PatientDetails != "")
+    {
+
+        <div id="bill-details-modal___BV_modal_outer_" style="position: absolute; z-index: 1040; display: none;">
+            <div id="bill-details-modal" role="dialog" aria-describedby="bill-details-modal___BV_modal_body_" class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <span tabindex="0"></span>
+                    <div id="bill-details-modal___BV_modal_content_" tabindex="-1" class="modal-content">
+                        <div id="bill-details-modal___BV_modal_body_" class="modal-body pt-0">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex align-items-center justify-content-between w-100">
+                                        <!-- Logo Section -->
+                                        <div class="mr-3">
+                                            @*<img src="~/assets/images/BVG.png" style="height: 50px;" />*@
+                                            <img src="~/assets/images/JnanaYugAyog.png" style="height: 71px;" />
+                                        </div>
+                                        <!-- Clinic Info Section -->
+                                        @*<div class="mr-3">
+                                                <h4 class="mb-0">BVG WELLNESS CLINIC & PATH LAB</h4>
+                                            </div>*@
+                                        <!-- Address & Payment Status Section -->
+                                        <div class="text-right ml-auto" style="margin-left:20px;">
+                                            @*<p class="mb-0 text-primary">BVG Life Science Limited</p>
+                                                <p class="mb-0">
+                                                    Sagar Complex,Opp.Kasarwadi Railway station,<br />Near Nashik Phata,Old Pune-Mumbai Road<br />
+                                                    Chichwad,Pune 411034,MAHARASHTRA,INDIA
+                                                </p>*@
+
+                                            <p class="mb-0 text-primary">Ayurvijnana Chikitsalay</p>
+                                            <p class="mb-0">
+                                                80/635 Nandraj Sankul Society,<br />Famous Chowk, Main Road,<br />
+                                                New Sangavi-411027,MAHARASHTRA,INDIA
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                    <hr class="my-3" style="border: 3px solid black;">
+                                    <header id="bill-details-modal___BV_modal_header_" class="modal-header" style="margin-top:-30px;">
+                                        <h2 class="text-primary w-100 text-center">
+                                            Invoice Details
+                                        </h2>
+                                    </header>
+                                    <div class="row">
+                                        <div class="col-12">
+
+                                            <div class="d-flex align-items-center justify-content-between w-100">
+                                                <!-- Clinic Info Section -->
+                                                <div class="mr-3">
+                                                    <h5 class="mb-0"><span>Patient Name:</span> @PatientDetails.PatientName</h5>
+                                                    <h5 class="mb-0"><span>Age:</span> @PatientDetails.Age</h5>
+                                                    <h5 class="mb-0"><span>Gender:</span> @PatientDetails.Gender</h5>
+                                                    <h5 class="mb-0"><span>Patient Contact :</span> @PatientDetails.PatientContactNumber</h5>
+                                                </div>
+                                                <div class="text-right ml-auto" style="margin-left:20px;">
+                                                    <h5 class="mb-0 font-weight-bold">
+                                                        @*Invoice id <span class="text-primary">#@PatientDetails.EncounterFid</span>*@
+                                                    </h5>
+                                                    <h5 class="mb-0"><span class="font-weight-bold">Created Date</span> @Convert.ToDateTime(@FinalBill.FDate).ToString("dd/MM/yyyy")</h5>
+                                                    @*<p class="mb-0 mt-2">
+                                                            Payment Status <span class="badge badge-danger">@FinalBill.Status</span>
+                                                        </p>*@
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="row">
+                                        <div class="col-12 col-md-12 col-sm-12">
+                                            <h3>Services</h3>
+
+                                            <table class="table custom-table">
+                                                <thead class="thead-light">
+                                                    <tr>
+                                                        <th>Sr no</th>
+                                                        <th>Medicine Name</th>
+                                                       
+                                                        <th>Price</th>
+                                                        <th>Quantity</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (ViewBag.GenerateBill != null)
+                                                    {
+                                                        int Count = 1;
+                                                        foreach (var item in ViewBag.GenerateBill)
+                                                        {
+                                                            TotalAmount += item.Total;
+                                                            <tr>
+                                                                <td>@Count</td>
+                                                                <td>
+                                                                    @if (!string.IsNullOrEmpty(item.ServiceName))
+                                                                    {
+                                                                        @item.ServiceName
+                                                                    }
+                                                                    else if (!string.IsNullOrEmpty(item.MedicineName))
+                                                                    {
+                                                                        @item.MedicineName
+                                                                    }
+                                                                </td>
+                                                            
+                                                                <td>@item.Price</td>
+                                                                <td>@item.Quantity</td>
+                                                                <td>@item.Total</td>
+                                                            </tr>
+                                                            Count++;
+                                                        }
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Total</th>
+                                                        <th>@FinalBill.TotalAmount</th>
+                                                    </tr>
+                                                    @*<tr>
+                                                            <th colspan="4" class="text-right">Discount in Percentage</th>
+                                                            <th>@FinalBill.DiscountAmt %</th>
+                                                        </tr>*@
+                                                    <tr>
+                                                        @*@{
+                                                                TotalDiscount = TotalAmount * @FinalBill.DiscountAmt / 100;
+                                                            }*@
+                                                        <th colspan="4" class="text-right">Discount in %</th>
+                                                        <th>@FinalBill.DiscountAmt</th>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th colspan="4" class="text-right">Amount Paid</th>
+                                                        <th>@*@Convert.ToDecimal(@FinalBill.PayableAmount).ToString("0.00")*@0.00</th>
+                                                    </tr>
+
+                                                </tfoot>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                    @*hide this on next publish*@
+                                    @*<div class="row">
+                                            <div class="col-12">
+                                                <h3>Payment Details</h3>
+                                                <div class="table-responsive">
+                                                    <table class="table custom-table">
+                                                        <thead class="thead-light">
+                                                            <tr>
+                                                                <th>Sr no</th>
+                                                                <th>Paid Amount</th>
+                                                                <th>Payment Mode</th>
+                                                                <th>Refrence No</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if (ViewBag.GetFinalbillDetails != null)
+                                                            {
+                                                                int Count = 1;
+                                                                foreach (var item in ViewBag.GetFinalbillDetails)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@Count</td>
+                                                                        <td>@item.Amount</td>
+                                                                        <td>@item.PaymentMode</td>
+                                                                        <td>@item.PaymentReferenceNumber</td>
+                                                                    </tr>
+                                                                    Count++;
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>*@
+
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="d-flex justify-content-end align-items-center" id="PrintFooter">
+                                <button id="sendToPatient" title="Send to patient" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-paper-plane"></i> Send to patient
+                                </button>
+                                <button id="billPrint" title="Print" class="btn btn-sm btn-primary">
+                                    <i class="fa fa-print"></i> Print
+                                </button>
+                                <button title="Cancel" class="btn btn-sm btn-primary" id="BillDetailsModelClose">
+                                    <i class="fa fa-times"></i> Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+    @*bill details pfd model view End  *@
+
+    @*=========================Bill Deatils================*@
+</div>
+
+
+
+
+
+<script>
+    $("#btnBillList").click(function(){
+        var url = '@Url.Action("OutstandingBill", "BillingRecord")';
+        window.location.href = url;
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("#ddlServiceName").select2();
+
+        $("#BtnAddRow").click(function () {
+            debugger;
+            var FinalPaybalAmt = parseFloat($("#txtFinalPaybalAmount").val());
+            var PayAmount=parseFloat($("#txtAmount").val());
+            var FinalTotal=0;
+            var DiffenceAmount=0;
+            $(".payment-row").each(function () {
+                debugger;
+                var amount = $(this).find(".amount").val();
+                FinalTotal += parseFloat(amount) || 0;
+
+            });
+
+            DiffenceAmount=FinalPaybalAmt-FinalTotal;
+
+            var newRow = `
+        <div class="row payment-row dynamic-row">
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Payment Type</label>
+                <select class="form-control custom-select paymentType">
+                    <option value="">Select Status</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                    <option value="CreditCard">Credit Card</option>
+                    <option value="DebitCard">Debit Card</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Reference</label>
+                <input type="text" class="form-control referenceNumber" placeholder="Enter Reference">
+            </div>
+            <div class="col-md-3">
+                <label class="form-control-label mt-1">Amount</label>
+                <input type="number" class="form-control amount" placeholder="Enter Amount" value=${DiffenceAmount}>
+            </div>
+             <div class="col-md-1 mt-3 dynamic-btn">
+               <button title="Remove" class="btn btn-sm btn-outline-danger btn-remove-row">
+                <i class="fa fa-trash"></i>
+            </button>
+            </div>
+        </div>`;
+
+            // Append new row to container
+            $("#paymentRowsContainer").append(newRow);
+        });
+
+        $(document).on("click", ".btn-remove-row", function () {
+            var FinalPaybalAmt = parseFloat($("#txtFinalPaybalAmount").val());
+
+            $(this).closest(".dynamic-row").remove();
+            $("#txtAmount").val(FinalPaybalAmt);
+        });
+
+        $("#CHKPrescription").change(function(){
+            debugger;
+            $("#CHKService").prop("checked",false);
+            const Prescription = document.getElementById('CHKPrescription');
+            if (Prescription && Prescription.checked) {
+                $("#ddlServiceName").find("option").remove();
+                var AppointmentFid=$("#txtAppointmentFid").val();
+                var FromPrescriptioncheck="Checked";
+                $.ajax({
+                    type: 'GET',
+                  //  dataType: 'JSON',
+                  //  contentType: "application/json; charset=utf-8",
+                  url: '@Url.Action("GetServices", "AayurvedEHR")',
+                  //  data: { FromPrescriptioncheck: FromPrescriptioncheck,EncounterFid:EncounterFid},
+                    success: function (data) {
+                        debugger;
+                        if(data!=null)
+                        {
+                            var Servicedata= data.GetData;
+                            $("#ddlServiceName").append("<option value=''>--Select-- </option>");
+                            $.each(Servicedata, function (i, p) {
+                                $("#ddlServiceName").append("<option value='" + p.Id  + "'>" + p.Name + "</option>");
+                            });
+                        }
+                        return false;
+                    }
+                })
+
+                debugger
+                document.getElementById('MedicineName').innerHTML = ' ';
+            }
+            else{
+                document.getElementById('MedicineName').innerHTML = ' ';
+                $("#ddlServiceName").find("option").remove();
+                var check="UnChecked"
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("GetServices", "AayurvedEHR")',
+                    data: { check: check},
+                    success: function (data) {
+                        debugger;
+                        if(data!=null)
+                        {
+                            var Servicedata= data.GetData;
+                            $("#ddlServiceName").append("<option value=''>--Select-- </option>");
+                            $.each(Servicedata, function (i, p) {
+                                $("#ddlServiceName").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                            });
+                        }
+                        return false;
+
+                    }
+                })
+            }
+        })
+        $("#CHKService").change(function(){
+            $("#CHKPrescription").prop("checked",false);
+            const serviceck = document.getElementById('CHKService');
+            if (serviceck && serviceck.checked) {
+                $("#ddlServiceName").find("option").remove();
+                var check="Checked"
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("GetServices", "AayurvedEHR", new { area= "Patient" })',
+                    data: { check: check},
+                    success: function (data) {
+                        debugger;
+                        if(data!=null)
+                        {
+                            var Servicedata= data.GetData;
+                            $("#ddlServiceName").append("<option value=''>--Select-- </option>");
+                            $.each(Servicedata, function (i, p) {
+                                $("#ddlServiceName").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                            });
+                        }
+                        return false;
+                    }
+                })
+
+                debugger
+                document.getElementById('MedicineName').innerHTML = 'Service';
+            }else{
+                document.getElementById('MedicineName').innerHTML = '';
+                $("#ddlServiceName").find("option").remove();
+                var check="UnChecked"
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("GetServices", "AayurvedEHR", new { area= "Patient" })',
+                    data: { check: check},
+                    success: function (data) {
+                        debugger;
+                        if(data!=null)
+                        {
+                            var Servicedata= data.GetData;
+                            $("#ddlServiceName").append("<option value=''>--Select-- </option>");
+                            $.each(Servicedata, function (i, p) {
+                                $("#ddlServiceName").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                            });
+                        }
+                        return false;
+
+                    }
+                })
+            }
+        })
+        $("#Cancel").click(function () {
+            debugger;
+            // Correct the URL assignment
+            const modalOuter = $("#bill-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            var url='@Url.Action("BillingRecord", "BillingRecord")';
+            window.location.href = url;
+        });
+        $("#Closemodel").click(function () {
+            debugger;
+
+            const modalOuter = $("#bill-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            var url='@Url.Action("BillingRecord", "BillingRecord")';
+            window.location.href = url;
+        });
+
+
+
+        $("#addBill").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#bill-item-add").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#bill-item-add").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#addBill").html('<i class="fa fa-times"></i> Close');
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#addBill").html('<i class="fa fa-plus"></i> Add Bill Item');
+                    $("#ddlServiceName").val("").trigger("change");
+                    $("#txtPrice").val("");
+                    $("#txtQuantity").val("");
+                    $("#txtTotal").val("");
+                    $("#txtBill_Fid_Encrapted").val("");
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+
+    function OpenBillModel(Bill_Fid,AppointmentFid){
+        debugger;
+
+
+
+        $('#txtBill_Fid').val(Bill_Fid);
+        $('#txtAppointmentFid').val(AppointmentFid);
+        $.ajax({
+            type: 'Get',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetBillRecord", "BillingRecord")',
+            data: { Bill_Fid: Bill_Fid,AppointmentFid:AppointmentFid},
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+
+
+                    var GenerateBill = data.GetBillList || [];
+
+
+                    // Get the table body where rows should be added
+                    var tableBody = $("#tblGenerateBillRecord tbody");
+
+                    // Clear any existing rows
+                    tableBody.empty();
+
+                    // Check if data exists
+                    if (GenerateBill.length > 0) {
+                        debugger;
+                        // Iterate through the prescription list and append rows
+                        var TotalAmount = 0; // Initialize TotalAmount
+                        var Count = 0;
+                        $.each(GenerateBill, function (i, item) {
+                            debugger;
+                            var row = "";
+                            var ServiceName = "";
+                            var MedicineName = "";
+                            var Price = "";
+                            var Quantity = "";
+                            var Total = "";
+                            var Bill_Fid = "";
+                            var Bill_Fid_Encrapted = "";
+                            var EncounterFid="";
+
+
+                            // Iterate over key-value pairs in the item
+                            $.each(item, function (index, pair) {
+                                debugger;
+                                if (pair.Key === "Bill_Fid_Encrapted") {
+                                    Bill_Fid_Encrapted = pair.Value;
+                                }
+                                if (pair.Key === "Bill_Fid") {
+                                    Bill_Fid = pair.Value;
+                                }
+                                if (pair.Key === "ServiceName") {
+                                    ServiceName = pair.Value;
+                                }
+                                if (pair.Key === "MedicineName") {
+                                    MedicineName = pair.Value;
+                                }
+                                if (pair.Key === "Price") {
+                                    Price = pair.Value;
+                                }
+                                if (pair.Key === "Quantity") {
+                                    Quantity = pair.Value;
+                                }
+                                if (pair.Key === "Total") {
+                                    //Total = pair.Value;
+                                    Total = parseFloat(pair.Value) || 0; // Ensure Total is parsed as a number
+                                    TotalAmount += Total;
+                                }
+                                if (pair.Key === "EncounterFid") {
+                                    EncounterFid = pair.Value;
+                                }
+
+                            });
+
+
+                            Count++;
+                            // Construct the row dynamically
+                            row = `
+                <tr class ="animated fadeInUp">
+
+                <td>${Count}</td>
+                   <td class="fixed-width">
+        <span>${MedicineName && MedicineName.trim() !== "" ? MedicineName : ServiceName}</span>
+    </td>
+
+                     <td>${Price}</td>
+                     <td>${Quantity}</td>
+                     <td>${Total}</td>
+                   
+                </tr>`;
+
+                            // Append the row to the table body
+                            tableBody.append(row);
+                        });
+                    } else {
+                        // Show "No prescription found" if no data exists
+                        var noDataRow = `
+            <tr>
+                <td colspan="4" class="text-center text-primary">
+                    <h4>No records found</h4>
+                </td>
+            </tr>`;
+                        tableBody.append(noDataRow);
+                    }
+                    var paymentStatus = data.paymentStatus ;
+                    var DiscountAmt=data.DiscountAmt;
+                    // Set the PaymentStatus radio button based on the returned status
+                    if (paymentStatus === "Paid") {
+                        $("#paidRadio").prop("checked", true); // Example: radio button with ID 'radioPaid'
+                    } else if (paymentStatus === "Unpaid") {
+                        $("#unpaidRadio").prop("checked", true); // Example: radio button with ID 'radioUnpaid'
+                    }
+                    if(DiscountAmt!=null || DiscountAmt!="")
+                    {
+                        var totalPayableAmount = TotalAmount - (TotalAmount * DiscountAmt / 100);
+                        $("#txtDiscount").val(DiscountAmt);
+                        $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                        $("#txtFinalPaybalAmount").val(totalPayableAmount.toFixed(2));
+                        $("#txtAmount").val(totalPayableAmount.toFixed(2));
+                    }else{
+                        $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                        $("#txtFinalPaybalAmount").val(TotalAmount.toFixed(2));
+                        $("#txtAmount").val(TotalAmount.toFixed(2));
+                    }
+
+                    var FinalbillDetails=data.GetFinalbillDetails;
+                    var finalCount=1;
+                    $.each(FinalbillDetails, function (i, item) {
+                        debugger;
+                        function getValue(key) {
+                            let foundItem = item.find(obj => obj.Key === key);
+                            return foundItem ? foundItem.Value : ""; // Return value or empty string if not found
+                        }
+
+                        let amount = getValue("Amount");
+                        let paymentReference = getValue("PaymentReferenceNumber");
+                        let paymentMode = getValue("PaymentMode");
+
+                        if(finalCount===1)
+                        {
+                            $("#ddlPaymentType").val(paymentMode);
+                            $("#txtReference").val(paymentReference);
+                            $("#txtAmount").val(amount);
+                            finalCount=2;
+                        }else{
+                            let paymentOptions = ["UPI", "Cash", "CreditCard", "DebitCard"];
+                            let optionsHtml = `<option value="">Select Status</option>`;
+
+                            // Loop through payment options and mark the selected option
+                            $.each(paymentOptions, function (index, option) {
+                                let selected = paymentMode === option ? "selected" : "";
+                                optionsHtml += `<option value="${option}" ${selected}>${option}</option>`;
+                            });
+
+                            let newRow = `
+                         <div class="row payment-row">
+                            <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Payment Type</label>
+                                 <select class="form-control custom-select paymentType">
+                                     ${optionsHtml} <!-- Insert dynamically generated options -->
+                                 </select>
+                             </div>
+                             <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Reference</label>
+                                 <input type="text" class="form-control referenceNumber" placeholder="Enter Reference" value="${paymentReference || ''}">
+                             </div>
+                             <div class="col-md-4">
+                                 <label class="form-control-label mt-1">Amount</label>
+                                 <input type="number" class="form-control amount" placeholder="Enter Amount" value="${amount || ''}">
+                             </div>
+                         </div>`;
+
+                            // Append new row to container
+                            $("#paymentRowsContainer").append(newRow);
+                        }
+                    });
+
+                }
+            }
+
+        })
+        // Correct the URL assignment
+        $("#bill-modal___BV_modal_outer_")
+         .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+         .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+         .addClass("show");
+    }
+
+    const paidRadio = document.getElementById('paidRadio');
+    const submitButton = document.getElementById('submitButton');
+
+    document.querySelectorAll('input[name="PaymentStatus"]').forEach(radio => {
+        debugger
+        radio.addEventListener('change', function () {
+            if (paidRadio.checked) {
+                submitButton.textContent = 'Save and Close ';
+            } else {
+                submitButton.textContent = 'Save';
+            }
+        });
+    });
+</script>
+
+<script>
+    function filterTable(inputId, tableId) {
+        debugger;
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+    filterTable('SearchInput', 'tblBillingRecords');
+    filterTable('FilterAmoutDue', 'tblBillingRecords');
+    filterTable('FilterByDiscount', 'tblBillingRecords');
+    filterTable('filterByTotal', 'tblBillingRecords');
+    filterTable('FilterByPatient', 'tblBillingRecords');
+    filterTable('FilterByClinic', 'tblBillingRecords');
+    filterTable('FilterByDoctor', 'tblBillingRecords');
+   // filterTable('FilterDate', 'tblBillingRecords');
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblBillingRecords');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            let totalPages = rowsPerPage === -1 ? 1 : Math.ceil(rows.length / rowsPerPage);
+
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= totalPages);
+            //prevButton.classList.toggle('disabled', currentPage <= 1);
+            //nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+        // 👉 Input page number change
+        currentPageInput.addEventListener('change', function () {
+            let enteredPage = parseInt(this.value);
+            let totalPages = Math.ceil(rows.length / rowsPerPage);
+
+            if (isNaN(enteredPage) || enteredPage < 1) {
+                alert("Please enter a valid page number");
+                currentPageInput.value = currentPage;
+                return;
+            }
+
+            if (enteredPage > totalPages) {
+                alert("Entered page exceeds total pages");
+                currentPageInput.value = currentPage;
+                return;
+            }
+
+            currentPage = enteredPage;
+            updateTable();
+        });
+
+        // 👉 Enter key support
+        currentPageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.dispatchEvent(new Event('change'));
+            }
+        });
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+
+<script>
+    $("#ddlServiceName").change(function(){
+        debugger;
+        var GetServiceId=$("#ddlServiceName").val();
+        var selectedServiceName = $("#ddlServiceName option:selected").text();
+        $("#txtServiceName").val(selectedServiceName);
+        $.ajax({
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetServicePrice", "Encounter")',
+            data: { GetServiceId: GetServiceId },
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    var Price=data.GetServicePrice;
+                    $("#txtPrice").val(data);
+                    $("#txtQuantity").val(1);
+                    $("#txtTotal").val(data);
+                }
+            }
+
+        })
+    });
+
+    $("#txtQuantity").on("keyup", function () {
+        debugger
+        var GetPrice = parseFloat($("#txtPrice").val()) || 0; // Ensure Price is selected correctly and defaults to 0 if empty
+
+        var Quantity = parseFloat($(this).val()) || 0; // Parse quantity and handle non-numeric input
+        var TotalPrice = GetPrice * Quantity;
+        $("#txtTotal").val(TotalPrice.toFixed(2)); // Fix total to 2 decimal places
+    });
+
+
+    $("#txtDiscount").on("keyup", function () {
+        debugger
+        // Ensure totalAmount is parsed correctly or defaults to 0
+        var totalAmount = parseFloat($("#txtFinalTotal").val()) || 0;
+
+        // Ensure Discount is parsed correctly or defaults to 0
+        var discount = parseFloat($(this).val()) || 0;
+
+        // Calculate the total payable amount
+        //var totalPayableAmount = totalAmount - discount;
+        var totalPayableAmount = totalAmount - (totalAmount * discount / 100);
+
+        // Ensure the total payable amount is not negative
+        if (totalPayableAmount < 0) {
+            $("#txtFinalPaybalAmount").val(totalAmount.toFixed(2));
+            $("#txtAmount").val(totalAmount.toFixed(2));
+        }
+
+        // Set the calculated total payable amount to 2 decimal places in the input field
+        $("#txtFinalPaybalAmount").val(totalPayableAmount.toFixed(2));
+        $("#txtAmount").val(totalPayableAmount.toFixed(2));
+    });
+
+    function GenereteBillTable(GenerateBill)
+    {
+        GenerateBill = GenerateBill || [];
+        var tableBody = $("#tblGenerateBillRecord tbody");
+
+        // Clear any existing rows
+        tableBody.empty();
+
+        // Check if data exists
+        if (GenerateBill.length > 0) {
+            // Iterate through the prescription list and append rows
+            var TotalAmount = 0; // Initialize TotalAmount
+            var Count = 1;
+            $.each(GenerateBill, function (i, item) {
+                var row = "";
+                var ServiceName = "";
+                var MedicineName = "";
+                var Price = "";
+                var Quantity = "";
+                var Total = "";
+                var Bill_Fid = "";
+                var Bill_Fid_Encrapted = "";
+                var EncounterFid="";
+
+                // Iterate over key-value pairs in the item
+                $.each(item, function (index, pair) {
+                    if (pair.Key === "Bill_Fid_Encrapted") {
+                        Bill_Fid_Encrapted = pair.Value;
+                    }
+                    if (pair.Key === "Bill_Fid") {
+                        Bill_Fid = pair.Value;
+                    }
+                    if (pair.Key === "ServiceName") {
+                        ServiceName = pair.Value;
+                    }
+                    if (pair.Key === "MedicineName") {
+                        MedicineName = pair.Value;
+                    }
+                    if (pair.Key === "Price") {
+                        Price = pair.Value;
+                    }
+                    if (pair.Key === "Quantity") {
+                        Quantity = pair.Value;
+                    }
+                    if (pair.Key === "Total") {
+                        //Total = pair.Value;
+                        Total = parseFloat(pair.Value) || 0; // Ensure Total is parsed as a number
+                        TotalAmount += Total;
+                    }
+                    if (pair.Key === "EncounterFid") {
+                        EncounterFid = pair.Value;
+                    }
+                });
+                $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                $("#txtFinalPaybalAmount").val(TotalAmount.toFixed(2));
+                $("#txtAmount").val(TotalAmount.toFixed(2));
+
+                Count++;
+                // Construct the row dynamically
+                row = `
+                <tr class ="animated fadeInUp">
+
+                <td>${Count}</td>
+                              <td class="fixed-width">
+        <span>${MedicineName && MedicineName.trim() !== "" ? MedicineName : ServiceName}</span>
+    </td>
+                     <td>${Price}</td>
+                     <td>${Quantity}</td>
+                     <td>${Total}</td>
+                    <td>
+                        <div role="group" class="btn-group btn-group-sm">
+                              <button title="Edit" type="button" class ="btn btn-sm btn-outline-primary" onclick="UpdateBill('${Bill_Fid_Encrapted}')">
+                                 <i class ="fa fa-pen-alt"></i>
+                            </button>
+                            <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('${Bill_Fid_Encrapted}','${AppointmentFid}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+
+                // Append the row to the table body
+                tableBody.append(row);
+            });
+        } else {
+            // Show "No prescription found" if no data exists
+            var noDataRow = `
+            <tr>
+                <td colspan="4" class="text-center text-primary">
+                    <h4>No records found</h4>
+                </td>
+            </tr>`;
+            tableBody.append(noDataRow);
+        }
+    }
+
+
+    $("#BtnSaveBill").click(function(){
+        debugger;
+        //var Bill = {
+
+        var Bill_Fid = $("#txtBill_Fid").val();
+        var Bill_Fid_Encrapted= $("#txtBill_Fid_Encrapted").val();
+        var  ServiceFid= $("#ddlServiceName").val();
+        var Price=$("#txtPrice").val();
+        var Quantity=$("#txtQuantity").val();
+        var Total=$("#txtTotal").val();
+        var  EncounterFid=$("#EncounterFid").val();
+        //AppointmentFid:$("#AppointmentFid").val(),
+        var  Service_Fid=$("#Service_Fid").val();
+
+        //};
+        var AppointmentFid=$("#txtAppointmentFid").val();
+        $.ajax({
+
+            //dataType: 'JSON',
+
+            //contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("SaveGenerateBill")',
+            //url: '~/Patients/AayurevedEHR/SaveGenerateBill',
+            type: 'Post',
+            data:{AppointmentFid:AppointmentFid , Bill_Fid:Bill_Fid,  Bill_Fid_Encrapted:Bill_Fid_Encrapted, ServiceFid:ServiceFid, Price:Price , Quantity:Quantity ,Total:Total , EncounterFid:EncounterFid,Service_Fid:Service_Fid},
+            //data: JSON.stringify({
+            //    Bill: Bill,
+            //    AppointmentFid: AppointmentFid
+            //}),
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    var GenerateBill = data.GetBillList || [];
+
+                    // Get the table body where rows should be added
+                    var tableBody = $("#tblGenerateBillRecord tbody");
+
+                    // Clear any existing rows
+                    tableBody.empty();
+
+                    // Check if data exists
+                    if (GenerateBill.length > 0) {
+                        // Iterate through the prescription list and append rows
+                        var TotalAmount = 0; // Initialize TotalAmount
+                        var Count = 1;
+                        $.each(GenerateBill, function (i, item) {
+                            var row = "";
+                            var ServiceName = "";
+                            var MedicineName = "";
+                            var Price = "";
+                            var Quantity = "";
+                            var Total = "";
+                            var Bill_Fid = "";
+                            var Bill_Fid_Encrapted = "";
+                            var EncounterFid="";
+
+                            // Iterate over key-value pairs in the item
+                            $.each(item, function (index, pair) {
+                                if (pair.Key === "Bill_Fid_Encrapted") {
+                                    Bill_Fid_Encrapted = pair.Value;
+                                }
+                                if (pair.Key === "Bill_Fid") {
+                                    Bill_Fid = pair.Value;
+                                }
+                                if (pair.Key === "ServiceName") {
+                                    ServiceName = pair.Value;
+                                }
+                                if(pair.Key=="MedicineName")
+                                {
+                                    MedicineName = pair.Value;
+                                }
+                                if (pair.Key === "Price") {
+                                    Price = pair.Value;
+                                }
+                                if (pair.Key === "Quantity") {
+                                    Quantity = pair.Value;
+                                }
+                                if (pair.Key === "Total") {
+                                    //Total = pair.Value;
+                                    Total = parseFloat(pair.Value) || 0; // Ensure Total is parsed as a number
+                                    TotalAmount += Total;
+                                }
+                                if (pair.Key === "EncounterFid") {
+                                    EncounterFid = pair.Value;
+                                }
+
+                            });
+                            $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+                            $("#txtFinalPaybalAmount").val(TotalAmount.toFixed(2));
+                            $("#txtAmount").val(TotalAmount.toFixed(2));
+                            Count++;
+                            // Construct the row dynamically
+                            row = `
+                <tr class ="animated fadeInUp">
+
+                <td>${Count}</td>
+                   <td class ="fixed-width">
+                         <span>${MedicineName && MedicineName.trim() !== "" ? MedicineName : ServiceName}</span>
+                     </td>
+                     <td>${Price}</td>
+                     <td>${Quantity}</td>
+                     <td>${Total}</td>
+                    <td>
+                        <div role="group" class="btn-group btn-group-sm">
+                              <button title="Edit" type="button" class ="btn btn-sm btn-outline-primary" onclick="UpdateBill('${Bill_Fid_Encrapted}')">
+                                 <i class ="fa fa-pen-alt"></i>
+                            </button>
+                            <button title="Delete" type="button" class="btn btn-outline-danger" onclick="DeleteBill('${Bill_Fid_Encrapted}','${AppointmentFid}')">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>`;
+
+                            // Append the row to the table body
+                            tableBody.append(row);
+                        });
+                    } else {
+                        // Show "No prescription found" if no data exists
+                        var noDataRow = `
+            <tr>
+                <td colspan="4" class="text-center text-primary">
+                    <h4>No records found</h4>
+                </td>
+            </tr>`;
+                        tableBody.append(noDataRow);
+                    }
+                }
+                $("#txtServiceName").val("");
+                $("#txtPrice").val("");
+                $("#txtQuantity").val("");
+                $("#txtTotal").val("");
+                $("#Service_Fid").val("");
+            }
+
+
+        })
+    });
+
+
+
+
+    @*$("#BtnSaveBill").click(function(){
+        debugger;
+
+        var Bill = {
+
+            Bill_Fid: $("#txtBill_Fid").val(),
+            Bill_Fid_Encrapted: $("#txtBill_Fid_Encrapted").val(),
+            ServiceFid:$("#ddlServiceName").val(),
+            Price:$("#txtPrice").val(),
+            Quantity:$("#txtQuantity").val(),
+            Total:$("#txtTotal").val(),
+            EncounterFid:$("#txtEncounterFid").val(),
+            AppointmentFid:$("#AppointmentFid").val(),
+            Service_Fid:$("#Service_Fid").val(),
+
+
+
+        };
+        $.ajax({
+            type: 'Post',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("SaveGenerateBill", "AayurvedEHR")',
+            data: JSON.stringify(Bill),
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    var GenerateBill = data.GetBillList || [];
+
+                    GenereteBillTable(GenerateBill);
+
+                    $("#txtServiceName").val("");
+                    $("#txtPrice").val("");
+                    $("#txtQuantity").val("");
+                    $("#txtTotal").val("");
+                    $("#Service_Fid").val("");
+                }
+            }
+
+        })
+    });*@
+
+    var totalAmount = @TotalAmount;
+    $("#txtFinalTotal").val(totalAmount);
+    $("#txtFinalPaybalAmount").val(totalAmount);
+    $("#totalAmount").val(totalAmount);
+
+    function UpdateBill(Bill_Fid_Encrapted){
+        debugger
+        $.ajax({
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("UpdateBill", "BillingRecord")',
+            data: { Bill_Fid_Encrapted: Bill_Fid_Encrapted },
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    debugger
+                    $("#txtServiceName").val(data.MedicineName);
+                    $("#txtPrice").val(data.Price);
+                    $("#txtQuantity").val(data.Quantity);
+                    $("#txtTotal").val(data.Total);
+                    $("#txtBill_Fid_Encrapted").val(data.BillFid_Encrapted);
+                    $("#Service_Fid").val(data.ServiceFid);
+                    $("#bill-modal___BV_modal_outer_")
+           .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+           .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+           .addClass("show");
+
+
+                    $("#bill-item-add").show();
+                    $("#addBill").html('<i class="fa fa-times"></i> Close Form');
+
+
+
+                }
+            }
+
+        })
+    }
+
+
+    function DeleteBill(Bill_Fid_Encrapted,AppointmentFid) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'JSON',
+                    contentType: "application/json; charset=utf-8",
+                    url: '@Url.Action("DeleteBill", "BillingRecord")',
+                    data: { Bill_Fid_Encrapted: Bill_Fid_Encrapted,AppointmentFid:AppointmentFid },
+                    success: function (data) {
+                        debugger;
+                        if (data != null) {
+                            debugger
+                            var SuccesMessage = data.SuccesMsg;
+                            var SuccesIcon = data.Icon;
+                            var GenerateBill = data.GenerateBill || []; // Use null-coalescing operator for safety
+
+                            GenereteBillTable(GenerateBill);      // Bind Table  by function
+                            SuccesAlert(SuccesMessage, SuccesIcon);
+                        }
+                    }
+
+                })
+            }
+        });
+
+    }
+    function SuccesAlert(Message, Icon) {
+        debugger;
+        try {
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(Message, Icon, imageUrl);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    @*$("#submitButton").click(function(){
+        debugger;
+
+        var finalbill = {
+            FinalPaybalAmount:$("#txtFinalPaybalAmount").val(),
+            Discount:$("#txtDiscount").val(),
+            finalAmount:$("#txtFinalTotal").val(),
+            EncounterFid:$("#txtEncounterFid").val(),
+            AppointmentFid:$("#txtAppointmentFid").val(),
+            PaymentType:$("#ddlPaymentType").val(),
+            ReferenceNumber:$("#txtReference").val(),
+            PaymentStatus: $("input[name='PaymentStatus']:checked").val()
+        };
+        $.ajax({
+            type: 'Post',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("SaveAndCloseEncounter", "BillingRecord")',
+            data: JSON.stringify(finalbill),
+            success: function (data) {
+                debugger;
+                if (data.AppointmentFid != null && data.AppointmentFid!=0) {
+                    var AppointmentFid = data.AppointmentFid;
+                    var url = '@Url.Action("BillingRecord", "BillingRecord")'
+                    window.location.href = url;
+                }
+                if(data.EncounterFid!=null && data.EncounterFid!=0)
+                {
+                    var EncounterFid = data.EncounterFid;
+                    var url = '@Url.Action("BillingRecord", "BillingRecord")'
+                    window.location.href = url;
+                }
+            }
+        })
+    });*@
+
+
+  $("#submitButton").click(function (e) {
+    // फॉर्म आपोआप सबमिट होऊ नये म्हणून हे महत्त्वाचे आहे
+    e.preventDefault();
+
+    var paymentList = [];
+    var FinalTotal = 0;
+    var FinalPaybalAmt = parseFloat($("#txtFinalPaybalAmount").val()) || 0;
+    var errorMessage = "";
+    var isValid = true;
+
+      // १. चेक करा की 'Paid' रेडिओ बटण सिलेक्ट केले आहे का?
+    if (!$("#paidRadio").is(":checked")) {
+        $("#idmismatchAmount").html('<span class="text-danger">Error: Please select "Paid" radio button to proceed.</span>');
+        return false; // इथेच थांबेल
+    }
+    // १. पेमेंट स्टेटस चेक (Paid/Unpaid)
+    var paymentStatus = $("input[name='PaymentStatus']:checked").val();
+    if (!paymentStatus) {
+        $("#idmismatchAmount").html('<span class="text-danger">Error: Please select Payment Status (Paid).</span>');
+        return false;
+    }
+
+    // २. पेमेंट रोज (Rows) मधून डेटा गोळा करा
+    $(".payment-row").each(function () {
+        var row = $(this);
+        var paymentType = row.find(".paymentType").val();
+        var referenceNumber = row.find(".referenceNumber").val() || "";
+        var amount = parseFloat(row.find(".amount").val()) || 0;
+
+        // --- नवीन व्हॅलिडेशन: अमाऊंट १ पेक्षा कमी नसावी ---
+        if (amount < 1) {
+            errorMessage = "Error: Amount must be at least 1.";
+            isValid = false;
+            row.find(".amount").focus(); // त्या बॉक्सवर फोकस नेईल
+            return false; // loop थांबवण्यासाठी
+        }
+        FinalTotal += amount;
+
+        // व्हॅलिडेशन: जर स्टेटस 'Paid' असेल तर
+        if (paymentStatus === "Paid") {
+            if (paymentType === "") {
+                errorMessage = "Error: Please select Payment Type.";
+                isValid = false;
+                return false; // loop थांबवण्यासाठी
+            }
+            //if (paymentType !== "Cash" && referenceNumber.trim() === "") {
+            //    errorMessage = "Error: Reference Number is required for " + paymentType;
+            //    isValid = false;
+            //    return false;
+            //}
+        }
+
+        // लिस्टमध्ये डेटा भरा
+        paymentList.push({
+            PaymentType: paymentType,
+            ReferenceNumber: referenceNumber,
+            Amount: amount,
+            FinalPaybalAmount: $("#txtFinalPaybalAmount").val(),
+            Discount: $("#txtDiscount").val(),
+            finalAmount: $("#txtFinalTotal").val(),
+            EncounterFid: $("#txtEncounterFid").val(),
+            AppointmentFid: $("#txtAppointmentFid").val(),
+            PaymentStatus: paymentStatus,
+            Bill_Fid: $("#txtBill_Fid").val()
+        });
+    });
+
+    // ३. जर काही चूक असेल तर AJAX थांबवा
+    if (!isValid) {
+        $("#idmismatchAmount").html('<span class="text-danger">' + errorMessage + '</span>');
+        return false;
+    }
+
+    // ४. अमाऊंट जास्त भरली आहे का ते तपासा
+    if (paymentStatus === "Paid" && FinalTotal > (FinalPaybalAmt + 0.1)) {
+        $("#idmismatchAmount").html('<span class="text-danger">Error: Paid amount cannot be greater than Payable amount.</span>');
+        return false;
+    }
+
+    // ५. सर्व बरोबर असल्यास AJAX कॉल
+    $("#idmismatchAmount").html('Processing...');
+
+    $.ajax({
+        type: 'POST',
+        dataType: 'JSON',
+        contentType: "application/json; charset=utf-8",
+        url: '@Url.Action("SaveAndCloseEncounter", "AayurvedEHR")',
+        data: JSON.stringify(paymentList),
+        success: function (data) {
+            // यशस्वी झाल्यावर बिलिंग रेकॉर्ड पेजवर जा
+            window.location.href = '@Url.Action("BillingRecord", "BillingRecord")';
+        },
+        error: function (xhr) {
+            $("#idmismatchAmount").html('<span class="text-danger">Server Error: Could not save record.</span>');
+        }
+    });
+});
+
+    const serviceck = document.getElementById('CHKService');
+    if (serviceck && serviceck.checked) {
+        document.getElementById('MedicineName').innerHTML = '<i class="fa fa-times"></i> Service';
+    }
+
+    @*function GetPatientDetails(EncounterFid)
+    {
+            debugger;
+            // Correct the URL assignment
+            $("#bill-details-modal___BV_modal_outer_")
+             .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+             .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+             .addClass("show");
+
+        var url = '@Url.Action("BillingRecord", "BillingRecord")' + '?EncounterFid=' + EncounterFid;
+        window.location.href = url;
+    }*@
+
+    $("#btnPaidBillList").click(function(){
+        var url = '@Url.Action("PaidBillRecords", "BillingRecord")';
+        window.location.href = url;
+    });
+</script>
+
+@*bill details view  script *@
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        var PatientDeatialsData = @Html.Raw(Json.Encode(ViewBag.GetPatientEncounterDetails));
+        if(PatientDeatialsData!=null || PatientDeatialsData!="")
+        {
+            $("#bill-details-modal___BV_modal_outer_")
+                 .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+                 .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+                 .addClass("show");
+        }
+
+        $("#CancelBillDetailsModel").click(function () {
+            debugger;
+            // Correct the URL assignment
+            const modalOuter = $("#bill-details-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            var url='@Url.Action("PaidBillRecords", "BillingRecord")';
+            window.location.href = url;
+        });
+        $("#BillDetailsModelClose").click(function () {
+            debugger;
+
+            const modalOuter = $("#bill-details-modal___BV_modal_outer_");
+
+            // Hide modal and remove aria-modal attribute
+            modalOuter.css("display", "none").attr("aria-hidden", "true");
+            var url='@Url.Action("BillingRecord", "BillingRecord")';
+            window.location.href = url;
+
+        });
+
+
+        //$("#btnExport").click(function(){
+        //    debugger;
+        //    var table = document.getElementById("tblBillingRecords");
+        //    var wb = XLSX.utils.book_new();
+        //    var ws = XLSX.utils.table_to_sheet(table);
+
+        //    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+        //    // Save the file
+        //    XLSX.writeFile(wb, "table_data.xlsx");
+        //});
+
+        //$("#sendToPatient").click(function () {
+        //    debugger;
+        //    //let element = document.getElementById('bill-details-modal');
+        //    let modalContent= document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+        //    var clonedContent = modalContent.cloneNode(true);
+
+        //    // Remove the footer div with ID 'PrintFooter'
+        //    var footerNav = clonedContent.querySelector("#PrintFooter");
+        //    if (footerNav) {
+        //        footerNav.remove();
+        //    }
+
+        //    var element = clonedContent.innerHTML;
+
+        //    html2pdf().from(element).outputPdf('blob').then(function (pdfBlob) {
+        //        debugger;
+        //        // Convert Blob to File
+        //        let pdfFile = new File([pdfBlob], "Invoice.pdf", { type: "application/pdf" });
+
+        //        let formData = new FormData();
+        //        formData.append("pdfFile", pdfFile);
+
+        //        // Get CSRF token
+        //        //let token = $('input[name="__RequestVerificationToken"]').val();
+        //        //formData.append("__RequestVerificationToken", token);
+
+        //        // Send AJAX request
+        //        $.ajax({
+        //            url: '/BillingRecord/SendBillEmail',
+        //            type: 'POST',
+        //            data: formData,
+        //            contentType: false,  // Don't set content type (auto-set for FormData)
+        //            processData: false,  // Prevent jQuery from converting FormData into a string
+        //            success: function (response) {
+        //                alert(response.message);
+        //            },
+        //            error: function (xhr, status, error) {
+        //                console.error('Error:', error);
+        //            }
+        //        });
+        //    });
+        //});
+
+
+        $("#sendToPatient").click(function () {
+            debugger;
+            //let element = document.getElementById('bill-details-modal');
+            let modalContent= document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+            var clonedContent = modalContent.cloneNode(true);
+
+            // Remove the footer div with ID 'PrintFooter'
+            var footerNav = clonedContent.querySelector("#PrintFooter");
+            if (footerNav) {
+                footerNav.remove();
+            }
+
+            var element = clonedContent.innerHTML;
+
+            html2pdf().from(element).outputPdf('blob').then(function (pdfBlob) {
+                debugger;
+                // Convert Blob to File
+                let pdfFile = new File([pdfBlob], "Invoice.pdf", { type: "application/pdf" });
+
+                let formData = new FormData();
+                formData.append("pdfFile", pdfFile);
+
+                let encounterid = $("#EncounterFid").val(); // Ensure the ID is correct
+                formData.append("EncounterFid", encounterid);
+
+                $.ajax({
+                    url: '/BillingRecord/SendBillEmail',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,  // Don't set content type (auto-set for FormData)
+                    processData: false,  // Prevent jQuery from converting FormData into a string
+                    success: function (response) {
+                        debugger;
+                        var Url='@Url.Action("PaidBillRecords", "BillingRecord")';
+                        window.location.href=Url;
+                        var message = response.message;
+                        var alertType = 'success';
+                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                        showCustomAlert(message, alertType, imageUrl);
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+
+    });
+
+
+    $("#btnUnPaidBillList").click(function(){
+        var url = '@Url.Action("BillingRecord", "BillingRecord")';
+        window.location.href = url;
+    });
+    function GetPatientDetails(AppointmentFid) {
+        debugger;
+        // Correct the URL assignment
+        $("#bill-details-modal___BV_modal_outer_")
+         .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+         .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+         .addClass("show");
+
+        var url = '@Url.Action("BillingRecord", "BillingRecord")' + '?AppointmentFid=' + AppointmentFid;
+        window.location.href = url;
+    }
+
+    //==============================Table Filter==============================================
+    function filterTable(inputId, tableId) {
+        debugger;
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+    filterTable('SearchInput', 'tblBillingRecords');
+    filterTable('FilterAmoutDue', 'tblBillingRecords');
+    filterTable('FilterByDiscount', 'tblBillingRecords');
+    filterTable('filterByTotal', 'tblBillingRecords');
+    filterTable('FilterByPatient', 'tblBillingRecords');
+    filterTable('FilterByClinic', 'tblBillingRecords');
+    filterTable('FilterByDoctor', 'tblBillingRecords');
+   // filterTable('FilterDate', 'tblBillingRecords');
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblBillingRecords');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+    //==============================Table Filter==============================================
+
+</script>
+
+<script>
+    document.getElementById("billPrint").addEventListener("click", function() {
+        debugger; // Debugging line (remove if not needed)
+
+        // Get the modal content correctly
+        var modalContent = document.querySelector("#bill-details-modal___BV_modal_outer_ .modal-content");
+
+        if (!modalContent) {
+            alert("Error: Bill details not found.");
+            return;
+        }
+
+        var clonedContent = modalContent.cloneNode(true);
+
+        // Remove the footer div with ID 'PrintFooter'
+        var footerNav = clonedContent.querySelector("#PrintFooter");
+        if (footerNav) {
+            footerNav.remove();
+        }
+
+        var printclinicaldetails = clonedContent.innerHTML; // Get modified content without footer
+
+
+        // Open a new print window
+        var printWindow = window.open("", "", "width=800,height=600");
+
+
+        printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print</title>
+            <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .hidden-print { display: none; } /* Hide buttons while printing */
+            </style>
+        </head>
+        <body>
+            ${printclinicaldetails}
+            <script>
+                window.onload = function() {
+                    window.print();
+                    window.close();
+                };
+            <\/script>
+        </body>
+        </html>
+    `);
+
+        // Close the document to complete rendering
+        printWindow.document.close();
+    });
+
+</script>
+<script>
+    document.getElementById("txtAmount").addEventListener("input", function (e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    // =========================
+    // 🔹 DISCOUNT VALIDATION
+    // =========================
+    $("#txtDiscount").on("keydown", function (e) {
+        if (e.key === "-" || e.key === "e") {
+            e.preventDefault();
+        }
+    });
+
+    $("#txtDiscount").on("input", function () {
+        let val = $(this).val();
+
+        // only numbers
+        val = val.replace(/[^0-9]/g, '');
+
+        // max 100
+        if (parseInt(val) > 100) {
+            val = "100";
+        }
+
+        $(this).val(val);
+
+        calculatePayable();
+    });
+
+
+    $(document).ready(function () {
+
+        $(document).on("input", ".referenceNumber", function () {
+
+            let value = $(this).val();
+
+            // only alphanumeric
+            value = value.replace(/[^a-zA-Z0-9]/g, '');
+
+            // strict max 50
+            if (value.length > 50) {
+                value = value.substring(0, 50);
+            }
+
+            $(this).val(value);
+        });
+
+    }); 
+
+    $(document).ready(function () {
+            // Assuming your save button has id="btnSave"
+        $('#submitButton').on('click', function (e) {
+                let isValid = true;
+                let errorMessage = "";
+
+                // 1. Check if Payment Status is selected
+                if (!$('input[name="PaymentStatus"]:checked').val()) {
+                    isValid = false;
+                    errorMessage += "Please select Payment Status (Paid/Unpaid).\n";
+                }
+
+                // 2. If "Paid" is selected, validate Payment Type and Reference
+                if ($('#paidRadio').is(':checked')) {
+                    const paymentType = $('#ddlPaymentType').val();
+                    const reference = $('#txtReference').val().trim();
+                    const amount = $('#txtAmount').val().trim();
+
+                    // Validate Payment Type
+                    //if (paymentType === "") {
+                    //    isValid = false;
+                    //    errorMessage += "Please select a Payment Type.\n";
+                    //}
+
+                    // Validate Reference (Required for all EXCEPT Cash)
+                    ////if (paymentType !== "Cash" && paymentType !== "" && reference === "") {
+                    ////    isValid = false;
+                    ////    errorMessage += "Reference number is required for " + paymentType + ".\n";
+                    ////}
+            
+                    // Validate Amount
+                    //if (amount === "" || parseFloat(amount) <= 0) {
+                    //    isValid = false;
+                    //    errorMessage += "Please enter a valid Amount.\n";
+                    //}
+                }
+
+                // If validation fails, stop form submission
+                if (!isValid) {
+                    e.preventDefault(); // Stops the Save
+                    alert(errorMessage); 
+                    return false;
+                }
+
+                // If valid, the form will continue to the controller
+            });
+    });
+
+    $(document).on("change", ".paymentType", function () {
+
+        let row = $(this).closest(".payment-row");
+        let type = $(this).val();
+
+        if (type === "Cash") {
+            row.find(".referenceNumber").val("").prop("readonly", true);
+        } else {
+            row.find(".referenceNumber").prop("readonly", false);
+        }
+    });
+
+</script>
+<script>
+    $("#FilterDate").on("change", function () {
+
+        let selectedDate = $(this).val(); // yyyy-MM-dd
+
+        if (!selectedDate) {
+            $("#tblBillingRecords tbody tr").show();
+            return;
+        }
+
+        $("#tblBillingRecords tbody tr").each(function () {
+
+            // 👉 DATE COLUMN = LAST COLUMN (correct index = 8)
+            let rowText = $(this).find("td").eq(8).text().trim();
+
+            // remove time if exists
+            let clean = rowText.split(" ")[0];
+
+            // convert 27/03/2026 → 2026-03-27
+            let p = clean.split("/");
+
+            if (p.length !== 3) return;
+
+            let rowDate = p[2] + "-" + p[1] + "-" + p[0];
+
+            if (rowDate === selectedDate) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+
+        });
+
+    });
+</script>

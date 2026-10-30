@@ -1,0 +1,28 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>GetQRCodeImage</title>
+</head>
+<body>
+    <div> 
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+            @if (!string.IsNullOrEmpty(ViewBag.GetQRCodeImage))
+            {
+                <img src="@ViewBag.GetQRCodeImage" alt="QR Code" style="width: 200px; height: 200px; object-fit: contain;" />
+            }
+            else
+            {
+                <p>No QR Code available.</p>
+            }
+        </div>
+
+    </div>
+</body>
+</html>

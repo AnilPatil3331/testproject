@@ -1,0 +1,916 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.ClsPatientEncounter
+@{
+    ViewBag.Title = "EncounterList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<style>
+     input[type="file"] {
+        display: none; /* Hide the input element */
+    }
+      #fileNameText {
+        font-size: 14px;
+        color: #555;
+    }
+    #ddlclinicFid + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlclinicFid + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlclinicFid + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+
+    #ddlDoctorFid + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlDoctorFid + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlPatientFid + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+
+    #ddlPatientFid + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlPatientFid + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlDoctorFid + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+
+    .footer__navigation__page-btn:hover {
+        cursor: pointer !important; /* Makes the cursor a hand icon */
+    }
+</style>
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div id="loader" class="loader hidden">
+        <img src="~/assets/images/favicon-1.ico" />
+    </div>
+    <div class="row">
+        @if (TempData["Message"] != null)
+        {
+            <script>
+                window.onload = function () {
+                    var message = '@TempData["Message"]';
+                    var alertType = '@TempData["Icon"]';
+                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                    showCustomAlert(message, alertType, imageUrl);
+                };
+            </script>
+
+        }
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Patients Encounter List
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    @*<button type="button" class="btn btn-sm btn-primary">
+                                        <i class="fa fa-angle-double-left">
+                                        </i>
+                                        Back
+                                    </button>*@
+                                    <button to="[object Object]" class="btn btn-sm btn-primary" id="AddEncounter">
+                                        <i class="fa fa-plus">
+                                        </i>
+                                        Add Encounter
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body p-0">
+                        <!---->
+                        <!---->
+                        <div id="encounterDataForm" style="display: none;" class="collapse show">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form action="/Patient/Encounter/SaveAddEncounter" id="encounterDataForm" name="encounterDataForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+
+                                        <div class="card-body">
+                                            <div class="row">
+                                                @Html.HiddenFor(m => m.EncounterFid)
+                                                @Html.HiddenFor(m => m.EncountrFid_Encrypted)
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="receptionist_birthdate" class="form-control-label">
+                                                            Encounter Date
+                                                            <span class="text-danger">
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                        <span id="receptionist_birthdate" title-position="left"
+                                                              class="">
+                                                            @Html.TextBoxFor(m => m.EncounterDate, "{0:yyyy-MM-dd}", new { @class = "form-control", id = "encounterDate", placeholder = "Encounter Date", required = "required", type = "date", name = "EncounterDate" })
+                                                            @*<input  readonly="readonly" class="form-control date-picker">*@
+                                                            <div data-v-7605e1b2="" class="vc-popover-content-wrapper">
+                                                                <!---->
+                                                            </div>
+                                                        </span>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="doctor_id" class="form-control-label">
+                                                            Select Clinic
+                                                            <span class="text-danger">
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.ClinicFid, new SelectList(ViewBag.ClinicName, "Id", "Name"), "-Select-", new { @class = "form-control", id = "ddlclinicFid", required = "required", @style = "width:100%;" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="doctor_id" class="form-control-label">
+                                                            Doctor
+                                                            <span class="text-danger">
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.DoctorFid, new SelectList(ViewBag.GetDoctor, "Id", "Name"), new { @class = "form-control", id = "ddlDoctorFid", required = "required", @style = "width:100%;" })
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="form_patient_id" class="form-control-label">
+                                                            Patient
+                                                            <span class="text-danger">
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.PatientFid, new SelectList(ViewBag.GetPatient, "Id", "Name"), "-Select-", new { @class = "form-control", id = "ddlPatientFid", required = "required", @style = "width:100%;" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <h5 class="m-0 mb-3">
+                                                            Add Medical Report
+                                                        </h5>
+                                                        <div class="input-group kivi-choose-file flex-nowrap">
+                                                            <!-- File Button -->
+                                                            <div class="input-group-prepend flex-shrink-0">
+                                                                <button type="button" id="appointmentreport" class="btn btn-primary px-3">
+                                                                    Choose file
+                                                                </button>
+                                                            </div>
+
+                                                            <!-- Hidden File Input -->
+                                                            <label for="file" class="input-group-text">
+                                                                <input id="file" type="file" name="file" class="p-2" style="color: transparent; width: 100%; opacity: 0;">
+                                                                @if (@ViewBag.GetFileName != null)
+                                                                {
+                                                                    <input type="hidden" name="PreviousFileName" value="@ViewBag.PreviousReportFile" />
+                                                                    <span id="fileNameText" class="ml-2 text-muted">@ViewBag.GetFileName</span> <!-- To show selected file name -->
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span id="fileNameText" class="ml-2 text-muted">No file chosen</span>
+                                                                }
+
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="description" class="form-control-label">
+                                                            Description
+                                                        </label>
+                                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", id = "description" })
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="submit" class="btn btn-primary rtl-ml-2">
+                                                            <i class="fa fa-save">
+                                                            </i>
+                                                            Save
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                            </div>
+                                            <div class="vld-icon">
+                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                     height="64" stroke="var(--primary)">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                            </circle>
+                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                                </animateTransform>
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-0 table-fixed-height">
+                                    <div class="vgt-wrap ">
+                                        <!---->
+                                        <div class="vgt-inner-wrap">
+                                            <!---->
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-712560173043">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                <div class="magnifying-glass">
+                                                                </div>
+                                                            </span>
+                                                            <span class="sr-only">
+                                                                Search
+                                                            </span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search encounter data by id, doctor, clinic, patient, date  and status(0 or 1)"
+                                                               class="vgt-input vgt-pull-left">
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-fixed-header">
+                                                <!---->
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="tblEncounterList" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <!---->
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Action
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Doctor Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Doctor Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Clinic Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Clinic Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Patient Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Patient Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Date
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Date in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Status in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                        </tr>
+                                                        <tr>
+                                                            <!---->
+                                                            <th>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-id" type="text" placeholder="ID" class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-doctor_name" id="FilterEncounterByDoctor" type="text" placeholder="Filter Encounter by doctor"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_name" id="FilterEncounterByClinicName" type="text" placeholder="Filter Encounter by clinic name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-patient_name" id="FilterEncounterByPatientName" type="text" placeholder="Filter Encounter by patient name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div class="d-flex justify-content-start align-items-center">
+                                                                    <span id="appointmentDate" title-position="left" is-expanded="">
+                                                                        <input placeholder="Date" class="form-control-sm" style="border: rgb(255, 255, 255);">
+                                                                        <div data-v-7605e1b2="" class="vc-popover-content-wrapper">
+                                                                            <!---->
+                                                                        </div>
+                                                                    </span>
+                                                                    <span class="form-control-sm">
+                                                                        X
+                                                                    </span>
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <!---->
+                                                                    <!---->
+                                                                    <select name="vgt-status" id="FilterByStatus" class="vgt-select">
+                                                                        <option value="">
+                                                                            Filter by status
+                                                                        </option>
+                                                                        <option value="ACTIVE">
+                                                                            Active
+                                                                        </option>
+                                                                        <option value="Close">
+                                                                            Closed 
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <!---->
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!---->
+                                                        <!---->
+                                                    </tbody>
+                                                    <tbody>
+                                                        @if (ViewBag.GetPatientEncounterDetails != null)
+                                                        {
+                                                            foreach (var item in ViewBag.GetPatientEncounterDetails)
+                                                            {
+                                                                <tr>
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <a href="@Url.Action("EncounterList", "Encounter", new { EncounterFid = @item.EncounterFid })" class="btn btn-sm btn-outline-primary"
+                                                                               title="Edit">
+                                                                                <i class="fa fa-pen-alt">
+                                                                                </i>
+                                                                            </a>
+                                                                            @*<button title="Edit" class="btn btn-sm btn-outline-primary">
+                                                                                    <i class="fa fa-pen-alt">
+                                                                                    </i>
+                                                                                </button>*@
+                                                                            <a href="@Url.Action("AayurvedEHR", "AayurvedEHR", new { EncountrFid = @item.EncounterFid })" class="btn btn-sm btn-outline-primary"
+                                                                               title="Encounter dashboard">
+                                                                                <i class="fas fa-tachometer-alt">
+                                                                                </i>
+                                                                            </a>
+                                                                            <a href="#/patient-encounter/body-chart/4" class="btn btn-sm btn-outline-primary"
+                                                                               title="Body chart">
+                                                                                <i class="fas fa-x-ray">
+                                                                                </i>
+                                                                            </a>
+                                                                            <button title="Bill Details" class="btn btn-sm btn-outline-primary" style="display:none;">
+                                                                                <i class="fa fa-file-invoice">
+                                                                                </i>
+                                                                            </button>
+                                                                            <!---->
+                                                                            <button title="Delete" class="btn btn-sm btn-outline-danger" onclick="DeleteEncounter('@item.EncountrFid_Encrypted')">
+                                                                                <i class="fa fa-trash">
+                                                                                </i>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @item.EncounterFid
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @item.DoctorName
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @item.ClinicName
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @item.PatientName
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="text-center">
+                                                                            @Convert.ToDateTime(@item.EncounterDate).ToString("dd/MM/yyyy")
+
+                                                                        </div>
+                                                                    </td>
+                                                                    @if (@item.Status == "Active")
+                                                                    {
+                                                                        <td>
+                                                                            <div class="text-center">
+                                                                                <span class="badge badge-success">@item.Status </span>
+
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td>
+                                                                            <div class="text-center">
+                                                                                <span class="badge badge-danger">@item.Status </span>
+                                                                            </div>
+                                                                        </td>
+                                                                    }
+
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="8">
+                                                                    <div class="text-center">
+                                                                        No Data Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                    <!---->
+                </div>
+                <!---->
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        const loader = document.getElementById('loader');
+        loader.classList.add('hidden');
+
+        $("#ddlclinicFid").select2();
+        $("#ddlDoctorFid").select2();
+        $("#ddlPatientFid").select2();
+
+        var fromDoctorAppointmentList=@Html.Raw(Json.Encode(ViewBag.fromDoctorAppointmentList));
+        if(fromDoctorAppointmentList!=null)
+        {
+            $("#encounterDataForm").show();
+            // Update the button text to "Close"
+            $("#AddEncounter").html('<i class="fa fa-times"></i> Close');
+        }
+        var ShowAddPatientForm=@Html.Raw(Json.Encode(ViewBag.ShowAddPatientForm));
+        if(ShowAddPatientForm!=null)
+        {
+            $("#encounterDataForm").show();
+            // Update the button text to "Close"
+            $("#AddEncounter").html('<i class="fa fa-times"></i> Close');
+        }
+
+        $("#AddEncounter").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#encounterDataForm").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#encounterDataForm").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#AddEncounter").html('<i class="fa fa-times"></i> Close');
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#AddEncounter").html('<i class="fa fa-plus"></i> Add Encounter');
+                }
+            });
+        });
+
+
+        $("#btnCancel").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#encounterDataForm").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#encounterDataForm").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#AddEncounter").html('<i class="fa fa-times"></i> Close Form');
+                    var url = '@Url.Action("EncounterList", "Encounter")'; // Ensure server-side helper is properly rendered
+                    window.location.href = url; // Navigate to the new URL
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#AddEncounter").html('<i class="fa fa-plus"></i> Add Service');
+                    var url = '@Url.Action("EncounterList", "Encounter")'; // Ensure server-side helper is properly rendered
+                    window.location.href = url; // Navigate to the new URL
+                }
+            });
+        });
+
+        var UpdateEncounter=@Html.Raw(Json.Encode(ViewBag.UpdateEncounter));
+        if(UpdateEncounter!=null)
+        {
+            $("#encounterDataForm").show();
+            $("#AddEncounter").html('<i class="fa fa-times"></i> Close');
+        }
+
+
+        $("#addcounter").click(function () {
+            debugger;
+            // Correct the URL assignment
+            var url = '@Url.Action("PatientEncounter", "Encounter")'; // Ensure server-side helper is properly rendered
+            window.location.href = url; // Navigate to the new URL
+        });
+
+
+        $("#ddlclinicFid").change(function () {
+            debugger;
+            $("#ddlDoctorFid").find("option").remove();
+            $("#ddlPatientFid").find("option").remove();
+            var ClinicFid = $("#ddlclinicFid").val();
+            $.ajax({
+                type: 'GET',
+                dataType: 'JSON',
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetDoctor", "Encounter")',
+                data: { ClinicFid: ClinicFid },
+                success: function (data) {
+                    debugger;
+
+                    if (data != null) {
+                        var Doctor = data.GetDoctor;
+                        var Patient = data.GetPatient;
+                        if (Doctor != null) {
+                            //$("#ddlDoctorFid").append("<option value=''>--Select-- </option>");
+                            $.each(Doctor, function (i, p) {
+                                $("#ddlDoctorFid").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                            });
+                        }
+                        if (Patient != null) {
+                            $("#ddlPatientFid").append("<option value=''>--Select-- </option>");
+                            $.each(Patient, function (i, p) {
+                                $("#ddlPatientFid").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                            });
+                        }
+                    } else {
+                        $('#ErrorESSPassword').html(" ");
+                    }
+
+
+                }
+            })
+        });      
+    });
+
+    $('#file').on('change', function () {
+        var fileName = $(this).val().split('\\').pop(); // Get the file name
+        if (fileName) {
+            $('#fileNameText').text(fileName); // Update the displayed file name
+        } else {
+            $('#fileNameText').text('No file chosen'); // Default text
+        }
+    });
+</script>
+@*========================Validate Form===============*@
+<script>
+
+
+    document.getElementById('encounterDataForm').addEventListener('submit', function (event) {
+        debugger;
+        var form = this;
+        var isValid = true;
+
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+
+            var message = 'Please fill out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+
+        }else{
+            const loader = document.getElementById('loader');
+
+            // Show the loader
+            loader.classList.remove('hidden');
+        }
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+    });
+
+</script>
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('SearchInput', 'tblEncounterList');
+    filterTable('FilterEncounterByDoctor', 'tblEncounterList');
+    filterTable('FilterEncounterByClinicName', 'tblEncounterList');
+    filterTable('FilterEncounterByPatientName', 'tblEncounterList');
+
+
+    document.getElementById('FilterByStatus').addEventListener('change', function () {
+        debugger;
+        const selectedValue = this.value; // Get the selected value from the dropdown
+        const table = document.getElementById('tblEncounterList'); // Get the table by ID
+        const rows = table.querySelectorAll('tbody tr'); // Get all table rows
+
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(7)'); // Assuming status is in the 8th column (Status column)
+
+            // Get the text content of the badge (either "Active" or "Inactive")
+            const statusValue = statusCell ? statusCell.querySelector('span').textContent.trim() : "";
+
+            // Show row if the selected value matches the status value or if no value is selected
+            if (selectedValue === "" || statusValue.toLowerCase() === selectedValue.toLowerCase()) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblEncounterList');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+
+@*========================Prescription Delete===============*@
+<script>
+    function DeleteEncounter(EncountrFid_Encrypted) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var url = '@Url.Action("DeleteEncounter", "Encounter")' + '?EncountrFid_Encrypted=' + EncountrFid_Encrypted;
+                window.location.href = url;
+            }
+        });
+    }
+    @*========================Prescription Delete End===============*@
+</script>

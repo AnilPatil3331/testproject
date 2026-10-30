@@ -1,0 +1,373 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.Game
+
+@{
+    ViewBag.Title = "AddQuestion";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+
+<style>
+    .select2-container .select2-selection--multiple 
+    {
+        min-height: auto !important;
+        height: auto !important;
+        padding-bottom: 18px !important;
+   }
+</style>
+
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/Admin/Game/SaveQuestion" id="doctorDataForm" name="doctorDataForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Add Questions
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    @*<button type="button" class="btn btn-sm btn-primary" id="btnBack">
+                                        <i class="fa fa-angle-double-left">
+                                        </i>
+                                        Back
+                                    </button>*@
+
+                                    <a href="@Url.Action("QuestionList", "Game")"
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fa fa-angle-double-left"></i> Back
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                   
+
+
+
+                    </header>
+                    <div class="card-body">
+                        @if (TempData["Message"] != null)
+                        {
+                            <script>
+                                window.onload = function () {
+                                    var message = '@TempData["Message"]';
+                                    var alertType = '@TempData["Icon"]';
+                                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                    showCustomAlert(message, alertType, imageUrl);
+                                };
+                            </script>
+
+                        }
+                        <div id="formError" class="alert alert-danger" style="display: none; position: fixed; top: 10%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; padding: 20px; background-color: white; border: 2px solid red; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <span id="formErrorMessage" style="color: black; font-size: 16px;">Please fill out all required fields.</span>
+                            <button type="button" class="close" id="dismissError" aria-label="Close" style="background: none; border: none; font-size: 20px; margin-left: 10px; cursor: pointer; color: black;">
+                                &times;
+                            </button>
+                        </div>
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="text-primary mb-4">
+                                    Add Questions 
+                                </h2>
+                            </div>
+                        </div>
+
+
+                        <!--row start -->
+
+
+                        <div class="row">
+
+                            <!-- Prefix -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-control-label">Level</label>
+                                    @Html.DropDownListFor(m => m.LevelId, new SelectList(ViewBag.Level, "Id", "Name"), "Select Level", new { @class = "form-control", id = "LevelId", required = "required", autocomplete = "off" })
+                                </div>
+                            </div>
+
+
+                            <!-- Gender -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-control-label">Gender</label>
+                           @Html.DropDownListFor(
+    m => m.Gender,
+    new MultiSelectList(new[] { "Male", "Female", "Other" }),
+    new
+    {
+        @class = "form-control select2",
+        multiple = "multiple",
+        id = "gender",
+        style = "width:100%;"
+    })
+
+                                </div>
+                            </div>
+
+                            <!-- Marital Status -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-control-label">Marital Status</label>
+                                   @Html.DropDownListFor(
+    m => m.MaritalStatus,
+    new MultiSelectList(new[] { "Single", "Married", "Divorced", "Widow" }),
+    new
+    {
+        @class = "form-control select2",
+        multiple = "multiple",
+        id = "maritalStatus",
+        style = "width:100%;"
+    })
+
+
+                                </div>
+                            </div>
+
+
+                            <!--  age category -->
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="form-control-label">Age Category</label>
+                                    @Html.DropDownListFor(m => m.AgeCategoryID, new SelectList(ViewBag.AgeCategory, "Id", "Name"), "Select Level", new { @class = "form-control  select2", multiple = "multiple", id = "AgeCategoryID", required = "required", autocomplete = "off" })
+                                </div>
+                            </div>
+
+        
+                        </div>
+
+
+                        <!--row End -->
+
+                        <!--Profession row start-->
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-control-label">Profession</label>
+
+                                <div class="row">
+                                    @foreach (var item in ViewBag.ProfessionList)
+            {
+                                        <div class="col-md-2">
+                                            <label>
+                                                <input type="checkbox"
+                                                       name="SelectedProfessions"
+                                                       value="@item.Id" /> @item.Name
+                                                </label>
+                                            </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                       <!--Disease row start-->
+                        <hr />
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="form-control-label">Disease</label>
+
+                                <div class="row">
+                                    @foreach (var item in ViewBag.DiseaseList)
+                                    {
+                                        <div class="col-md-2">
+                                            <label>
+                                                <input type="checkbox"
+                                                       name="SelectedDisease"
+                                                       value="@item.Id" /> @item.Name
+                                                </label>
+                                            </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="form-control-label">Question Type</label>
+                                    @Html.DropDownListFor(
+    m => m.QuestionType,
+    new MultiSelectList(new[] { "Multiple Choice Question", "Yes/No " }),
+    new
+    {
+        @class = "form-control select2",      
+        id = "QuestionType",
+        style = "width:100%;"
+    })
+
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-control-label">Question</label>
+                                    @Html.TextBoxFor(m => m.Question, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Question",
+                                   id = "Question"
+                               })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">OptionA</label>
+                                    @Html.TextBoxFor(m => m.OptionA, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Option A",
+                                   id = "OptionA"
+                               })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Suggestion Option A</label>
+                                    @Html.TextBoxFor(m => m.SuggestionOptionA, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Suggestion Option A",
+                                   id = "SuggestionOptionA"
+                               })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">OptionB</label>
+                                    @Html.TextBoxFor(m => m.OptionB, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Option B",
+                                   id = "OptionB"
+                               })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Suggestion Option B</label>
+                                    @Html.TextBoxFor(m => m.SuggestionOptionB, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Suggestion Option B",
+                                   id = "SuggestionOptionB"
+                               })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">OptionC</label>
+                                    @Html.TextBoxFor(m => m.OptionC, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Option C",
+                                   id = "OptionC"
+                               })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Suggestion Option C</label>
+                                    @Html.TextBoxFor(m => m.SuggestionOptionC, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Suggestion Option C",
+                                   id = "SuggestionOptionC"
+                               })
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">OptionD</label>
+                                    @Html.TextBoxFor(m => m.OptionD, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Option D",
+                                   id = "OptionD"
+                               })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Suggestion Option D</label>
+                                    @Html.TextBoxFor(m => m.SuggestionOptionD, new
+                               {
+                                   @class = "form-control",
+                                   placeholder = "Enter Suggestion Option D",
+                                   id = "SuggestionOptionD"
+                               })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 p-0">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary rtl-ml-2" id="Save">
+                                        <i class="fa fa-save">
+                                        </i>
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!---->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+</script>

@@ -1,0 +1,375 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane p-20" id="CounterDispensing" role="tabpanel">
+
+                                <hr />
+
+                                @using (Html.BeginForm("SaveCounterResult", "AayurvedEHR", FormMethod.Post))
+                                {
+                                    @*if (ViewBag.CounterResultView != null)
+                                        {
+                                            foreach (var item in ViewBag.CounterResultView)
+                                            {
+                                                <div class="row mb-3">
+                                                    <div class="col-md-3 font-weight-bold">
+                                                        औषध
+                                                    </div>
+                                                    <div class="col-md-9">
+
+                                                        <textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" id="txtMedicine" name="MedicineInstructionsDescription"> @item.MedicineDescription </textarea>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="row mt-3 mb-4">
+                                                    <div class="col-md-3">
+                                                        <label for="txtSuchana">सूचना तपशील:</label>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        @*<textarea id="txtSuchana_@index"
+                                                            class="form-control"
+                                                            rows="6" style="height: 150px !important;"
+                                                            placeholder="सूचना इथे दिसेल..."
+                                                            name="MorningSuchana"></textarea>*@
+
+                                    @*<textarea id="txtSuchana" class="form-control" rows="6" style="height: 150px !important;" placeholder="सूचना इथे दिसेल..." name="MedicineInstruction"> @item.MorningSuchana </textarea>
+
+
+                                                    </div>
+                                                </div>
+
+                                                <hr />
+                                            }
+
+                                        }*@
+                                    int totalIndex = 0;
+                                    if (ViewBag.CounterResultView != null)
+                                    {
+
+                                        foreach (var item in ViewBag.CounterResultView)
+                                        {
+                                            @* ?? AppointmentFid ??? PatientFid - ????? add ??? *@
+                                            if (totalIndex == 0)
+                                            {
+                                                <input type="hidden" name="AppointmentFid"
+                                                       value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                                <input type="hidden" name="PatientFid"
+                                                       value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+                                            }
+
+                                            @* ?? PrescriptionID hidden field *@
+                                            <input type="hidden" name="MedicineInstructions[@totalIndex].PrescriptionID" value="@item.PrescriptionID" />
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-3 font-weight-bold">औषध (Saved)</div>
+                                                <div class="col-md-9">
+                                                    <textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" name="MedicineInstructions[@totalIndex].Description">@item.MedicineDescription</textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-4">
+                                                <div class="col-md-3"><label>सूचना तपशील:</label></div>
+                                                <div class="col-md-9">
+                                                    <textarea class="form-control" rows="6" style="height: 150px !important;" name="MedicineInstructions[@totalIndex].MorningSuchana">@item.MorningSuchana</textarea>
+                                                </div>
+                                            </div>
+
+                                            <hr />
+                                            totalIndex++;
+                                        }
+
+                                        @*<div class="text-center mt-4">
+                                                <button type="submit" class="btn btn-success px-4">Save</button>
+                                            </div>*@
+                                    }
+
+                                    <!-- पहाटे उपाशी पोटीची औषधी -->
+                                    if (ViewBag.CounterFormulaView != null && ((IEnumerable<dynamic>)ViewBag.CounterFormulaView).Any())
+                                    {
+
+                                        if (totalIndex == 0) // जर वरचे loop चालले नसेल तरच हे fields ॲड होतील
+                                        {
+                                            <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                            <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+                                        }
+                                        foreach (var item in ViewBag.CounterFormulaView)
+                                        {
+
+                                            // जर सर्व fields null असतील तर skip करायचे
+                                            //if (item == null ||
+                                            //                                                        (item.ProcessingNumber == null && item.ProcessingUnitType == null &&
+                                            //                                                         item.FormResult == null && item.PackageResult == null &&
+                                            //                                                         item.NumberLeft == null && item.DoseNumber == null &&
+                                            //                                                         item.Dose == null && item.TimeResult == null &&
+                                            //                                                         item.MixingDetailsFluid == null))
+                                            //{
+                                            //    continue;
+                                            //}
+                                            bool alreadyExists = false;
+                                            if (ViewBag.CounterResultView != null)
+                                            {
+                                                foreach (var saved in ViewBag.CounterResultView)
+                                                {
+                                                    if (saved.PrescriptionID == item.PrescriptionID) { alreadyExists = true; break; }
+                                                }
+                                            }
+                                            if (alreadyExists) { continue; }
+
+                                            // तुमचं औषध नाव बनवण्याचं लॉजिक इथे येईल (basePart, finalText इ.)
+                                            var parts = new List<string>();
+                                            string basePart = "";
+                                            if (item.FormResult != null) { basePart += item.FormResult + " "; }
+                                            if (item.PackageResult != null)
+                                            {
+                                                basePart += item.PackageResult;
+                                                if (item.NumberLeft != null) { basePart += $" नं. {item.NumberLeft}"; }
+                                            }
+
+                                            if ((item.FormResult ?? "").Contains("फाण्ट") || (item.FormResult ?? "").Contains("काढा") || (item.FormResult ?? "").Contains("हिम"))
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(basePart)) { parts.Add(basePart.Trim()); }
+                                                if (item.DoseNumber != null || item.Dose != null) { parts.Add($"{item.DoseNumber} {item.Dose}".Trim()); }
+                                                if (item.ProcessingNumber != null || item.ProcessingUnitType != null) { parts.Add($"{item.ProcessingNumber} {item.ProcessingUnitType}".Trim()); }
+                                                if (item.Time != null) { parts.Add(item.Time.Trim()); }
+                                                if (item.TimeResult != null) { parts.Add(item.TimeResult.Trim()); }
+                                                if (item.DaysNumber != null) { parts.Add("(" + item.DaysNumber + " Days)"); }
+                                            }
+                                            else
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(basePart)) { parts.Add(basePart.Trim()); }
+                                                if (item.DoseNumber != null || item.Dose != null)
+                                                {
+                                                    var dosePart = $"{item.DoseNumber} {item.Dose}".Trim();
+                                                    if (item.Time != null) { dosePart += $" {item.Time.Trim()}"; }
+                                                    parts.Add(dosePart);
+                                                }
+                                                if (item.MixingDetailsFluid != null) { parts.Add(item.MixingDetailsFluid.Trim()); }
+                                                if (item.TimeResult != null) { parts.Add(item.TimeResult.Trim()); }
+                                                if (item.DaysNumber != null) { parts.Add("(" + item.DaysNumber + " Days)"); }
+                                            }
+                                            string finalText = string.Join(" = ", parts);
+
+                                            <input type="hidden" name="MedicineInstructions[@totalIndex].PrescriptionID" value="@item.PrescriptionID" />
+                                            <div class="row mb-3">
+                                                <div class="col-md-3 font-weight-bold">
+                                                    औषध
+                                                </div>
+                                                <div class="col-md-9">
+
+                                                    @*@{
+                                                            var parts = new List<string>();
+                                                            string finalText = "";
+
+                                                            // बेस भाग (FormResult + PackageResult + NumberLeft)
+                                                            string basePart = "";
+                                                            if (item.FormResult != null)
+                                                            {
+                                                                basePart += item.FormResult + " ";
+                                                            }
+                                                            if (item.PackageResult != null)
+                                                            {
+                                                                basePart += item.PackageResult;
+                                                                if (item.NumberLeft != null)
+                                                                {
+                                                                    basePart += $" नं. {item.NumberLeft}";
+                                                                }
+                                                            }
+
+                                                            // ?? ????? condition: ?????, ????, ???
+                                                            if ((item.FormResult ?? "").Contains("फाण्ट") ||
+                                                                (item.FormResult ?? "").Contains("काढा") ||
+                                                                (item.FormResult ?? "").Contains("हिम"))
+                                                            {
+                                                                // फाण्ट / काढा / हिम साठी
+                                                                if (!string.IsNullOrWhiteSpace(basePart))
+                                                                {
+                                                                    parts.Add(basePart.Trim());
+                                                                }
+
+                                                                if (item.DoseNumber != null || item.Dose != null)
+                                                                {
+                                                                    parts.Add($"{item.DoseNumber} {item.Dose}".Trim());
+                                                                }
+
+                                                                if (item.ProcessingNumber != null || item.ProcessingUnitType != null)
+                                                                {
+                                                                    parts.Add($"{item.ProcessingNumber} {item.ProcessingUnitType}".Trim());
+                                                                }
+
+                                                                if (item.Time != null)
+                                                                {
+                                                                    parts.Add(item.Time.Trim());
+                                                                }
+
+                                                                if (item.TimeResult != null)
+                                                                {
+                                                                    parts.Add(item.TimeResult.Trim());
+                                                                }
+
+                                                                if (item.DaysNumber != null)
+                                                                {
+                                                                    parts.Add("(" + item.DaysNumber + " Days)");
+                                                                }
+
+
+
+                                                            }
+                                                            else
+                                                            {
+                                                                // बाकी सर्व (उदा. चूर्ण)
+                                                                if (!string.IsNullOrWhiteSpace(basePart))
+                                                                {
+                                                                    parts.Add(basePart.Trim());
+                                                                }
+
+                                                                if (item.DoseNumber != null || item.Dose != null)
+                                                                {
+                                                                    var dosePart = $"{item.DoseNumber} {item.Dose}".Trim();
+                                                                    if (item.Time != null)
+                                                                    {
+                                                                        dosePart += $" {item.Time.Trim()}";
+                                                                    }
+                                                                    parts.Add(dosePart);
+                                                                }
+
+                                                                if (item.MixingDetailsFluid != null)
+                                                                {
+                                                                    parts.Add(item.MixingDetailsFluid.Trim());
+                                                                }
+
+                                                                if (item.TimeResult != null)
+                                                                {
+                                                                    parts.Add(item.TimeResult.Trim());
+                                                                }
+                                                                if (item.DaysNumber != null)
+                                                                {
+                                                                    parts.Add("(" + item.DaysNumber + " Days)");
+                                                                }
+
+
+
+
+
+                                                            }
+
+                                                            finalText = string.Join(" = ", parts);
+                                                        }*@
+                                                    @*<input type="hidden"
+                                                        name="MedicineInstructions[@index].PrescriptionID"
+                                                        value="@item.PrescriptionID" />*@
+                                                    <textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" id="txtMedicine_@totalIndex" name="MedicineInstructions[@totalIndex].Description">@finalText</textarea>
+                                                    @*<textarea class="form-control autosize-textarea" rows="6" style="height: 150px !important;" id="txtMedicine_@index" name="MedicineInstructions[@index].Description"> @finalText </textarea>*@
+                                                </div>
+                                            </div>
+
+                                            @*<div class="row mt-3">
+                                                    <div class="col-md-3">
+                                                        <label for="ddlSuchana_@index">सूचना निवडा:</label>
+                                                    </div>
+                                                    <div class="col-md-9">
+
+                                                        <select id="ddlSuchana_@index"
+                                                                class="form-control suchanaDropdown"
+                                                                data-formid="@item.FormID"
+                                                                data-target="txtSuchana_@index">
+                                                            <option value="">सूचना निवडा</option>
+                                                        </select>
+
+                                                    </div>
+                                                </div>*@
+                                            <div class="row mt-3">
+                                                <div class="col-md-3"><label for="ddlSuchana_@totalIndex">सूचना निवडा:</label></div>
+                                                <div class="col-md-9">
+                                                    <select id="ddlSuchana_@totalIndex" class="form-control suchanaDropdown" data-formid="@item.FormID" data-target="txtSuchana_@totalIndex">
+                                                        <option value="">सूचना निवडा</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3 mb-4">
+                                                <div class="col-md-3"><label for="txtSuchana_@totalIndex">सूचना तपशील:</label></div>
+                                                <div class="col-md-9">
+                                                    <textarea id="txtSuchana_@totalIndex" class="form-control" rows="6" style="height: 150px !important;" name="MedicineInstructions[@totalIndex].MorningSuchana"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <hr />
+                                            totalIndex++;
+                                        }
+                                        @*<div class="text-center mt-4">
+                                                <button type="submit" class="btn btn-success px-4">Save</button>
+                                            </div>*@
+                                    }
+                                    if (totalIndex > 0)
+                                    {
+                                        <div class="text-center mt-4">
+                                            <button type="submit" class="btn btn-success px-4">Save</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info" style="margin:40px;">
+                                            <i class="fas fa-info-circle"></i>
+                                            No Formula results to display. Please submit the form to see results.
+                                        </div>
+                                    }
+                                }
+
+
+
+
+
+
+
+
+
+                            </div>  <!--7th tab end div-->

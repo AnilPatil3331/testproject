@@ -1,0 +1,105 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.RolePermissionsVM
+
+@{
+    ViewBag.Title = "Role Permissions Settings";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml"; // Update layout if needed
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow mt-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0 text-white">
+            <i class="fa fa-cogs"></i> Role Permission Settings
+        </h4>
+    </div>
+    <div class="card-body">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <strong>Success!</strong> @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong> @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form action="@Url.Action("Index", "RolePermissions")" method="get" id="roleForm" class="mb-4">
+                <div class="row align-items-center">
+                    <div class="col-md-2">
+                        <label class="fw-bold">Select Role:</label>
+                    </div>
+                    <div class="col-md-4">
+                        @Html.DropDownList("roleId", ViewBag.Roles as SelectList, "-- Select Role --", new { @class = "form-control select2", onchange = "document.getElementById('roleForm').submit();" })
+                    </div>
+                </div>
+            </form>
+
+            <hr />
+
+            @if (Model.RoleId > 0 && Model.Menus != null && Model.Menus.Any())
+            {
+                <form action="@Url.Action("SavePermissions", "RolePermissions")" method="post">
+                    <input type="hidden" name="roleId" value="@Model.RoleId" />
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="text-primary mb-3">Assign Menus:</h5>
+                            <div class="row">
+                                @{
+                                    var mainMenus = Model.Menus.Where(m => m.ParentMenuId == null || m.ParentMenuId == 0).ToList();
+                                }
+                                @foreach (var main in mainMenus)
+                                {
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card bg-light">
+                                            <div class="card-body">
+                                                <div class="form-check fw-bold mb-2">
+                                                    <input class="form-check-input" type="checkbox" name="selectedMenus" value="@main.MenuId" id="menu_@main.MenuId" @(main.IsAssigned ? "checked" : "") />
+                                                    <label class="form-check-label text-dark" for="menu_@main.MenuId">
+                                                        <i class="@main.MenuIcon"></i> @main.MenuName
+                                                    </label>
+                                                </div>
+
+                                                @{
+                                                    var subMenus = Model.Menus.Where(m => m.ParentMenuId == main.MenuId).ToList();
+                                                }
+                                                @if (subMenus.Any())
+                                                {
+                                                    <div class="ps-4">
+                                                        @foreach (var sub in subMenus)
+                                                        {
+                                                            <div class="form-check mt-1">
+                                                                <input class="form-check-input" type="checkbox" name="selectedMenus" value="@sub.MenuId" id="menu_@sub.MenuId" @(sub.IsAssigned ? "checked" : "") />
+                                                                <label class="form-check-label" for="menu_@sub.MenuId">
+                                                                    <i class="@sub.MenuIcon"></i> @sub.MenuName
+                                                                </label>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-success px-5"><i class="fa fa-save"></i> Save Permissions</button>
+                    </div>
+                </form>
+            }
+            else if (Model.RoleId > 0)
+            {
+                <div class="alert alert-warning">No menus found in the database. Please run the Menu Script first.</div>
+            }
+        </div>
+    </div>
+</div>
+</div>

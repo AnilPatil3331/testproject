@@ -1,0 +1,286 @@
+﻿@model dynamic
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Room Bill Invoice</title>
+
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+      .invoice-box{
+    max-width:900px;
+    margin:auto;
+    background:#fff;
+    padding:35px;
+    border-radius:10px;
+    box-shadow:0 0 15px rgba(0,0,0,.12);
+}
+
+.table th{
+    white-space:nowrap;
+}
+
+.table td,
+.table th{
+    vertical-align:middle;
+}
+
+@@media print{
+
+    body{
+        background:#fff;
+    }
+
+    .invoice-box{
+        box-shadow:none;
+        border:none;
+    }
+
+    .btn-print{
+        display:none;
+    }
+
+}
+.btn-print {
+    margin-bottom: 15px;
+}
+
+@@media print {
+
+    .btn-print {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+    }
+
+    .invoice-box {
+        box-shadow: none !important;
+        border: none !important;
+        margin: 0;
+        max-width: 100%;
+    }
+}
+    </style>
+
+</head>
+<body>
+
+    @if (Model != null)
+    {
+      <div class="container mt-3 mb-3 text-end">
+          <button type="button" class="btn btn-primary btn-print" onclick="window.print();">
+              <i class="mdi mdi-printer"></i> Print Invoice
+          </button>
+      </div>
+        <div class="invoice-box">
+
+            <!-- Header -->
+            <div class="row border-bottom pb-3 mb-4">
+                <div class="col-8">
+                    <h2 class="mb-0 text-primary"><b>WELLNESS CENTER</b></h2>
+                    <small class="text-muted">ROOM BILL / INVOICE</small>
+                </div>
+
+                <div class="col-4 text-end">
+                    <b>Invoice No :</b> @Model.Id <br />
+                    <b>Booking ID :</b> @Model.BookingId <br />
+                    <b>Date :</b>
+                    @(Model.Fdate != null ? Convert.ToDateTime(Model.Fdate).ToString("dd-MMM-yyyy") : "")
+                </div>
+            </div>
+
+            <!-- Patient + Payment -->
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="border-bottom pb-2 text-primary">
+                            Patient Information
+                        </h5>
+
+                        <table class="table table-borderless table-sm mb-0">
+
+                            <tr>
+                                <th width="40%">Patient</th>
+                                <td>@Model.GuestFullName</td>
+                            </tr>
+
+                            <tr>
+                                <th>Mobile</th>
+                                <td>@Model.Mobile</td>
+                            </tr>
+
+                            <tr>
+                                <th>Stay Type</th>
+                                <td>@Model.StayType</td>
+                            </tr>
+
+                            <tr>
+                                <th>Check In</th>
+                                <td>@(Model.CheckInDate != null ? Convert.ToDateTime(Model.CheckInDate).ToString("dd-MMM-yyyy") : "")</td>
+                            </tr>
+
+                            <tr>
+                                <th>Check Out</th>
+                                <td>@(Model.CheckOutDate != null ? Convert.ToDateTime(Model.CheckOutDate).ToString("dd-MMM-yyyy") : "")</td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <div class="border rounded p-3 h-100">
+
+                        <h5 class="border-bottom pb-2 text-primary">
+                            Payment Information
+                        </h5>
+
+                        <table class="table table-borderless table-sm mb-0">
+
+                            <tr>
+                                <th width="40%">Mode</th>
+                                <td>@Model.PaymentMode</td>
+                            </tr>
+
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    <span class="badge bg-success">
+                                        @Model.PaymentStatus
+                                    </span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>Bank</th>
+                                <td>@Model.BankName</td>
+                            </tr>
+
+                            <tr>
+                                <th>Txn ID</th>
+                                <td>@Model.BankTxnId</td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Bill Summary -->
+
+            <div class="mt-4">
+
+                <h5 class="text-primary mb-3">
+                    Bill Summary
+                </h5>
+
+                <table class="table table-bordered">
+
+                    <thead class="table-primary">
+
+                        <tr>
+
+                            <th>Description</th>
+
+                            <th width="180" class="text-end">
+                                Amount
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>IPD Room Booking Charges</td>
+
+                            <td class="text-end">
+                                ₹@Model.TotalAmount
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                    <tfoot>
+
+                        <tr>
+
+                            <th class="text-end">
+                                Total Amount
+                            </th>
+
+                            <th class="text-end">
+                                ₹@Model.TotalAmount
+                            </th>
+
+                        </tr>
+
+                        <tr class="table-success">
+
+                            <th class="text-end">
+                                Amount Paid
+                            </th>
+
+                            <th class="text-end">
+                                ₹@Model.amount
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+            <!-- Footer -->
+
+            <div class="text-center mt-5 border-top pt-3">
+
+                <h5 class="mb-1">
+                    Thank You For Choosing Wellness Center
+                </h5>
+
+                <small class="text-muted">
+                    We wish you good health.
+                </small>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="container mt-5">
+
+            <div class="alert alert-danger text-center">
+
+                Invoice details not found.
+
+            </div>
+
+        </div>
+    }
+
+</body>
+</html>

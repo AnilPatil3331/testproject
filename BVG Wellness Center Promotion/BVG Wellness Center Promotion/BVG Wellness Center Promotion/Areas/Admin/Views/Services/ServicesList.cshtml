@@ -1,0 +1,1032 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.ClinicService
+@{
+    ViewBag.Title = "ServicesList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    int count = 1;
+
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
+
+<style>
+    .big-input {
+        height: 55px !important;
+        font-size: 16px;
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card p-0 shadow">
+                <!---->
+                <header class="card-header">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-8 col-lg-8">
+                            <h3 class="mb-0">
+                                Services/Therapies
+                            </h3>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="d-flex justify-content-end">
+                                @*<button class="float-right btn btn-sm btn-primary rtl-left">
+                                    <i class="fas fa-file-import">
+                                    </i>
+                                    Import data
+                                </button>*@
+                                <button class="btn btn-sm btn-primary" id="addService">
+                                    <i class="fa fa-plus">
+                                    </i>
+                                    Add Service
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="card-body p-0" style="margin-left:50px; margin-right:34px; ">
+                    <!---->
+                    <!---->
+                    <div data-v-9bd3ed50="">
+                        <!---->
+                    </div>
+                    <div id="static-data-add-tab" style="display:none;">
+                        <div class="row">
+                            @if (TempData["Message"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        var message = '@TempData["Message"]';
+                                        var alertType = '@TempData["Icon"]';
+                                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                        showCustomAlert(message, alertType, imageUrl);
+                                    };
+                                </script>
+
+                            }
+
+                            <div class="col-sm-12">
+                                <!-- form with dummy model context (simulated for UI demo) -->
+                                <form action="/Admin/Services/SaveServices" id="serviceForm" name="serviceForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                                    @Html.HiddenFor(m => m.ServiceFid)
+                                    @Html.HiddenFor(m => m.ServiceId_Encrypted, new { id = "ServiceId_Encrypted" })
+
+                                    <div class="row g-4">
+                                        <div class="col-md-12">
+                                            <div class="row g-3">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="type" class="form-control-label">
+                                                            Service Group <span class="text-danger">*</span> @*this will handel backend have services Category*@
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.Servicecategory, new SelectList(new[] {
+                                                            new { Value = "OPD", Text = "OPD" },
+                                                            new { Value="IPD", Text = "IPD" },
+                                                            new { Value = "BOTH", Text = "BOTH" }
+                                                        }, "Value", "Text"), "--Select Service Group--",
+                                                        new { @id = "ddlServicecategory", @class = "form-control custom-select", @required = "required" })
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="type" class="form-control-label">
+                                                            Service category <span class="text-danger">*</span> @*this will handel backend have services Group Coloum *@
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.ServiceGroupID, new SelectList(ViewBag.ServiveGroup, "Id", "Name"), new { @Class = "form-control custom-select", id = "ddlServicegroup", required = "required" })
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label for="name" class="form-control-label">
+                                                            Service Name <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.TextBoxFor(m => m.ServiceName, new { @class = "form-control", id = "ServiceName", type = "text", required = "required", placeholder = "Enter service name" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="price" class="form-control-label">
+                                                            Charges <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div role="group" class="input-group input-group-md">
+                                                            <div class="input-group-prepend">
+                                                                <div class="input-group-text">₹</div>
+                                                            </div>
+                                                            @Html.TextBoxFor(m => m.Charges, new { @class = "form-control", id = "ServiceCharges", required = "required", placeholder = "Enter charges" })
+                                                            <div class="input-group-append">
+                                                                <div class="input-group-text">/-</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="Duration" class="form-control-label">
+                                                            Duration(In Min)<span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.Duration, new SelectList(new[] {
+                                                                   new { Value = "30", Text = "30" },
+                                                              new { Value="60", Text = "60" },
+                                                               new { Value="120", Text = "120" },
+                                                               
+
+                                                             }, "Value", "Text"), "--Select--",
+                                                                 new { @id = "Duration", @class = "form-control custom-select" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="telemed_service" class="form-control-label">
+                                                            Is this a telemed service? <span class="text-danger">*</span>
+                                                        </label>
+                                                        @Html.DropDownListFor(m => m.telemed_service, new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem { Text="No", Value="false" },
+                                                            new SelectListItem { Text="Yes", Value="true" },
+                                                        }.Select(x => { x.Selected = x.Value == (ViewBag.telemedservice?.ToString() ?? ""); return x; }), new { @class = "form-control custom-select", id = "telemed_service", @required = "required" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="status" class="form-control-label">
+                                                            Status <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div class="kivi-pr">
+                                                            @Html.DropDownListFor(m => m.Status, new SelectList(new[] {
+                                                                new { Value = "Active", Text = "Active" },
+                                                                new { Value="InActive", Text = "InActive" },
+                                                            }, "Value", "Text"), "Select Status",
+                                                            new { @id = "ddlStatus", @class = "form-control custom-select", required = "required" })
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-3">
+                                                    <div class="form-group">
+                                                        <div class="therapy-toggle">
+                                                            <h5 class="mb-0">Is Therapy</h5>
+                                                            <input type="checkbox" id="IsTherapy" name="IsTherapy" value="1" class="switch-input" @(Model != null && Model.IsTherapy == 1 ? "checked" : "") />
+                                                            <small class="text-muted">Enable therapy fields</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-3">
+                                                    <div class="form-group">
+                                                        <div class="therapy-toggle">
+                                                            <h5 class="mb-0">Is Double</h5>
+                                                            <input type="checkbox" id="IsDouble" name="IsDouble" value="1" class="switch-input" @(Model != null && Model.IsDouble == 1 ? "checked" : "") />
+                                                            <small class="text-muted">Enable Double therapy Slot</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+                                            <!-- Therapy Form Section -->
+                                            <div id="therapySection" style="display:none;">
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <h5><i class="fas fa-language me-1"></i> Local Name</h5>
+                                                        @Html.TextBoxFor(m => m.LocalName, new { @class = "form-control", placeholder = "Local language name" })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5><i class="fas fa-tag me-1"></i> Slogan / Tagline</h5>
+                                                        @Html.TextBoxFor(m => m.Slogan, new { @class = "form-control", placeholder = "Catchy tagline" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="row g-3 mt-2">
+                                                    <div class="col-md-6">
+                                                        <h5><i class="fas fa-pills me-1"></i> Medicines</h5>
+                                                        @Html.ListBoxFor(m => m.MedicineNamesList, (IEnumerable<SelectListItem>)ViewBag.MedicineList, new { @class = "form-control", id = "ddlMedicine", multiple = "multiple" })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5><i class="fas fa-door-open me-1"></i> Room / Place for Therapy</h5>
+                                                        @Html.ListBoxFor(m => m.SelectedRoomIds, (IEnumerable<SelectListItem>)ViewBag.GetRoom, new { @class = "form-control", id = "ddlRooms", multiple = "multiple" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="row g-3 mt-2">
+                                                    <div class="col-md-6">
+                                                        <h5>Uses / Indications</h5>
+                                                        @Html.TextAreaFor(m => m.Uses, new { @class = "form-control", rows = 3, placeholder = "Therapeutic uses..." })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Description</h5>
+                                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control", rows = 3, placeholder = "Detailed description" })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Prerequisite Procedure</h5>
+                                                        @Html.TextAreaFor(m => m.PrerequisiteProcedure, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Main Procedure</h5>
+                                                        @Html.TextAreaFor(m => m.MainProcedure, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Post-Procedure Care</h5>
+                                                        @Html.TextAreaFor(m => m.PostProcedureCare, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Instruments & Materials</h5>
+                                                        @Html.TextAreaFor(m => m.Instruments, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Instructions for Patient</h5>
+                                                        @Html.TextAreaFor(m => m.PatientInstructions, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Instructions for Relatives</h5>
+                                                        @Html.TextAreaFor(m => m.RelativeInstructions, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Instructions for Therapist</h5>
+                                                        @Html.TextAreaFor(m => m.TherapistInstructions, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Cautiousness / Precautions</h5>
+                                                        @Html.TextAreaFor(m => m.Precautions, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Contraindications</h5>
+                                                        @Html.TextAreaFor(m => m.ContraIndications, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Related Disorders / Risks</h5>
+                                                        @Html.TextAreaFor(m => m.RelatedDisorders, new { @class = "form-control", rows = 3 })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-4">
+                                        <div class="col-md-12">
+                                            <div class="d-flex justify-content-end gap-2">
+                                                <button type="submit" class="btn btn-primary px-4">
+                                                    <i class="fa fa-save me-2"></i> Save Service
+                                                </button>
+                                                <button type="button" class="btn btn-outline-primary px-4" id="btnCancel">
+                                                    <i class="fas fa-times me-1"></i> Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div id="static-data-edit-tab" class="mt-2 collapse" style="display: none;">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="page-loader-section" style="display: none;">
+                                <div class="text-center loader-2-container">
+                                    <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                        <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                        </div>
+                                        <div class="vld-icon">
+                                            <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                 height="64" stroke="var(--primary)">
+                                                <g fill="none" fill-rule="evenodd">
+                                                    <g transform="translate(1 1)" stroke-width="2">
+                                                        <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                        </circle>
+                                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                            <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                              to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                            </animateTransform>
+                                                        </path>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="vgt-wrap ">
+                                    <!---->
+                                    <div class="vgt-inner-wrap">
+                                        <!---->
+                                        <div class="vgt-global-search vgt-clearfix">
+                                            <div class="vgt-global-search__input vgt-pull-left">
+                                                <form role="search">
+                                                    <label for="vgt-search-1309953020420">
+                                                        <span aria-hidden="true" class="input__icon">
+                                                            <div class="magnifying-glass">
+                                                            </div>
+                                                        </span>
+                                                        <span class="sr-only">
+                                                            Search
+                                                        </span>
+                                                    </label>
+                                                    <input id="SearchInput" type="text" placeholder="Search services data by id, doctor, name, category, price  and status(0 or 1)"
+                                                           class="vgt-input vgt-pull-left">
+                                                </form>
+                                            </div>
+                                            <div class="vgt-global-search__actions vgt-pull-right">
+                                                <div>
+                                                    <div class="row">
+                                                        <div id="export_1734776919833">
+                                                            <button title="Export CSV" class="btn btn-sm">
+                                                                <i class="fas fa-file-csv">
+                                                                </i>
+                                                            </button>
+                                                        </div>
+                                                        <button title="Export Excel" class="btn btn-sm mr-0">
+                                                            <i class="fa fa-file-excel">
+                                                            </i>
+                                                        </button>
+                                                        <button title="Export PDF" class="btn btn-sm">
+                                                            <i class="fa fa-file-pdf">
+                                                            </i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                        <div class="vgt-fixed-header">
+                                            <!---->
+                                        </div>
+                                        <div class="vgt-responsive">
+                                            <table id="tblServiceList" class="vgt-table striped vgt-compact">
+                                                <thead>
+                                                    <tr>
+                                                        <!---->
+                                                        @*<th scope="col" class="vgt-checkbox-col">
+                                                                <input type="checkbox">
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-9" class="vgt-left-align"
+                                                            style="min-width:auto; width: auto;">
+                                                            <span>
+                                                                Action
+                                                            </span>
+                                                            <!---->
+                                                        </th>
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                style="min-width: 120px; max-width: 120px; width: 120px;">
+                                                                <span>
+                                                                    Service ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Service ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                            style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                            <span>
+                                                                Sr.No
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Name in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                            style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                            <span>
+                                                                Service Name
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Name in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                            style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                            <span>
+                                                                Clinic Name
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Clinic Name in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align sortable"
+                                                            style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                            <span>
+                                                                Charges
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Charges in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Duration
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Duration in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                            style="min-width: auto; width: auto;">
+                                                            <span>
+                                                                Category
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Category in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+                                                            style="min-width: auto; width: auto;">
+                                                            <span>
+                                                                Status
+                                                            </span>
+                                                            <button>
+                                                                <span class="sr-only">
+                                                                    Sort table by Status in descending order
+                                                                </span>
+                                                            </button>
+                                                        </th>
+                                                    </tr>
+
+                                                </thead>
+                                                <tbody>
+                                                    <!---->
+                                                    @if (ViewBag.ServiceList != null)
+                                                    {
+                                                        foreach (var item in ViewBag.ServiceList)
+                                                        {
+                                                            <tr class="">
+                                                                <!---->
+                                                                @*<th class="vgt-checkbox-col">
+                                                                        <input type="checkbox">
+                                                                    </th>
+                                                                    <td data-label="ID" class="vgt-left-align">
+                                                                        <div>
+                                                                            @count
+                                                                        </div>
+                                                                    </td>*@
+                                                                <td data-label="Action" class="vgt-left-align">
+                                                                    <div class="btn-group">
+                                                                        <a href="@Url.Action("ServicesList", "Services", new { ServiceId_Encrypted = @item.ServiceId_Encrypted })" class="btn btn-sm btn-outline-primary"
+                                                                           title="Edit">
+                                                                            <i class="fa fa-pen-alt">
+                                                                            </i>
+                                                                        </a>
+                                                                        <button title="Delete" id="deleteDoctorSession" class="btn btn-outline-danger btn-sm" onclick="DeleteService('@item.ServiceId_Encrypted')">
+                                                                            <i class="fa fa-trash">
+                                                                            </i>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Service ID" class="vgt-left-align">
+                                                                    <div>
+                                                                        @count
+                                                                    </div>
+                                                                </td>
+
+                                                                <td data-label="Medicine Name" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.ServiceName
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Clinic Name" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.ClinicName
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Charges" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.Charges
+                                                                    </div>
+                                                                </td>
+
+
+                                                                <td data-label="Category" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.Servicecategory
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Status" class="vgt-left-align">
+                                                                    <div class="d-flex justify-content-start align-items-center">
+                                                                        <div class="custom-control custom-switch b-custom-control-lg">
+                                                                            @if (@item.Status == "Active")
+                                                                            {
+                                                                                <input id="status_change_@item.ServiceFid" type="checkbox" name="check-button" class="custom-control-input" checked onclick="toggleStatus(this,'@item.ServiceId_Encrypted')">
+                                                                                <label for="status_change_@item.ServiceFid" class="custom-control-label">
+                                                                                </label>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input id="status_change_@item.ServiceFid" type="checkbox" name="check-button" class="custom-control-input" onclick="toggleStatus(this,'@item.ServiceId_Encrypted')">
+                                                                                <label for="status_change_@item.ServiceFid" class="custom-control-label">
+                                                                                </label>
+                                                                            }
+                                                                        </div>
+                                                                        @if (@item.Status == "Active")
+                                                                        {
+                                                                            <span class="badge badge-success">
+                                                                                @item.Status
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="badge badge-danger">
+                                                                                @item.Status
+                                                                            </span>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+
+                                                            </tr>
+
+                                                            @*<!-- Is Therapy -->
+                                                                     <td>
+                                                                @(item.IsTherapy ? "Yes" : "No")
+
+                                                                     </td>
+
+                                                                     <td>@item.LocalName</td>
+                                                                     <td>@item.Slogan</td>F
+                                                                     <td>@item.Uses</td>
+                                                                     <td>@item.Description</td>
+                                                                     <td>@item.TherapyValue</td>
+                                                                     <td>@item.Instruments</td>
+                                                                     <td>@item.PrerequisiteProcedure</td>
+                                                                     <td>@item.MainProcedure</td>
+                                                                     <td>@item.PostProcedureCare</td>
+
+                                                                     <td>@item.Status</td>*@
+                                                            count++;
+
+                                                        }
+                                                    }
+
+                                                    <!---->
+                                                </tbody>
+                                                <!---->
+                                            </table>
+                                        </div>
+                                        <!---->
+                                        <div class="vgt-wrap__footer vgt-clearfix">
+                                            <div class="footer__row-count vgt-pull-left">
+                                                <form>
+                                                    <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                    <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                        <option value="10">10</option>
+                                                        <option value="20">20</option>
+                                                        <option value="30">30</option>
+                                                        <option value="40">40</option>
+                                                        <option value="50">50</option>
+                                                        <option value="-1">ALL</option>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                            <div class="footer__navigation vgt-pull-right">
+                                                <div class="footer__navigation__page-info">
+                                                    <form>
+                                                        <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                            <span>Page</span>
+                                                            <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                            <span>of <span id="total-pages">1</span></span>
+                                                        </label>
+                                                    </form>
+                                                </div>
+                                                <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                    <span class="chevron left"></span><span>Prev</span>
+                                                </button>
+                                                <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                    <span>Next</span><span class="chevron right"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!---->
+                <!---->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+$(document).ready(function () {
+        // ---------- Select2 for Medicines ----------
+        $('#ddlMedicine').select2({
+            placeholder: "Select Medicines",
+            allowClear: true,
+            width: '100%'
+        });
+
+
+
+    // Your existing JS code for Add/Cancel buttons and Doctor dropdown
+    $("#addService").click(function () { $("#static-data-add-tab").slideToggle(); });
+    $("#btnCancel").click(function () { $("#static-data-add-tab").slideToggle(); });
+});
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        // ---------- Select2 for Medicines ----------
+    $('#ddlRooms').select2({
+            placeholder: "Select Rooms",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Your existing JS code for Add/Cancel buttons and Doctor dropdown
+    //$("#addService").click(function () { $("#static-data-add-tab").slideToggle(); });
+    //$("#btnCancel").click(function () { $("#static-data-add-tab").slideToggle(); });
+});
+</script>
+
+<script>
+    $("#ddlClinicFid").change(function () {
+        debugger;
+        $("#ddlDoctorName").find("option").remove();
+        var ClinicFid = $("#ddlClinicFid").val();
+        $.ajax({
+            type: 'GET',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+            url: '@Url.Action("GetDoctor", "Services")',
+            data: { ClinicFid: ClinicFid },
+            success: function (data) {
+                debugger;
+                if (data != null) {
+                    var data1 = data.data;
+                    $("#ddlDoctorName").append("<option value=''>--Select-- </option>");
+                    $.each(data1, function (i, p) {
+                        $("#ddlDoctorName").append("<option value='" + p.Id + "'>" + p.Name + "</option>");
+                    });
+                }
+                else {
+                    $('#ErrorESSPassword').html(" ");
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+
+
+
+
+    // Add Service button
+    $(document).off("click", "#addService").on("click", "#addService", function (e) {
+
+        e.preventDefault();
+
+        var $div = $("#static-data-add-tab");
+        var $btn = $("#addService"); // ALWAYS target same button
+
+        if ($div.hasClass("open")) {
+
+            $div.removeClass("open").slideUp(300);
+            $btn.html('<i class="fa fa-plus"></i> Add Service');
+
+        } else {
+
+            $div.addClass("open").slideDown(300);
+            $btn.html('<i class="fa fa-times"></i> Close Form');
+        }
+    });
+
+
+    // Cancel button
+    $(document).off("click", "#btnCancel").on("click", "#btnCancel", function (e) {
+
+        e.preventDefault();
+
+        var $div = $("#static-data-add-tab");
+        var $btn = $("#addService"); // IMPORTANT: not $(this)
+
+        $div.removeClass("open").slideUp(300);
+
+        // Always reset to Add Service
+        $btn.html('<i class="fa fa-plus"></i> Add Service');
+    });
+
+
+
+        var CheckUpdate = @Html.Raw(Json.Encode(ViewBag.Update));
+        if(CheckUpdate!=null)
+        {
+            $("#static-data-add-tab").show();
+            $("#addService").html('<i class="fa fa-times"></i> Close Form');
+
+        }
+
+
+       // });
+</script>
+@*=====================For change Status of Service====================*@
+<script>
+    function toggleStatus(checkbox, ServiceId_Encrypted) {
+        debugger;
+
+        if (checkbox.checked) {
+            debugger;
+            var Status = "Active";
+            var url = '@Url.Action("ChangeServiceStatus", "Services")' + '?ServiceId_Encrypted=' + ServiceId_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        } else {
+            debugger;
+            var Status = "Inactive";
+            var url = '@Url.Action("ChangeServiceStatus", "Services")' + '?ServiceId_Encrypted=' + ServiceId_Encrypted + '&Status=' + Status;
+            window.location.href = url;
+        }
+    }
+</script>
+@*=====================For change Status of Service====================*@
+@*========================Show Image when select==========================*@
+<script>
+    function showImage(event, previewElementId) {
+        debugger;
+        const file = event.target.files[0]; // Get the selected file
+        if (file) {
+            const reader = new FileReader(); // Create a FileReader to read the file
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById(previewElementId);
+                imagePreview.style.backgroundImage = `url(${e.target.result})`; // Set the background image
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var checkbox = document.getElementById("IsTherapy");
+        var section = document.getElementById("therapySection");
+
+        function toggleTherapySection() {
+            if (checkbox.checked) {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+
+        // Run on page load
+        toggleTherapySection();
+
+        // Run on checkbox change
+        checkbox.addEventListener("change", toggleTherapySection);
+    });
+</script>
+
+
+@*========================Show Image when select end==========================*@
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('serviceForm').addEventListener('submit', function (event) {
+        debugger;
+        var form = this;
+        var isValid = true;
+
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+
+            var message = 'Please fill out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+
+            //setTimeout(() => {
+            //    formError.style.display = "none";
+            //}, 1000);
+        }
+
+        //if (!isValid) {
+        //    event.preventDefault(); // Prevent form submission if fields are invalid
+        //    formError.style.display = 'block'; // Show the error message div
+
+        //}
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+
+        //$("#dismissError").click(function () {
+        //    debugger;
+        //    formError.style.display = 'none';
+        //});
+
+    });
+</script>
+<script>
+    function DeleteService(ServiceId_Encrypted) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you absolutely sure about this?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, go ahead!',
+            cancelButtonText: 'No, cancel!',
+            customClass: {
+                popup: 'fullscreen-popup',
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Perform the desired action
+                var url = '@Url.Action("DeleteService", "Services")' + '?ServiceId_Encrypted=' + ServiceId_Encrypted;
+                window.location.href = url;
+            }
+        });
+    }
+</script>
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('SearchInput', 'tblServiceList'); //Type any for filter
+
+
+
+    document.getElementById('FilterByStatus').addEventListener('change', function () {
+        debugger;
+        const selectedValue = this.value; // Get the selected value from the dropdown
+        const table = document.getElementById('tblServiceList'); // Get the table by ID
+        const rows = table.querySelectorAll('tbody tr'); // Get all table rows
+
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(7)'); // Assuming status is in the 8th column (Status column)
+
+            // Get the text content of the badge (either "Active" or "Inactive")
+            const statusValue = statusCell ? statusCell.querySelector('span').textContent.trim() : "";
+
+            // Show row if the selected value matches the status value or if no value is selected
+            if (selectedValue === "" || statusValue.toLowerCase() === selectedValue.toLowerCase()) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblServiceList');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+

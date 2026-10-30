@@ -1,0 +1,49 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script> <!-- You can use another QR scanning library -->
+</head>
+<body>
+    <div id="qr-reader" style="width: 500px; height: 500px;"></div> <!-- QR Scanner View -->
+    <div id="qr-result" style="display: none;">
+        <p>QR Code Scanned:</p>
+        <img id="qr-image" src="" alt="Scanned QR" width="200px" /> <!-- Display QR Code Image -->
+    </div>
+
+    <script>
+        // Initialize the QR Code scanner
+        const qrScanner = new Html5QrcodeScanner("qr-reader", {
+            fps: 10,
+            qrbox: 250
+        });
+
+        qrScanner.render(function (decodedText, decodedResult) {
+            // Once QR Code is scanned
+            console.log("Scanned QR Code:", decodedText);
+
+            // Display the scanned QR code image
+            const qrImage = document.getElementById('qr-image');
+            qrImage.src = decodedText;  // Assuming the QR contains a URL or image source
+
+            // Show the image container with the QR code
+            document.getElementById('qr-result').style.display = 'block';
+
+            // Redirect after a brief delay (e.g., 2 seconds) to show the QR code before redirecting
+            setTimeout(function () {
+                window.location.href = "http://localhost:51552/Patient/QRScanePatient/AddPatientQRScane";
+            }, 2000); // Adjust time to your preference
+        });
+    </script>
+</body>
+</html>
+

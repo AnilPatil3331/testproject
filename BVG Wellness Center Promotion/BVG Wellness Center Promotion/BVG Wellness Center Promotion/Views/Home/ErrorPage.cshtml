@@ -1,0 +1,154 @@
+﻿
+@{
+    Layout = null;
+}
+
+<style>
+    /* General Utility Classes */
+    .vh-100 {
+        height: 100vh !important;
+    }
+
+    .text-center {
+        text-align: center !important;
+    }
+
+    .position-absolute {
+        position: absolute !important;
+    }
+
+    .position-relative {
+        position: relative !important;
+    }
+
+    img {
+        vertical-align: middle;
+        max-width: 100%; /* Ensure images are responsive */
+        height: auto;
+    }
+
+    /* Background Color Class */
+    .bg-primary-subtle {
+        background-color: var(--bs-primary-bg-subtle, #e3f2fd) !important;
+    }
+
+    /* Responsive Adjustments */
+    .error-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%; /* Full viewport height */
+        text-align: center;
+    }
+
+    .error-container img {
+        max-width: 80%; /* Limit image size on smaller screens */
+        margin-bottom: 20px;
+    }
+
+    .error-text {
+        font-size: 1rem;
+        margin: 10px 0;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 5px;
+    }
+
+    /* Positioning for Decorative Images */
+    .decorative-image {
+        position: absolute;
+    }
+
+    .decorative-image.top-left {
+        top: 20px;
+        left: 20px;
+        width: 50px;
+    }
+
+    .decorative-image.top-right {
+        top: 20px;
+        right: 20px;
+        width: 50px;
+    }
+
+    .decorative-image.bottom-left {
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+    }
+
+    .decorative-image.bottom-right {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+    }
+
+    /* Media Queries */
+    @@media (min-width: 768px) {
+        .error-container img {
+            max-width: 60%;
+        }
+
+        .error-text {
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            font-size: 1.1rem;
+            padding: 15px 30px;
+        }
+    }
+
+    @@media (min-width: 1024px) {
+        .error-container img {
+            max-width: 50%;
+        }
+
+        .error-text {
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            font-size: 1.2rem;
+            padding: 20px 40px;
+        }
+    }
+</style>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Error Page</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="bg-primary-subtle vh-100 position-relative">
+            <!-- Main Content -->
+            <div class="error-container">
+                <img src="~/images/404.png" alt="404 Error" class="img-fluid">
+                <p class="error-text text-body">
+                    The Page You Requested Could Not Be Found. Please Go <br>
+                    Back To Homepage.
+                </p>
+                <a class="btn bg-primary text-white" href="/Home/Login/">Back to Login</a>
+            </div>
+
+            <!-- Decorative Images -->
+            <img src="~/images/error-bg-5.png" alt="decorative" class="decorative-image top-left">
+            <img src="~/images/error-bg-2.png" alt="decorative" class="decorative-image top-right">
+            <img src="~/images/error-bg-3.png" alt="decorative" class="decorative-image bottom-left">
+            <img src="~/images/error-bg-6.png" alt="decorative" class="decorative-image bottom-right">
+        </div>
+    </div>
+</body>
+</html>
+
+

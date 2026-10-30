@@ -1,0 +1,372 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.MobileEHRViewModel
+@{
+    Layout = null;
+    var patientRaw = ViewBag.GetPatientEncounterDetails;
+
+    Func<dynamic, string, object> GetVal = (obj, key) =>
+    {
+        if (obj == null) return "N/A";
+        var dict = (IDictionary<string, object>)obj;
+        return dict.ContainsKey(key) && dict[key] != null ? dict[key] : "N/A";
+    };
+
+    var prescriptions = ViewBag.ResultView as IEnumerable<dynamic>;
+    var therapyList = ViewBag.AdvisedTherapyResult as IEnumerable<dynamic>;
+    // काउंटर लिस्ट इथे व्यवस्थित डिफाइन केली आहे
+    var counterList = ViewBag.CounterResultView as IEnumerable<dynamic>;
+}
+
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* प्रिंट करताना बटणे लपवा */
+        @@media print {
+            .no-print, #billPrint, .btn {
+                display: none !important;
+            }
+
+            #PrintArea {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 10px !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+            /* टेबल प्रिंटमध्ये नीट दिसण्यासाठी */
+            .table-responsive {
+                overflow: visible !important;
+            }
+
+            .table {
+                width: 100% !important;
+                border-collapse: collapse;
+            }
+
+                .table td, .table th {
+                    border: 1px solid #dee2e6 !important;
+                    padding: 8px !important;
+                }
+            /* औषध बॉक्सेस तुटू नयेत */
+            .med-section {
+                page-break-inside: avoid;
+                border: 1px solid #ccc !important;
+            }
+        }
+
+        /* मोबाईलसाठी थोडी जास्त जागा */
+        @@media (max-width: 767px) {
+            #PrintArea {
+                width: 100% !important;
+                padding: 15px !important;
+                margin: 0 auto !important;
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            #detailScreen {
+                padding: 10px !important;
+            }
+
+            .header-info {
+                flex-direction: column !important;
+                text-align: center !important;
+            }
+
+            .header-info .col-3, 
+            .header-info .col-9 {
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                text-align: center !important;
+                margin-bottom: 10px;
+            }
+
+            .header-info img {
+                margin: 0 auto !important;
+                max-height: 70px !important;
+                max-width: 100% !important;
+                display: block;
+            }
+
+            .header-info h3 {
+                font-size: 1.5rem !important;
+            }
+
+            .header-info p {
+                font-size: 13px !important;
+            }
+
+            .patient-box {
+                flex-direction: column !important;
+                padding: 12px !important;
+                margin-bottom: 15px !important;
+            }
+
+            .patient-box div {
+                text-align: left !important;
+                margin-bottom: 8px;
+            }
+
+            .patient-box .text-right {
+                text-align: left !important;
+                margin-bottom: 0;
+            }
+
+            .table-responsive table {
+                min-width: 650px; /* Forces scroll bar instead of squishing columns */
+            }
+        }
+
+        .patient-box {
+            background: #f8f9fa;
+            border-left: 5px solid #1a6b4a;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex; /* हे महत्त्वाचे */
+            justify-content: space-between; /* डावी आणि उजवीकडे जागा सोडेल */
+        }
+
+            .patient-box p {
+                margin-bottom: 2px !important; /* ओळींमधील अंतर कमी करण्यासाठी */
+                font-size: 14px;
+            }
+    </style>
+    <style>
+        /* बेसिक सेटिंग्ज */
+        body {
+            background: #e9ecef;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #detailScreen {
+            display: block; /* हे none होते, आता डायरेक्ट दिसेल */
+            background: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+
+        /* स्क्रीनवर दिसण्यासाठी */
+        #PrintArea {
+            width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+
+        /* UI घटक */
+        .header-info {
+            border-bottom: 3px solid #1a6b4a;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+        }
+
+        .med-section {
+            border: 1px solid #e1e1e1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #fff;
+        }
+
+        .inst-box {
+            background: #fdfdfd;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+            margin-top: 5px;
+        }
+
+
+        /* Textarea सेटिंग्ज */
+        .print-textarea {
+            border: none;
+            width: 100%;
+            resize: none;
+            background: transparent;
+            font-size: 14px;
+            color: #333;
+            height: auto;
+            min-height: 40px;
+            overflow: hidden;
+            display: block;
+        }
+
+
+        /* प्रिंटसाठी खास सेटिंग्ज */
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            #PrintArea {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+            }
+
+            .print-textarea {
+                height: auto !important;
+                overflow: visible !important;
+                display: block !important;
+                page-break-inside: avoid; /* प्रिंट करताना मजकूर कट होऊ नये म्हणून */
+                border: none !important;
+            }
+
+            .med-section, .inst-box {
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    @if (ViewBag.Error != null)
+    {
+        <div style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f8f9fa;">
+            <div style="text-align:center; padding:40px; border:2px solid #dc3545; border-radius:12px; background:white;">
+                <i class="fas fa-exclamation-circle" style="font-size:60px; color:#dc3545;"></i>
+                <h4 class="mt-3 text-danger">@ViewBag.Error</h4>
+                <p class="text-muted">Please check the Appointment ID and try again.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- List Screen इथून काढून टाकला आहे -->
+
+        <div id="detailScreen">
+            @*<div class="container mb-4 no-print mt-3">
+                    <button class="btn btn-outline-secondary" onclick="showList()"><i class="fa fa-arrow-left"></i> Back to List</button>
+                </div>*@
+
+            <div id="PrintArea">
+                <div class="row header-info align-items-center">
+                    <div class="col-3"><img src="~/images/JnanaYugAyog.png" style="max-height: 80px; max-width: 100%; object-fit: contain;" /></div>
+                    <div class="col-9 text-right">
+                        <h3 class="text-success font-weight-bold m-0">Ayurvijnana Chikitsalay</h3>
+                        <p class="address-text m-0">80/635 Nandraj Sankul Society, Famous Chowk, New Sangavi-411027, INDIA</p>
+                    </div>
+                </div>
+
+                <h4 class="text-center mb-4 text-uppercase font-weight-bold">Prescription</h4>
+
+                <div class="patient-box">
+                    <div>
+                        <p><b>Patient:</b> @GetVal(patientRaw, "PatientName")</p>
+                        <p><b>Age/Gnd:</b> @GetVal(patientRaw, "Age") / @GetVal(patientRaw, "Gender")</p>
+                    </div>
+                    <div class="text-right">
+                        <p><b>Doctor:</b> @GetVal(patientRaw, "DoctorName")</p>
+                        <p><b>UHID:</b> @GetVal(patientRaw, "UHIDNO")</p>
+                    </div>
+                </div>
+
+
+
+                <hr>
+
+                @if (counterList != null && counterList.Any())
+                {
+                    <h5 class="text-primary mt-4 font-weight-bold">Counter Products</h5>
+                    <hr>
+                    foreach (var cp in counterList)
+                    {
+                        <div class="med-section">
+                            <div class="row">
+                                <div class="col-8">
+                                    <h6 class="font-weight-bold text-success mb-2">@cp.MedicineDescription</h6>
+                                    <small class="text-muted">Department: @cp.Department</small>
+                                </div>
+                            </div>
+                            <div class="inst-box mt-2">
+                                <p class="mb-1 font-weight-bold" style="font-size:12px;">Instructions:</p>
+                                <textarea class="print-textarea" readonly>@cp.MorningSuchana</textarea>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="text-align:center; padding:20px; border:1px dashed #ccc; border-radius:8px; color:#888; margin-top:15px;">
+                        <i class="fas fa-info-circle" style="font-size:30px;"></i>
+                        <p class="mt-2">No counter products found for this appointment.</p>
+                    </div>
+                }
+            </div>
+
+
+            <div class="text-center mt-4 no-print pb-5">
+                <button id="billPrint" class="btn btn-primary btn-lg px-5">Print Prescription</button>
+            </div>
+        </div>
+    }
+
+        <script>
+            // १. पेज लोड झाल्यावर आणि स्क्रीन रिसाईज झाल्यावर Textarea ची उंची सेट करा
+            function autoResizeTextareas() {
+                document.querySelectorAll('.print-textarea').forEach(el => {
+                    el.style.height = 'auto';
+                    el.style.height = el.scrollHeight + "px";
+                });
+            }
+
+            window.onload = autoResizeTextareas;
+            window.addEventListener('resize', autoResizeTextareas);
+            document.addEventListener('DOMContentLoaded', autoResizeTextareas);
+            setTimeout(autoResizeTextareas, 200);
+            setTimeout(autoResizeTextareas, 1000);
+
+            // आता List Screen नाहीये त्यामुळे हे functions वापरले जाणार नाहीत, पण तुमच्या सांगण्यानुसार ते तशेच ठेवले आहेत
+            function showDetail() {
+                document.getElementById('detailScreen').style.display = 'block';
+                autoResizeTextareas();
+            }
+
+            function showList() {
+                document.getElementById('detailScreen').style.display = 'none';
+            }
+
+            // २. प्रिंट बटण लॉजिक (फक्त एकदाच)
+            document.getElementById("billPrint").addEventListener("click", function () {
+                var textareas = document.querySelectorAll('.print-textarea');
+                var tempStorage = [];
+
+                textareas.forEach(function (el) {
+                    var div = document.createElement('div');
+                    div.style.whiteSpace = "pre-wrap";
+                    div.style.fontSize = "14px";
+                    div.style.marginBottom = "10px";
+                    div.innerText = el.value;
+
+                    el.style.display = 'none'; // मूळ textarea लपवा
+                    el.parentNode.insertBefore(div, el); // div वर ठेवा
+                    tempStorage.push({ el: el, div: div });
+                });
+
+                window.print();
+
+                // प्रिंट झाल्यावर पुन्हा मूळ स्थितीत या
+                tempStorage.forEach(function (item) {
+                    item.el.style.display = 'block';
+                    item.div.remove();
+                });
+            });
+        </script>
+    </body>
+</html>

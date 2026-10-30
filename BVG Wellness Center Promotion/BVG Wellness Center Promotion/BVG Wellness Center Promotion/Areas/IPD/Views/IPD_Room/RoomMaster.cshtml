@@ -1,0 +1,411 @@
+﻿@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model List<IPD_RoomModel>
+@{
+    ViewBag.Title = "Room Master";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
+<style>
+    .master-header { background: linear-gradient(135deg, #1565c0, #1976d2); color: white; padding: 16px 22px; border-radius: 12px; margin-bottom: 20px; position: relative; z-index: 10; }
+    .add-btn { background: #27ae60; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .table-card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); overflow: hidden; position: relative; z-index: 10; }
+    .badge-on { background: #e8f5e9; color: #2e7d32; padding: 3px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .btn-edit { background: #fff8e1; color: #f57f17; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+    .btn-del { background: #fce4ec; color: #c62828; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+    .btn-charges { background: #e3f2fd; color: #1565c0; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+    .btn-beds { background: #e8f5e9; color: #2e7d32; border: none; padding: 5px 10px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+    .modal-hdr { background: linear-gradient(135deg, #1565c0, #1976d2); color: white; }
+    .modal-lg { max-width: 750px; }
+    .charge-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 6px; }
+    .charge-row .charge-name { flex: 1; font-weight: 500; }
+    .compulsory-badge { background: #fce4ec; color: #c62828; padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; }
+    .optional-badge { background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; }
+
+    /* Light blue input fields */
+    .form-control, .form-select, input[type=text], input[type=number], input[type=datetime-local], textarea, select {
+        background-color: #eef5fb !important;
+        border-color: #c8dff0 !important;
+        color: #1e3a5f;
+    }
+    .form-control:focus, .form-select:focus, input:focus, select:focus, textarea:focus {
+        background-color: #ddeefa !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.15) !important;
+        color: #1e3a5f;
+    }
+    /* Standard IPD table & page styles */
+    .page-title { font-size:1rem; font-weight:700; color:#1e3a5f; }
+    .tbl-ipd th { font-size:0.74rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.3px; border-top:none; background:#f8fafc; padding:7px 10px; white-space:nowrap; }
+    .tbl-ipd td { font-size:0.82rem; padding:7px 10px; vertical-align:middle; border-color:#f1f5f9; }
+    .tbl-ipd tbody tr:hover { background:#f0f9ff; }
+    .badge-on  { background:#dcfce7; color:#15803d; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .badge-off { background:#fee2e2; color:#991b1b; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .act-btn { font-size:0.72rem; padding:3px 9px; border-radius:4px; font-weight:600; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin:1px; transition:all 0.15s; text-decoration:none; }
+    .act-edit { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+    .act-edit:hover { background:#92400e; color:#fff; }
+    .act-del  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+    .act-del:hover  { background:#991b1b; color:#fff; }
+    .act-blue { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .act-blue:hover { background:#1d4ed8; color:#fff; }
+    .act-green { background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+<div class="container-fluid mt-2">
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+            <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                <i class="fas fa-door-open me-1"></i> Room Master
+            </h6>
+        </div>
+        <div class="card-body">
+            <input type="hidden" id="RoomId" value="0">
+            <div class="row g-2 align-items-end">
+                <div class="col-md-2">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Room No <span class="text-danger">*</span></label>
+                    <input type="text" id="RoomNumber" class="form-control form-control-sm" placeholder="e.g. 101">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Floor</label>
+                    <select id="FloorId" class="form-select form-select-sm" @(ViewBag.Settings != null && ViewBag.Settings.EnableHierarchicalMapping ? "onchange=filterWards()" : "")>
+                        <option value="">-- Select --</option>
+                        @if (ViewBag.Floors != null)
+                        {
+                            foreach (var f in (List<IPD_FloorModel>)ViewBag.Floors)
+                            {
+                                <option value="@f.FloorId">@f.FloorName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Ward</label>
+                    <select id="WardId" class="form-select form-select-sm" @(ViewBag.Settings != null && ViewBag.Settings.EnableHierarchicalMapping ? "onchange=filterCategories()" : "")>
+                        <option value="">-- Select --</option>
+                        @if (ViewBag.Wards != null)
+                        {
+                            foreach (var w in (List<IPD_WardModel>)ViewBag.Wards)
+                            {
+                                <option value="@w.WardId" data-floor="@w.FloorId">@w.WardName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Category</label>
+                    <select id="CategoryId" class="form-select form-select-sm">
+                        <option value="">-- Select --</option>
+                        @if (ViewBag.Categories != null)
+                        {
+                            foreach (var c in (List<IPD_CategoryModel>)ViewBag.Categories)
+                            {
+                                <option value="@c.CategoryId" data-floor="@c.FloorId" data-ward="@c.WardId">@c.CategoryName</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted" style="font-size: 0.75rem; font-weight:600;">Charge (₹/day)</label>
+                    <input type="number" id="RoomChargePerDay" class="form-control form-control-sm" placeholder="0" min="0" step="0.01">
+                </div>
+                <div class="col-md-1">
+                    <div class="form-check form-switch mt-1">
+                        <input class="form-check-input" type="checkbox" id="IsActive" checked>
+                        <label class="form-check-label fw-semibold text-muted" style="font-size: 0.75rem;" for="IsActive">Active</label>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-primary btn-sm px-4" id="btnSave" onclick="saveRoom()"><i class="fas fa-plus me-1"></i> Add Room</button>
+                    <button class="btn btn-light btn-sm px-3 ms-2 d-none" id="btnCancel" onclick="resetForm()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive border-top">
+            <table id="tblRoom" class="table tbl-ipd mb-0">
+                <thead class="table-light">
+                    <tr><th>Sr No.</th><th>Room No</th><th>Location</th><th>Category</th><th>Charge/Day</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                    @{ int index = 1; }`n                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td>@(index++)</td>
+                            <td><strong><i class="fas fa-door-closed text-primary me-2"></i>@r.RoomNumber</strong></td>
+                            <td>
+                                <div style="font-size:0.75rem;color:#64748b;"><i class="fas fa-building me-1"></i>@r.FloorName</div>
+                                <div style="font-size:0.75rem;color:#64748b;"><i class="fas fa-hospital me-1"></i>@r.WardName</div>
+                            </td>
+                            <td><span style="background:#f3e5f5;color:#6a1b9a;padding:2px 8px;border-radius:10px;font-size:0.72rem;font-weight:600;">@r.CategoryName</span></td>
+                            <td><strong class="text-success">₹@r.RoomChargePerDay.ToString("N0")</strong></td>
+                            <td>
+                                @if (r.IsActive) { <span class="badge-on">Active</span> }
+                                else { <span class="badge-off">Inactive</span> }
+                            </td>
+                            <td>
+                                <button class="act-btn btn-charges me-1" onclick="openChargesModal(@r.RoomId, '@r.RoomNumber')">
+                                    <i class="fas fa-receipt"></i> Charges
+                                </button>
+                                <a href="/IPD/IPD_Room/BedMaster?roomId=@r.RoomId" class="act-btn btn-beds me-1">
+                                    <i class="fas fa-bed"></i> Beds
+                                </a>
+                                <button class="act-btn act-edit me-1" onclick="editRoom(@r.RoomId, '@r.RoomNumber', @(r.FloorId?.ToString() ?? "null"), @(r.WardId?.ToString() ?? "null"), @(r.CategoryId?.ToString() ?? "null"), @r.RoomChargePerDay, @r.IsActive.ToString().ToLower())">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="act-btn act-del" onclick="deleteRoom(@r.RoomId)">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="chargesModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-hdr">
+                <h6 class="modal-title mb-0" id="chargesModalTitle"><i class="fas fa-receipt me-2"></i>Room Charges</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-3 pb-4 px-4">
+                <div class="alert alert-info py-2 small">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Map which charges apply to this room. Compulsory = always charged. Optional = patient can choose.
+                </div>
+
+                <!-- Existing mapped charges -->
+                <h6 class="fw-bold mb-3">Mapped Charges:</h6>
+                <div id="mappedChargesList">
+                    <p class="text-muted">Loading...</p>
+                </div>
+
+                <hr>
+
+                <!-- Add new charge -->
+                <h6 class="fw-bold mb-3">Add New Charge to this Room:</h6>
+                <input type="hidden" id="mappingRoomId">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold small">Select Charge</label>
+                        <select id="newChargeId" class="form-select form-select-sm">
+                            <option value="">-- Select --</option>
+                            @foreach (var c in (ViewBag.AllCharges as List<IPD_RoomChargesModel> ?? new List<IPD_RoomChargesModel>()))
+                            {
+                                <option value="@c.ChargeId" data-default="@c.DefaultAmount">@c.ChargeName (₹@c.DefaultAmount/day)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Amount (₹/day)</label>
+                        <input type="number" id="newChargeAmount" class="form-control form-control-sm" placeholder="Override amount" min="0">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold small">Mode</label>
+                        <select id="newChargeMode" class="form-select form-select-sm">
+                            <option value="false">Optional</option>
+                            <option value="true">Compulsory</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary btn-sm w-100" onclick="addChargeMapping()">
+                            <i class="fas fa-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function () { $('#tblRoom').DataTable({ pageLength: 25 }); });
+
+    // Auto-fill default amount when charge selected
+    document.getElementById('newChargeId').addEventListener('change', function () {
+        var opt = this.options[this.selectedIndex];
+        document.getElementById('newChargeAmount').value = opt.dataset.default || 0;
+    });
+
+    function filterWards() {
+        var floorId = document.getElementById('FloorId').value;
+        var wardSelect = document.getElementById('WardId');
+        if(wardSelect){
+            var options = wardSelect.querySelectorAll('option:not([value=""])');
+            var firstVisible = "";
+            options.forEach(opt => {
+                var fl = opt.getAttribute('data-floor');
+                if (!floorId || fl == floorId) {
+                    opt.style.display = 'block';
+                    if(!firstVisible) firstVisible = opt.value;
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+            if(wardSelect.value && wardSelect.querySelector('option[value="'+wardSelect.value+'"]').style.display === 'none') {
+                wardSelect.value = firstVisible;
+            }
+            filterCategories();
+        }
+    }
+
+    function filterCategories() {
+        var floorId = document.getElementById('FloorId') ? document.getElementById('FloorId').value : null;
+        var wardId = document.getElementById('WardId') ? document.getElementById('WardId').value : null;
+        var catSelect = document.getElementById('CategoryId');
+        if(catSelect){
+            var options = catSelect.querySelectorAll('option:not([value=""])');
+            var firstVisible = "";
+            options.forEach(opt => {
+                var fl = opt.getAttribute('data-floor');
+                var wd = opt.getAttribute('data-ward');
+                
+                var show = true;
+                if(floorId && fl != floorId) show = false;
+                if(wardId && wd != wardId) show = false;
+                
+                if (show) {
+                    opt.style.display = 'block';
+                    if(!firstVisible) firstVisible = opt.value;
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+            if(catSelect.value && catSelect.querySelector('option[value="'+catSelect.value+'"]').style.display === 'none') {
+                catSelect.value = firstVisible;
+            }
+        }
+    }
+
+    function editRoom(id, no, floorId, wardId, catId, charge, active) {
+        document.getElementById('RoomId').value = id || 0;
+        document.getElementById('RoomNumber').value = no || '';
+        if (document.getElementById('FloorId')) {
+            document.getElementById('FloorId').value = floorId || '';
+            filterWards();
+        }
+        if (document.getElementById('WardId')) {
+            document.getElementById('WardId').value = wardId || '';
+            filterCategories();
+        }
+        if (document.getElementById('CategoryId')) document.getElementById('CategoryId').value = catId || '';
+        document.getElementById('RoomChargePerDay').value = charge || 0;
+        document.getElementById('IsActive').checked = active !== false;
+        
+        document.getElementById('btnSave').innerHTML = '<i class="fas fa-save me-1"></i> Update';
+        document.getElementById('btnSave').classList.replace('btn-primary', 'btn-success');
+        document.getElementById('btnCancel').classList.remove('d-none');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function resetForm() {
+        document.getElementById('RoomId').value = 0;
+        document.getElementById('RoomNumber').value = '';
+        if (document.getElementById('FloorId')) {
+            document.getElementById('FloorId').value = '';
+            filterWards();
+        }
+        if (document.getElementById('WardId')) {
+            document.getElementById('WardId').value = '';
+            filterCategories();
+        }
+        if (document.getElementById('CategoryId')) document.getElementById('CategoryId').value = '';
+        document.getElementById('RoomChargePerDay').value = '';
+        document.getElementById('IsActive').checked = true;
+        
+        document.getElementById('btnSave').innerHTML = '<i class="fas fa-plus me-1"></i> Add';
+        document.getElementById('btnSave').classList.replace('btn-success', 'btn-primary');
+        document.getElementById('btnCancel').classList.add('d-none');
+    }
+
+    function saveRoom() {
+        var data = {
+            RoomId: document.getElementById('RoomId').value,
+            RoomNumber: document.getElementById('RoomNumber').value,
+            FloorId: document.getElementById('FloorId') ? document.getElementById('FloorId').value || null : null,
+            WardId: document.getElementById('WardId') ? document.getElementById('WardId').value || null : null,
+            CategoryId: document.getElementById('CategoryId') ? document.getElementById('CategoryId').value || null : null,
+            RoomChargePerDay: document.getElementById('RoomChargePerDay').value,
+            IsActive: document.getElementById('IsActive').checked
+        };
+        if (!data.RoomNumber.trim()) { alert('Room Number is required'); return; }
+        fetch('/IPD/IPD_Room/RoomMaster_Save', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(data) })
+            .then(r => r.json()).then(res => { if (res.success) { alert('Success: ' + res.message); location.reload(); } else alert('Error: ' + res.message); });
+    }
+
+    function deleteRoom(id) {
+        if (!confirm('Delete this room?')) return;
+        fetch('/IPD/IPD_Room/RoomMaster_Delete', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'id=' + id })
+            .then(r => r.json()).then(res => { if (res.success) { alert('Success: ' + res.message); location.reload(); } else alert('Error: ' + res.message); });
+    }
+
+    function openChargesModal(roomId, roomNo) {
+        document.getElementById('mappingRoomId').value = roomId;
+        document.getElementById('chargesModalTitle').innerHTML = `<i class="fas fa-receipt me-2"></i>Charges - Room ${roomNo}`;
+        loadMappedCharges(roomId);
+        new bootstrap.Modal(document.getElementById('chargesModal')).show();
+    }
+
+    function loadMappedCharges(roomId) {
+        fetch('/IPD/IPD_Room/GetRoomCharges?roomId=' + roomId)
+            .then(r => r.json()).then(charges => {
+                if (charges.length === 0) {
+                    document.getElementById('mappedChargesList').innerHTML = '<p class="text-muted small">No charges mapped yet. Add one below.</p>';
+                    return;
+                }
+                var html = '';
+                charges.forEach(c => {
+                    var badge = c.IsCompulsory
+                        ? '<span class="compulsory-badge"><i class="fas fa-lock"></i> Compulsory</span>'
+                        : '<span class="optional-badge"><i class="far fa-circle"></i> Optional</span>';
+                    html += `<div class="charge-row">
+                        <div class="charge-name">${c.ChargeName}</div>
+                        ${badge}
+                        <strong class="text-success">&#8377;${c.ChargeAmount}/day</strong>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeCharge(${c.MappingId})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>`;
+                });
+                document.getElementById('mappedChargesList').innerHTML = html;
+            });
+    }
+
+    function addChargeMapping() {
+        var roomId = document.getElementById('mappingRoomId').value;
+        var chargeId = document.getElementById('newChargeId').value;
+        var amount = document.getElementById('newChargeAmount').value;
+        var isCompulsory = document.getElementById('newChargeMode').value === 'true';
+        if (!chargeId) { alert('Please select a charge'); return; }
+        fetch(`/IPD/IPD_Room/SaveChargeMapping?roomId=${roomId}&chargeId=${chargeId}&chargeAmount=${amount}&isCompulsory=${isCompulsory}`, {
+            method: 'POST'
+        }).then(r => r.json()).then(res => {
+            if (res.success) { loadMappedCharges(roomId); document.getElementById('newChargeId').value = ''; document.getElementById('newChargeAmount').value = 0; }
+            else alert('Error: ' + res.message);
+        });
+    }
+
+    function removeCharge(mappingId) {
+        if (!confirm('Remove this charge from room?')) return;
+        fetch('/IPD/IPD_Room/DeleteChargeMapping?mappingId=' + mappingId, { method: 'POST' })
+            .then(r => r.json()).then(res => {
+                if (res.success) loadMappedCharges(document.getElementById('mappingRoomId').value);
+                else alert('Error: ' + res.message);
+            });
+    }
+</script>
+
+</div>
+
+</div>
+
+

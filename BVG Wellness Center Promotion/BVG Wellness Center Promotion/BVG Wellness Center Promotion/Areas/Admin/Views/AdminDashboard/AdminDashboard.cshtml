@@ -1,0 +1,258 @@
+﻿
+@{
+    ViewBag.Title = "AdminDashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<style>
+    @@media (max-width: 767.98px) {
+        .row {
+            margin-top: 0px;
+        }
+    }
+</style>
+
+<div class="container-fluid mt--5">
+    <div class="col-sm-12 col-lg">
+        <div role="alert" aria-live="polite" aria-atomic="true" class="alert d-flex align-items-center justify-content-between alert-warning">
+            <p class="m-0">
+                <b> Please make sure your server has Email Server SMTP setup ! </b>
+            </p>
+            <button type="button" class="btn btn-sm btn-secondary float-right">
+                <i class="fas fa-paper-plane"></i> Send Email
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-md-6">
+            <a href="#/patient" class="">
+                <div class="card card-stats shadow p-0">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col"><h5 class="card-title text-uppercase text-muted mb-0"> Total Receptionist </h5> <span class="h2 font-weight-bold mb-0">1</span></div>
+                            <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow"><i class="fas fa-user-injured"></i></div>
+                            </div>
+                        </div>
+                        <p class="mt-3 mb-0 text-sm"><span class="text-nowrap">Total clinic Receptionist</span></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <a href="#/doctor" class="">
+                <div class="card card-stats shadow p-0">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h5 class="card-title text-uppercase text-muted mb-0"> Total Doctors </h5>
+                                <span class="h2 font-weight-bold mb-0">1</span>
+                            </div> <div class="col-auto">
+                                <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                            </div>
+                        </div> <p class="mt-3 mb-0 text-sm"><span class="text-nowrap">Total clinic doctors</span></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-xl-4 col-md-6">
+            <a href="#/all-appointment-list" class="">
+                <div class="card card-stats shadow p-0">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col"><h5 class="card-title text-uppercase text-muted mb-0">Total Clinic</h5> <span class="h2 font-weight-bold mb-0">0</span></div>
+                            <div class="col-auto"><div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow"><i class="fas fa-calendar-check"></i></div></div>
+                        </div>
+                        <p class="mt-3 mb-0 text-sm"><span class="text-nowrap">Total clinic </span></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @*<div class="col-xl-3 col-md-6">
+            <div class="card card-stats shadow p-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex justify-content-start">
+                                <h5 class="card-title text-uppercase text-muted mb-0 mr-2">Total revenue</h5>
+                                <i title="Net Revenue: The total revenue after discounts, but excluding taxes and other deductions." class="fa fa fa-info-circle"></i>
+                            </div>
+                            <span class="h2 font-weight-bold mb-0"> $0/-</span>
+                        </div> <div class="col-auto">
+                            <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
+                                <i class="fas fa-money-check-alt"></i>
+                            </div>
+                        </div>
+                    </div> <p class="mt-3 mb-0 text-sm"><span class="text-nowrap">Total generated revenue</span></p>
+                </div>
+            </div>
+        </div>*@
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-xl-8 mb-5 mb-xl-0">
+            <div class="card p-0 shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 col-lg-4 rmb-15">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Latest appointments</h6>
+                            <h2 class="mb-0 text-capitalize">todays appointment list</h2>
+                        </div> <div class="col-md-8 col-lg-8">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <a href="#/all-appointment-list" class="btn btn-sm btn-primary text-capitalize ml-2">
+                                    <i class="fas fa-eye"></i> All upcoming appointments
+                                </a> <button class="btn btn-sm btn-primary text-capitalize">
+                                    <i class="fas fa-sync"></i> Reload
+                                </button> <!---->
+                            </div>
+                        </div>
+                    </div>
+                </div> <div class="card-body" style="overflow: auto;">
+                    <div class="chart">
+                        <div>
+                            <!---->
+                            <div>
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row mb-2">
+                                                <div class="col-md-12 text-center d-flex justify-content-center align-items-center" style="height: 350px;">
+                                                    <h4> No Appointments Found. </h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <div class="col-xl-4">
+            <div class="card p-0 shadow">
+                <div class="card-header bg-transparent">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-muted ls-1 mb-1">Weekly appointments</h6>
+                            <h2 class="mb-0 text-capitalize">Weekly total appointments</h2>
+                        </div>
+                    </div> <div class="row">
+                        <div class="col-8 rmb-15">
+                            <span class="badge mr-2 cursor-pointer badge-primary p-2 " style="font-size: 0.8rem;">
+                                Weekly
+                            </span><span class="badge mr-2 cursor-pointer badge-outline-primary">
+                                Monthly
+                            </span>
+                        </div>
+                    </div>
+                </div> <div class="card-body">
+                    <div>
+                        <!---->
+                        <div id="someId" style="min-height: 335px;">
+                            <div id="apexchartspq3zeciq" class="apexcharts-canvas apexchartspq3zeciq apexcharts-theme-light" style="width: 347px; height: 320px;">
+                                <svg id="SvgjsSvg1561" width="347" height="320" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                     xmlns:svgjs="http://svgjs.dev" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;">
+                                    <foreignObject x="0" y="0" width="347" height="320">
+                                        <div class="apexcharts-legend" xmlns="http://www.w3.org/1999/xhtml" style="max-height: 160px;">
+                                        </div>
+                                    </foreignObject>
+                                    <text id="SvgjsText1564" font-family="Helvetica, Arial, sans-serif" x="173.5" y="176" text-anchor="middle" dominant-baseline="auto" font-size="14px"
+                                          font-weight="regular" fill="#373d3f" class="apexcharts-text " style="font-family: Helvetica, Arial, sans-serif;opacity: 1;">No Appointments Found</text>
+                                    <g id="SvgjsG1577" class="apexcharts-datalabels apexcharts-element-hidden" data:realindex="0"></g>
+                                    <g id="SvgjsG1578" class="apexcharts-bar-goals-markers"></g>
+                                    <g id="SvgjsG1579" class="apexcharts-bar-shadows apexcharts-element-hidden"></g>
+                                    <g id="SvgjsG1597" class="apexcharts-yaxis" rel="0" transform="translate(3.4000000953674316, 0)">
+                                        <g id="SvgjsG1598" class="apexcharts-yaxis-texts-g">
+                                            <text id="SvgjsText1600" font-family="Helvetica, Arial, sans-serif" x="20" y="31.5" text-anchor="end" dominant-baseline="auto" font-size="11px" font-weight="400" fill="#373d3f" class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1601">5</tspan><title>5</title>
+                                            </text>
+                                            <text id="SvgjsText1603" font-family="Helvetica, Arial, sans-serif" x="20" y="80.00711290156048" text-anchor="end" dominant-baseline="auto" font-size="11px"
+                                                  font-weight="400" fill="#373d3f" class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1604">4</tspan><title>4</title>
+                                            </text>
+                                            <text id="SvgjsText1606" font-family="Helvetica, Arial, sans-serif" x="20" y="128.51422580312095"
+                                                  text-anchor="end" dominant-baseline="auto" font-size="11px" font-weight="400" fill="#373d3f"
+                                                  class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1607">3</tspan><title>3</title>
+                                            </text>
+                                            <text id="SvgjsText1609" font-family="Helvetica, Arial, sans-serif" x="20" y="177.02133870468143"
+                                                  text-anchor="end" dominant-baseline="auto" font-size="11px" font-weight="400" fill="#373d3f"
+                                                  class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1610">2</tspan><title>2</title>
+                                            </text>
+                                            <text id="SvgjsText1612" font-family="Helvetica, Arial, sans-serif" x="20" y="225.5284516062419" text-anchor="end" dominant-baseline="auto" font-size="11px" font-weight="400" fill="#373d3f" class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1613">1</tspan><title>1</title>
+                                            </text>
+                                            <text id="SvgjsText1615" font-family="Helvetica, Arial, sans-serif" x="20" y="274.03556450780235" text-anchor="end" dominant-baseline="auto" font-size="11px" font-weight="400" fill="#373d3f" class="apexcharts-text apexcharts-yaxis-label " style="font-family: Helvetica, Arial, sans-serif;">
+                                                <tspan id="SvgjsTspan1616">0</tspan><title>0</title>
+                                            </text>
+                                        </g>
+                                    </g>
+                                    <g id="SvgjsG1563" class="apexcharts-inner apexcharts-graphical" transform="translate(33.40000009536743, 30)">
+                                        <defs id="SvgjsDefs1562">
+                                            <linearGradient id="SvgjsLinearGradient1568" x1="0" y1="0" x2="0" y2="1">
+                                                <stop id="SvgjsStop1569" stop-opacity="0.4" stop-color="rgba(216,227,240,0.4)" offset="0"></stop>
+                                                <stop id="SvgjsStop1570" stop-opacity="0.5" stop-color="rgba(190,209,230,0.5)" offset="1"></stop>
+                                                <stop id="SvgjsStop1571" stop-opacity="0.5" stop-color="rgba(190,209,230,0.5)" offset="1"></stop>
+                                            </linearGradient>
+                                            <clipPath id="gridRectMaskpq3zeciq">
+                                                <rect id="SvgjsRect1573" width="330.59999990463257"
+                                                      height="250.53556450780235" x="-15" y="-4" rx="0" ry="0" opacity="1"
+                                                      stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect>
+                                            </clipPath>
+                                            <clipPath id="forecastMaskpq3zeciq"></clipPath>
+                                            <clipPath id="nonForecastMaskpq3zeciq"></clipPath>
+                                            <clipPath id="gridRectMarkerMaskpq3zeciq">
+                                                <rect id="SvgjsRect1574" width="307.59999990463257" height="246.53556450780235" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0"
+                                                      stroke="none" stroke-dasharray="0" fill="#fff"></rect>
+                                            </clipPath>
+                                        </defs>
+                                        <rect id="SvgjsRect1572" width="0" height="242.53556450780235"
+                                              x="0" y="0" rx="0" ry="0" opacity="1" stroke-width="0"
+                                              stroke-dasharray="3" fill="url(#SvgjsLinearGradient1568)"
+                                              class="apexcharts-xcrosshairs" y2="242.53556450780235"
+                                              filter="none" fill-opacity="0.9"></rect>
+                                        <g id="SvgjsG1580"
+                                           class="apexcharts-grid">
+                                            <g id="SvgjsG1581" class="apexcharts-gridlines-horizontal">
+                                                <line id="SvgjsLine1585" x1="0" y1="48.50711290156047" x2="303.59999990463257"
+                                                      y2="48.50711290156047" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt"
+                                                      class="apexcharts-gridline"></line>
+                                                <line id="SvgjsLine1586" x1="0" y1="97.01422580312094"
+                                                      x2="303.59999990463257" y2="97.01422580312094" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt" class="apexcharts-gridline"></line>
+                                                <line id="SvgjsLine1587" x1="0" y1="145.5213387046814" x2="303.59999990463257" y2="145.5213387046814" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt" class="apexcharts-gridline"></line>
+                                                <line id="SvgjsLine1588" x1="0" y1="194.02845160624187" x2="303.59999990463257" y2="194.02845160624187" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt" class="apexcharts-gridline"></line>
+                                            </g>
+                                            <g id="SvgjsG1582" class="apexcharts-gridlines-vertical"></g>
+                                            <line id="SvgjsLine1591" x1="0" y1="242.53556450780235" x2="303.59999990463257" y2="242.53556450780235" stroke="transparent" stroke-dasharray="0" stroke-linecap="butt"></line>
+                                            <line id="SvgjsLine1590" x1="0" y1="1" x2="0" y2="242.53556450780235" stroke="transparent" stroke-dasharray="0" stroke-linecap="butt"></line>
+                                        </g>
+                                        <g id="SvgjsG1583" class="apexcharts-grid-borders">
+                                            <line id="SvgjsLine1584" x1="0" y1="0" x2="303.59999990463257" y2="0" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt" class="apexcharts-gridline"></line>
+                                            <line id="SvgjsLine1589" x1="0" y1="242.53556450780235" x2="303.59999990463257" y2="242.53556450780235" stroke="#e0e0e0" stroke-dasharray="0" stroke-linecap="butt" class="apexcharts-gridline"></line>
+                                            <line id="SvgjsLine1596" x1="0" y1="243.53556450780235" x2="303.59999990463257" y2="243.53556450780235" stroke="#e0e0e0" stroke-dasharray="0" stroke-width="1" stroke-linecap="butt">
+                                            </line>
+                                        </g>
+                                        <g id="SvgjsG1575" class="apexcharts-bar-series apexcharts-plot-series"><g id="SvgjsG1576" class="apexcharts-series" rel="1" seriesname="TotalxAppointments" data:realindex="0"></g></g>
+                                        <line id="SvgjsLine1592" x1="0" y1="0" x2="303.59999990463257" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" stroke-linecap="butt" class="apexcharts-ycrosshairs"></line>
+                                        <line id="SvgjsLine1593" x1="0" y1="0" x2="303.59999990463257" y2="0" stroke-dasharray="0" stroke-width="0" stroke-linecap="butt" class="apexcharts-ycrosshairs-hidden"></line>
+                                        <g id="SvgjsG1594" class="apexcharts-xaxis" transform="translate(0, 0)"><g id="SvgjsG1595" class="apexcharts-xaxis-texts-g" transform="translate(-3.5841431617736816, 5.933054436524709)"></g></g>
+                                        <g id="SvgjsG1617" class="apexcharts-yaxis-annotations"></g>
+                                        <g id="SvgjsG1618" class="apexcharts-xaxis-annotations"></g>
+                                        <g id="SvgjsG1619" class="apexcharts-point-annotations"></g>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

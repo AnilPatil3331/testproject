@@ -1,0 +1,1716 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    var chronicList = ViewBag.ChronicIllness as IEnumerable<dynamic>;
+    var complaintsList = ViewBag.Complaints as IEnumerable<dynamic>;
+    var durationUnitsList = ViewBag.DurationUnits as IEnumerable<dynamic>;
+    var familyHistoryList = ViewBag.FamilyHistory as IEnumerable<dynamic>;
+    var labTestsList = ViewBag.LabTests as IEnumerable<dynamic>;
+    var imagingList = ViewBag.Imaging as IEnumerable<dynamic>;
+    var surgeryList = ViewBag.PastSurgery as IEnumerable<dynamic>;
+    var traumaList = ViewBag.Trauma as IEnumerable<dynamic>;
+    var allergyList = ViewBag.Allergy as IEnumerable<dynamic>;
+    var medList = ViewBag.Medication as IEnumerable<dynamic>;
+    var progressionList = ViewBag.Progressions as IEnumerable<dynamic>;
+    var symptomsList = ViewBag.Symptoms as IEnumerable<dynamic>;
+    var aggravatingList = ViewBag.Aggravating as IEnumerable<dynamic>;
+    var relievingList = ViewBag.Relieving as IEnumerable<dynamic>;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane" id="Medicine" role="tabpanel">
+                                <div class="section">
+                                    <div class="section-heading mt-2 d-flex justify-content-between align-items-center text-white" onclick="toggleSummary('collapseCasePaper2', 'casePaperIcon2')" style="cursor: pointer; padding: 10px 15px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: rgba(20, 151, 222, 0.898) !important;">
+                                        <h4 class="card-title mb-0 text-white" style="font-size: 16px;">Case Paper Summary (केस पेपर सारांश)</h4>
+                                        <button type="button" class="btn btn-sm toggle-btn" style="background: transparent; border: none; font-size: 20px;">
+                                            <i id="casePaperIcon2" class="fas fa-minus-circle text-white"></i>
+                                        </button>
+                                    </div>
+
+
+
+                                    @*@{
+                                            // IDs चे रूपांतर Names मध्ये करण्यासाठी ViewBag मधला डेटा घेणे
+                                            var chronicList = ViewBag.ChronicIllness as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var complaintsList = ViewBag.Complaints as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var durationUnitsList = ViewBag.DurationUnits as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var familyHistoryList = ViewBag.FamilyHistory as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var labTestsList = ViewBag.LabTests as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var imagingList = ViewBag.Imaging as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var surgeryList = ViewBag.PastSurgery as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var traumaList = ViewBag.Trauma as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var allergyList = ViewBag.Allergy as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                            var medList = ViewBag.Medication as IEnumerable<BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR>;
+                                        }*@
+                                    <div id="collapseCasePaper2" style="display: block; transition: all 0.3s ease;">
+                                        <div class="diagnosis-results mb-4 p-3" style="background: #f9f9f9; border-radius: 8px; border: 1px solid #ddd;">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered mb-0">
+                                                    <tbody>
+                                                        @* 1. Vitals (शारीरिक तपासणी) *@
+                                                        @if (Model.Height.HasValue || Model.Weight.HasValue || !string.IsNullOrEmpty(Model.BloodPressure) || Model.Pulse.HasValue)
+                                                        {
+                                                            <tr>
+                                                                <td style="width: 25%; background:#f1f1f1;"><b>Vitals (तपासणी):</b></td>
+                                                                <td>
+                                                                    @if (Model.Height.HasValue)
+                                                                    {<span class="mr-2"><b>Height:</b> @Model.Height cm,</span>}
+                                                                    @if (Model.Weight.HasValue)
+                                                                    {<span class="mr-2"><b>Weight:</b> @Model.Weight kg,</span>}
+                                                                    @if (Model.BMI.HasValue)
+                                                                    {<span class="mr-2"><b>BMI:</b> @Model.BMI,</span>}
+                                                                    @if (Model.Pulse.HasValue)
+                                                                    {<span class="mr-2"><b>Pulse:</b> @Model.Pulse bpm,</span>}
+                                                                    @if (!string.IsNullOrEmpty(Model.BloodPressure))
+                                                                    {<span class="mr-2"><b>BP:</b> @Model.BloodPressure mm Hg</span>}
+                                                                    @if (Model.SpO2.HasValue)
+                                                                    {<span class="mr-2"><b>SpO2:</b> @Model.SpO2 %,</span>}
+                                                                    @if (Model.TemperatureCasepaper.HasValue)
+                                                                    {<span class="mr-2"><b>Temp:</b> @Model.TemperatureCasepaper @Model.TempUnitCP</span>}
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 2. Complaints (मुख्य तक्रारी - सविस्तर) *@
+                                                        @if (Model.Complaints != null && Model.Complaints.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Complaints (मुख्य तक्रारी):</b></td>
+                                                                <td>
+                                                                    @foreach (var comp in Model.Complaints)
+                                                                    {
+                                                                        var compName = complaintsList?.FirstOrDefault(x => x.Id == comp.ComplaintId)?.Name ?? comp.ComplaintId.ToString();
+                                                                        var dUnit = durationUnitsList?.FirstOrDefault(x => x.Id == comp.DurationUnitId)?.Name ?? "";
+
+                                                                        // ?? ???? ??????? ?????? ?? ???? ???? ???? ??????
+                                                                        progressionList = ViewBag.Progressions as IEnumerable<dynamic>;
+                                                                        symptomsList = ViewBag.Symptoms as IEnumerable<dynamic>;
+                                                                        aggravatingList = ViewBag.Aggravating as IEnumerable<dynamic>;
+                                                                        relievingList = ViewBag.Relieving as IEnumerable<dynamic>;
+
+                                                                        var progressionName = progressionList?.FirstOrDefault(x => x.Id == comp.ProgressionId)?.Name ?? comp.ProgressionId?.ToString();
+                                                                        var symptomsName = symptomsList != null && comp.AssociatedSymptomsId != null && comp.AssociatedSymptomsId.Length > 0 ? string.Join(", ", symptomsList.Where(x => Array.IndexOf(comp.AssociatedSymptomsId, Convert.ToString(x.Id)) >= 0).Select(x => Convert.ToString(x.Name))) : (comp.AssociatedSymptomsId != null ? string.Join(", ", comp.AssociatedSymptomsId) : "");
+                                                                        var aggravatingName = aggravatingList != null && comp.AggravatingFactorsId != null && comp.AggravatingFactorsId.Length > 0 ? string.Join(", ", aggravatingList.Where(x => Array.IndexOf(comp.AggravatingFactorsId, Convert.ToString(x.Id)) >= 0).Select(x => Convert.ToString(x.Name))) : (comp.AggravatingFactorsId != null ? string.Join(", ", comp.AggravatingFactorsId) : "");
+                                                                        var relievingName = relievingList != null && comp.RelievingFactorsId != null && comp.RelievingFactorsId.Length > 0 ? string.Join(", ", relievingList.Where(x => Array.IndexOf(comp.RelievingFactorsId, Convert.ToString(x.Id)) >= 0).Select(x => Convert.ToString(x.Name))) : (comp.RelievingFactorsId != null ? string.Join(", ", comp.RelievingFactorsId) : "");
+
+                                                                        <div style="border: 1px solid #ddd; padding: 12px; margin-bottom: 12px; border-radius: 6px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                                                            <h6 class="text-primary font-weight-bold mb-2" style="font-size: 16px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                                                                                <i class="fas fa-notes-medical"></i> @compName
+                                                                            </h6>
+                                                                            <div class="row" style="font-size: 14px;">
+                                                                                @if (comp.DurationC.HasValue)
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Duration:</b> @comp.DurationC @dUnit</div>}
+
+                                                                                @if (!string.IsNullOrEmpty(comp.Onset))
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Onset:</b> @comp.Onset</div>}
+
+                                                                                @if (comp.NatureOfIllnessId.HasValue)
+                                                                                {
+                                                                                    var natureList = ViewBag.NatureList as IEnumerable<dynamic>;
+                                                                                    var natureName = natureList?.FirstOrDefault(x => x.Id == comp.NatureOfIllnessId)?.Name ?? comp.NatureOfIllnessId.ToString();
+                                                                                    <div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Nature of Illness:</b> @natureName</div>
+                                                                                }
+
+                                                                                @if (comp.ProgressionId.HasValue)
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Progression:</b> @progressionName</div>}
+
+                                                                                @if ((comp.AssociatedSymptomsId != null && comp.AssociatedSymptomsId.Length > 0))
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Assoc. Symptoms:</b> @symptomsName</div>}
+
+                                                                                @if ((comp.AggravatingFactorsId != null && comp.AggravatingFactorsId.Length > 0))
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Aggravating Factors:</b> @aggravatingName</div>}
+
+                                                                                @if ((comp.RelievingFactorsId != null && comp.RelievingFactorsId.Length > 0))
+                                                                                {<div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Relieving Factors:</b> @relievingName</div>}
+
+                                                                                @if (comp.PreviousTreatment.HasValue)
+                                                                                {
+                                                                                    var prevTreatList = ViewBag.PreviousTreatments as IEnumerable<dynamic>;
+                                                                                    var prevTreatName = prevTreatList?.FirstOrDefault(x => x.Id == comp.PreviousTreatment)?.Name ?? comp.PreviousTreatment.ToString();
+                                                                                    <div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Prev. Treatment:</b> @prevTreatName @comp.PreviousTreatmentOther</div>
+                                                                                }
+
+                                                                                @if (comp.ResponsePreviousTreatmentId.HasValue)
+                                                                                {
+                                                                                    var responseList = ViewBag.ResponseTreatment as IEnumerable<dynamic>;
+                                                                                    var responseName = responseList?.FirstOrDefault(x => x.Id == comp.ResponsePreviousTreatmentId)?.Name ?? comp.ResponsePreviousTreatmentId.ToString();
+                                                                                    <div class="col-12 col-md-6 col-lg-4 mb-2" style="white-space: normal !important; word-wrap: break-word;"><b>Response:</b> @responseName</div>
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 3. Chronic Illness (जुनाट आजार - सुटसुटीत लिस्ट) *@
+                                                        @if (Model.ChronicIllnessList != null && Model.ChronicIllnessList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Chronic Illness (जुनाट आजार):</b></td>
+                                                                <td>
+                                                                    <div class="d-flex flex-column">
+                                                                        @foreach (var illness in Model.ChronicIllnessList)
+                                                                        {
+                                                                            var name = chronicList?.FirstOrDefault(x => x.Id == illness.ChronicIllnessId)?.Name ?? illness.ChronicIllnessId.ToString();
+                                                                            var unit = durationUnitsList?.FirstOrDefault(x => x.Id == illness.DurationUnit)?.Name ?? "";
+
+                                                                            <div style="background: #eef2f5; padding: 8px 12px; margin-bottom: 8px; border-radius: 4px; border-left: 4px solid #17a2b8;">
+                                                                                <b style="font-size: 15px;">@name</b>
+                                                                                @if (illness.Duration.HasValue)
+                                                                                {
+                                                                                    <span class="ml-3 text-secondary"><i class="far fa-clock"></i> <b>Duration:</b> @illness.Duration @unit </span>
+                                                                                }
+                                                                            </div>
+                                                                        }
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 4. Past Surgery (शस्त्रक्रिया) *@
+                                                        @if (Model.PastSurgeryList != null && Model.PastSurgeryList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Past Surgery:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3">
+                                                                        @foreach (var surg in Model.PastSurgeryList)
+                                                                        {
+                                                                            var name = surgeryList?.FirstOrDefault(x => x.Id == surg.PastSurgeryId)?.Name ?? surg.PastSurgeryId.ToString();
+                                                                            var unit = durationUnitsList?.FirstOrDefault(x => x.Id == surg.PastSurgeryDurationUnit)?.Name ?? "";
+                                                                            <li>
+                                                                                <b>@name</b>
+                                                                                @if (surg.PastSurgeryDuration.HasValue)
+                                                                                {<span> | <b>Duration:</b> @surg.PastSurgeryDuration @unit </span>}
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 5. Trauma History *@
+                                                        @if (Model.TraumaHistoryList != null && Model.TraumaHistoryList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Trauma History:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3">
+                                                                        @foreach (var tr in Model.TraumaHistoryList)
+                                                                        {
+                                                                            var name = traumaList?.FirstOrDefault(x => x.Id == tr.TraumaHistoryId)?.Name ?? tr.TraumaHistoryId.ToString();
+                                                                            var unit = durationUnitsList?.FirstOrDefault(x => x.Id == tr.TraumaHistoryDurationUnit)?.Name ?? "";
+                                                                            <li>
+                                                                                <b>@name</b>
+                                                                                @if (tr.TraumaHistoryDuration.HasValue)
+                                                                                {<span> | <b>Duration:</b> @tr.TraumaHistoryDuration @unit </span>}
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 6. Allergies *@
+                                                        @if (Model.AllergyList != null && Model.AllergyList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Allergies:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3">
+                                                                        @foreach (var al in Model.AllergyList)
+                                                                        {
+                                                                            var name = allergyList?.FirstOrDefault(x => x.Id == al.AllergyId)?.Name ?? al.AllergyId.ToString();
+                                                                            var unit = durationUnitsList?.FirstOrDefault(x => x.Id == al.AllergyHistoryDurationUnit)?.Name ?? "";
+                                                                            <li>
+                                                                                <b>@name</b>
+                                                                                @if (al.AllergyHistoryDuration.HasValue)
+                                                                                {<span> | <b>Duration:</b> @al.AllergyHistoryDuration @unit </span>}
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 7. Medications *@
+                                                        @if (Model.LongTermMedicationList != null && Model.LongTermMedicationList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Long Term Medication:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3">
+                                                                        @foreach (var med in Model.LongTermMedicationList)
+                                                                        {
+                                                                            var name = medList?.FirstOrDefault(x => x.Id == med.LongTermMedicationId)?.Name ?? med.LongTermMedicationId.ToString();
+                                                                            var unit = durationUnitsList?.FirstOrDefault(x => x.Id == med.LongTermMedicationDurationUnit)?.Name ?? "";
+                                                                            <li>
+                                                                                <b>@name</b>
+                                                                                @if (med.LongTermMedicationDuration.HasValue)
+                                                                                {<span> | <b>Duration:</b> @med.LongTermMedicationDuration @unit </span>}
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 8. Family History (\???????????) *@
+                                                        @if (Model.FamilyHistoryList != null && Model.FamilyHistoryList.Any(x => x.FamilyHistoryIds != null && x.FamilyHistoryIds.Any()))
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Family History:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3">
+                                                                        @foreach (var fam in Model.FamilyHistoryList.Where(x => x.FamilyHistoryIds != null && x.FamilyHistoryIds.Any()))
+                                                                        {
+                                                                            var diseases = new List<string>();
+                                                                            foreach (var fid in fam.FamilyHistoryIds)
+                                                                            {
+                                                                                var n = familyHistoryList?.FirstOrDefault(x => x.Id == fid)?.Name ?? fid.ToString();
+                                                                                diseases.Add(n);
+                                                                            }
+                                                                            var relationStr = string.IsNullOrEmpty(fam.Relation) ? "Unknown Relation" : fam.Relation;
+                                                                            <li><b>@relationStr:</b> @string.Join(", ", diseases)</li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                        else if (Model.FamilyHistoryIdsList != null && Model.FamilyHistoryIdsList.Count > 0)
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Family History (\???????????):</b></td>
+                                                                <td>
+                                                                    @{
+                                                                        var famNames = new List<string>();
+                                                                        foreach (var fid in Model.FamilyHistoryIdsList)
+                                                                        {
+                                                                            var n = familyHistoryList?.FirstOrDefault(x => x.Id == fid)?.Name ?? fid.ToString();
+                                                                            famNames.Add(n);
+                                                                        }
+                                                                    }
+                                                                    @string.Join(", ", famNames)
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 9. Investigations (तपासण्या) *@
+                                                        @if ((Model.LabTestsAdvisedIdsList != null && Model.LabTestsAdvisedIdsList.Count > 0) || (Model.ImagingAdvisedIdsList != null && Model.ImagingAdvisedIdsList.Count > 0))
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Investigations:</b></td>
+                                                                <td>
+                                                                    @if (Model.LabTestsAdvisedIdsList != null && Model.LabTestsAdvisedIdsList.Count > 0)
+                                                                    {
+                                                                        var labNames = new List<string>();
+                                                                        foreach (var lid in Model.LabTestsAdvisedIdsList)
+                                                                        {
+                                                                            var n = labTestsList?.FirstOrDefault(x => x.Id == lid)?.Name ?? lid.ToString();
+                                                                            labNames.Add(n);
+                                                                        }
+                                                                        <div><b>Lab Tests:</b> @string.Join(", ", labNames)</div>
+                                                                    }
+
+                                                                    @if (Model.ImagingAdvisedIdsList != null && Model.ImagingAdvisedIdsList.Count > 0)
+                                                                    {
+                                                                        var imgNames = new List<string>();
+                                                                        foreach (var iid in Model.ImagingAdvisedIdsList)
+                                                                        {
+                                                                            var n = imagingList?.FirstOrDefault(x => x.Id == iid)?.Name ?? iid.ToString();
+                                                                            imgNames.Add(n);
+                                                                        }
+                                                                        <div class="mt-1"><b>Imaging Advised:</b> @string.Join(", ", imgNames)</div>
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 10. Follow-up & Prognosis *@
+                                                        @if (Model.FollowUpDate.HasValue || !string.IsNullOrEmpty(Model.ExpectedOutcome))
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Follow-up & Prognosis:</b></td>
+                                                                <td>
+                                                                    @if (Model.FollowUpDate.HasValue)
+                                                                    {<div><b>Next Follow-up:</b> @Model.FollowUpDate.Value.ToString("dd-MMM-yyyy")</div>}
+                                                                    @if (!string.IsNullOrEmpty(Model.ExpectedOutcome))
+                                                                    {<div><b>Expected Outcome:</b> @Model.ExpectedOutcome</div>}
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 11. Red-Flag Advice (धोक्याची लक्षणे) *@
+                                                        @if (Model.RF_FeverIncrease || Model.RF_SeverePain || Model.RF_SuddenWorsening || Model.RF_VomitingBleeding || Model.RF_DizzinessFainting || Model.RF_NoImprovement || !string.IsNullOrEmpty(Model.RF_Other))
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Red-Flag Advice:</b></td>
+                                                                <td>
+                                                                    <ul class="mb-0 pl-3 text-danger">
+                                                                        @if (Model.RF_FeverIncrease)
+                                                                        {
+                                                                            <li>Fever Increase (ताप वाढणे)</li>
+                                                                        }
+                                                                        @if (Model.RF_SeverePain)
+                                                                        {
+                                                                            <li>Severe Pain (तीव्र वेदना)</li>
+                                                                        }
+                                                                        @if (Model.RF_SuddenWorsening)
+                                                                        {
+                                                                            <li>Sudden Worsening (अचानक प्रकृती बिघडणे)</li>
+                                                                        }
+                                                                        @if (Model.RF_VomitingBleeding)
+                                                                        {
+                                                                            <li>Vomiting / Bleeding (उलट्या / रक्तस्राव)</li>
+                                                                        }
+                                                                        @if (Model.RF_DizzinessFainting)
+                                                                        {
+                                                                            <li>Dizziness / Fainting (चक्कर / बेशुद्धी)</li>
+                                                                        }
+                                                                        @if (Model.RF_NoImprovement)
+                                                                        {
+                                                                            <li>No Improvement (सुधारणा न होणे)</li>
+                                                                        }
+                                                                    </ul>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                        @* 12. Other Advice *@
+                                                        @if (!string.IsNullOrEmpty(Model.RF_Other))
+                                                        {
+                                                            <tr>
+                                                                <td style="background:#f1f1f1;"><b>Other Advice:</b></td>
+                                                                <td>@Model.RF_Other</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-heading">
+                                        <h4 class="card-title">8Pulse Exam Results</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+
+                                    </div>
+
+                                    <!-- Display only selected/checked items -->
+                                    <div class="diagnosisss-results">
+                                        <!-- Basic Information -->
+
+
+
+                                        @if (Model != null && !string.IsNullOrEmpty(Model.Condition))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Basic Information</h5>
+                                                <div class="result-item">
+                                                    <strong>Condition:</strong> @Model.Condition
+                                                </div>
+
+                                                @if (Model.PulseRate > 0)
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pulse Rate:</strong> @Model.PulseRate / Min
+                                                    </div>
+                                                }
+
+                                                @if (Model.BloodPressureDia > 0 || Model.BloodPressureSys > 0)
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Blood Pressure:</strong> @Model.BloodPressureSys/@Model.BloodPressureDia mm Hg
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Dosha Results -->
+                                        @if (Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+Model.BustardQuail || Model.GreyBird || Model.ButtonQuai)
+                                        {
+                                            <div class="result-section">
+                                                <h5>Dosha Findings</h5>
+                                                <div class="row">
+                                                    @if (Model.Vat)
+                                                    {
+                                                        <div class="col-md-3 result-item">वातV</div>
+                                                    }
+                                                    @if (Model.Vataf)
+                                                    {
+                                                        <div class="col-md-3 result-item">वातकफVK</div>
+                                                    }
+                                                    @if (Model.Vatpit)
+                                                    {
+                                                        <div class="col-md-3 result-item">वातपित्तVP</div>
+                                                    }
+                                                    @if (Model.VarKafPit)
+                                                    {
+                                                        <div class="col-md-3 result-item">वातकफपित्तVKP</div>
+                                                    }
+                                                    @if (Model.VatPitKaf)
+                                                    {
+                                                        <div class="col-md-3 result-item">वातपित्तकफVPK</div>
+                                                    }
+                                                    @if (Model.Leech)
+                                                    {
+                                                        <div class="col-md-3 result-item">जलौकाLeech</div>
+                                                    }
+                                                    @if (Model.Snake)
+                                                    {
+                                                        <div class="col-md-3 result-item">सर्पSnake</div>
+                                                    }
+                                                    @if (Model.Pitta)
+                                                    {
+                                                        <div class="col-md-3 result-item">पित्तP</div>
+                                                    }
+                                                    @if (Model.PittaKaf)
+                                                    {
+                                                        <div class="col-md-3 result-item">पित्तकफPK</div>
+                                                    }
+                                                    @if (Model.PittaVat)
+                                                    {
+                                                        <div class="col-md-3 result-item">पित्तवातPV</div>
+                                                    }
+                                                    @if (Model.PottaKafVat)
+                                                    {
+                                                        <div class="col-md-3 result-item">पित्तकफवातPKV</div>
+                                                    }
+                                                    @if (Model.PittaVatKaf)
+                                                    {
+                                                        <div class="col-md-3 result-item">पित्तवातकफPVK</div>
+                                                    }
+                                                    @if (Model.Sparrow)
+                                                    {
+                                                        <div class="col-md-3 result-item">कुलिंगSparrow</div>
+                                                    }
+                                                    @if (Model.Crow)
+                                                    {
+                                                        <div class="col-md-3 result-item">काकCrow</div>
+                                                    }
+                                                    @if (Model.Monkey)
+                                                    {
+                                                        <div class="col-md-3 result-item">हरीMonkey</div>
+                                                    }
+                                                    @if (Model.Frog)
+                                                    {
+                                                        <div class="col-md-3 result-item">भेक-मण्डूकFrog</div>
+                                                    }
+                                                    @if (Model.kaf)
+                                                    {
+                                                        <div class="col-md-3 result-item">कफk</div>
+                                                    }
+                                                    @if (Model.KaffPitta)
+                                                    {
+                                                        <div class="col-md-3 result-item">कफवातKP</div>
+                                                    }
+                                                    @if (Model.Kaffvtta)
+                                                    {
+                                                        <div class="col-md-3 result-item">कफवातKP</div>
+                                                    }
+                                                    @if (Model.KafPittaVat)
+                                                    {
+                                                        <div class="col-md-3 result-item">कफपित्तवातKPV</div>
+                                                    }
+                                                    @if (Model.KVP)
+                                                    {
+                                                        <div class="col-md-3 result-item">कफवातपित्तKVP</div>
+                                                    }
+                                                    @if (Model.Swan)
+                                                    {
+                                                        <div class="col-md-3 result-item">???Swan</div>
+                                                    }
+                                                    @if (Model.Pigeon)
+                                                    {
+                                                        <div class="col-md-3 result-item">पारावतPigeon</div>
+                                                    }
+                                                    @if (Model.Peacock)
+                                                    {
+                                                        <div class="col-md-3 result-item">मयूरPeacock</div>
+                                                    }
+                                                    @if (Model.SaniPat)
+                                                    {
+                                                        <div class="col-md-3 result-item">सन्निपातजSP</div>
+                                                    }
+                                                    @if (Model.BustardQuail)
+                                                    {
+                                                        <div class="col-md-3 result-item">lava Bustard Quail</div>
+                                                    }
+                                                    @if (Model.GreyBird)
+                                                    {
+                                                        <div class="col-md-3 result-item">तित्तिर Grey Bird</div>
+                                                    }
+                                                    @if (Model.ButtonQuai)
+                                                    {
+                                                        <div class="col-md-3 result-item">वर्तक Button Quail</div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+
+                                        <!-- Movement Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+!string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+!string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+!string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+!string.IsNullOrEmpty(Model.Temperature))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Movement Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.SamataUndigested))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Samata Undigested:</strong> @Model.SamataUndigested
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.GatiMovement1))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Gati Movement 1:</strong> @Model.GatiMovement1
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.GatiMovement2))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Gati Movement 2:</strong> @Model.GatiMovement2
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.GatiMovement3))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Gati Movement 3:</strong> @Model.GatiMovement3
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Speed))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Speed:</strong> @Model.Speed
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Rhythm))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Rhythm:</strong> @Model.Rhythm
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Strength))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Strength:</strong> @Model.Strength
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Volume))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Volume:</strong> @Model.Volume
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.Temperature))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Temperature:</strong> @Model.Temperature
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Urine Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+!string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+!string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Urine Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.UrinePrakritasama))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Prakritasama:</strong> @Model.UrinePrakritasama
+                                                        @if (!string.IsNullOrEmpty(Model.UrinePrakritasamaOtherText))
+                                                        {
+                                                            <span> - @Model.UrinePrakritasamaOtherText</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.UrineVata))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Vata:</strong> @Model.UrineVata
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.UrinePitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Pitta:</strong> @Model.UrinePitta
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.UrineRakta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Rakta:</strong> @Model.UrineRakta
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.UrineKapha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Kapha:</strong> @Model.UrineKapha
+                                                    </div>
+                                                }
+                                                @if (!string.IsNullOrEmpty(Model.UrineTridosha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Urine Tridosha:</strong> @Model.UrineTridosha
+                                                        @if (!string.IsNullOrEmpty(Model.UrineTridoshaOtherText))
+                                                        {
+                                                            <span> - @Model.UrineTridoshaOtherText</span>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Stool Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+!string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+!string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+!string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Stool Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.StoolNaturalState))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Natural State:</strong> @Model.StoolNaturalState
+                                                        @if (!string.IsNullOrEmpty(Model.StoolNaturalOtherText))
+                                                        {
+                                                            <span> - @Model.StoolNaturalOtherText</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                <!-- Vata Characteristics -->
+                                                @if (Model.StoolVataKrishna || Model.StoolVataDrudha || Model.StoolVataShushka ||
+Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana)
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata Characteristics:</strong>
+                                                        @{
+                                                            var vataItems = new List<string>();
+                                                            if (Model.StoolVataKrishna) { vataItems.Add("कृष्ण"); }
+                                                            if (Model.StoolVataDrudha) { vataItems.Add("दृढ"); }
+                                                            if (Model.StoolVataShushka) { vataItems.Add("शुष्क"); }
+                                                            if (Model.StoolVataTrutita) { vataItems.Add("त्रुटित"); }
+                                                            if (Model.StoolVataPhena) { vataItems.Add("फेन"); }
+                                                            if (Model.StoolVataRuksha) { vataItems.Add("रुक्ष"); }
+                                                            if (Model.StoolVataDhumra) { vataItems.Add("धूम्र"); }
+                                                            if (Model.StoolVataPravahana) { vataItems.Add("प्रवाहन"); }
+                                                            if (Model.StoolVataAdhmana) { vataItems.Add("आध्मान"); }
+                                                        }
+                                                        @string.Join(", ", vataItems)
+                                                    </div>
+
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolKapha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Kapha:</strong> @Model.StoolKapha
+                                                        @if (!string.IsNullOrEmpty(Model.StoolKaphaOtherText))
+                                                        {
+                                                            <span> - @Model.StoolKaphaOtherText</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolPitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Pitta:</strong> @Model.StoolPitta
+                                                        @if (!string.IsNullOrEmpty(Model.StoolPittaOtherText))
+                                                        {
+                                                            <span> - @Model.StoolPittaOtherText</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolVataKapha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Vata-Kapha:</strong> @Model.StoolVataKapha
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolVataPitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Vata-Pitta:</strong> @Model.StoolVataPitta
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolKaphaPitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Kapha-Pitta:</strong> @Model.StoolKaphaPitta
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.StoolTridosha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Stool Tridosha:</strong> @Model.StoolTridosha
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Tongue Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+!string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+!string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+!string.IsNullOrEmpty(Model.TridoshaCharacteristics))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Tongue Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.NaturalStateTongue))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Natural State:</strong> @Model.NaturalStateTongue
+                                                        @if (!string.IsNullOrEmpty(Model.NaturalStateOther))
+                                                        {
+                                                            <span> - @Model.NaturalStateOther</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.RukshaSnigdha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Ruksha/Snigdha:</strong> @Model.RukshaSnigdha
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.SamaNiramaAlpasama))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Sama/Nirama/Alpasama:</strong> @Model.SamaNiramaAlpasama
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.VataCharacteristics))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata Characteristics:</strong> @Model.VataCharacteristics
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.PittaCharacteristics))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pitta Characteristics:</strong> @Model.PittaCharacteristics
+                                                        @if (!string.IsNullOrEmpty(Model.PittaOther))
+                                                        {
+                                                            <span> - @Model.PittaOther</span>
+                                                        }
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.KaphaCharacteristics))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Kapha Characteristics:</strong> @Model.KaphaCharacteristics
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.TridoshaCharacteristics))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Tridosha Characteristics:</strong> @Model.TridoshaCharacteristics
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Voice Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+!string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Voice Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.NaturalStateVoiceExam))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Natural State:</strong> @Model.NaturalStateVoiceExam
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.KaphaVoiceExam))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Kapha:</strong> @Model.KaphaVoiceExam
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.PittaVoiceExam))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pitta:</strong> @Model.PittaVoiceExam
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.VataVoiceExam))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata:</strong> @Model.VataVoiceExam
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Touch Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+!string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Touch Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.NaturalStateTouch))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Natural State:</strong> @Model.NaturalStateTouch
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.PittaTouch))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pitta:</strong> @Model.PittaTouch
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.VataTouch))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata:</strong> @Model.VataTouch
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.KaphaTouch))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Kapha:</strong> @Model.KaphaTouch
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Eye Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+!string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Eye Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.EyeNaturalState))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Natural State:</strong> @Model.EyeNaturalState
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.EyeVata))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata:</strong> @Model.EyeVata
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.EyePitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pitta:</strong> @Model.EyePitta
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.EyeKapha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Kapha:</strong> @Model.EyeKapha
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        <!-- Appearance Exam Findings -->
+                                        @if (!string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+!string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha))
+                                        {
+                                            <div class="result-section">
+                                                <h5>Appearance Exam Findings</h5>
+                                                @if (!string.IsNullOrEmpty(Model.AppearanceNaturalState))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Natural State:</strong> @Model.AppearanceNaturalState
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.AppearanceVata))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Vata:</strong> @Model.AppearanceVata
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.AppearancePitta))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Pitta:</strong> @Model.AppearancePitta
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(Model.AppearanceKapha))
+                                                {
+                                                    <div class="result-item">
+                                                        <strong>Kapha:</strong> @Model.AppearanceKapha
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+
+                                        @if (!has8PulseExamResults)
+                                        {
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle"></i>
+                                                No 8PulseExam results to display. Please submit the form to see results.
+                                            </div>
+                                        }
+
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">Ayurvedic Diagnosis Result</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+
+                                    </div>
+
+                                    <!--dyanosis result-->
+                                    <div class="diagnosiss-results">
+                                        @if (Model != null)
+                                        {
+                                            <!-- Basic Information -->
+                                            if (!string.IsNullOrEmpty(Model.Fever))
+                                            {
+                                                <div class="result-section">
+                                                    <h5>आयुर्वेद विनिश्चय (Ayurveda Diagnosis)</h5>
+                                                    <div class="result-item">
+                                                        <strong>ज्वर (Fever):</strong> @Model.Fever
+                                                    </div>
+
+
+                                                    <div class="result-item">
+                                                        <strong>स्थिती (Status):</strong> @Model.StatusCheck
+                                                    </div>
+
+                                                </div>
+                                            }
+
+
+                                            <!-- Ayurveda Diagnosis Results -->
+                                            <!-- Function (दोष) Results -->
+                                            bool hasDoshaFunctionData = Model.Sams || Model.VatavFunction || Model.VatakafFunction ||
+                                                                       Model.VatpittaFunction || Model.VatakafpittaFunction || Model.VatapittakafFunction ||
+                                                                       Model.PittaFunction || Model.PittaKafFunction || Model.PittaVatFunction ||
+                                                                       Model.PittaKafVatFunction || Model.PittaVatKafFunction ||
+                                                                       Model.KafFunction || Model.KafPittaFunction || Model.KafVatFunction ||
+                                                                       Model.KafPittaVatFunction || Model.KafVatPittaFunction;
+
+                                            if (hasDoshaFunctionData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>दोष Function Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.Sams)
+                                                        {
+
+                                                            <div class="col-md-4"><div class="result-item">समS</div></div>
+                                                        }
+                                                        @if (Model.VatavFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">वातV</div></div>
+                                                        }
+                                                        @if (Model.VatakafFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">वातकफVK</div></div>
+                                                        }
+                                                        @if (Model.VatpittaFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">वातपित्तVP</div></div>
+                                                        }
+                                                        @if (Model.VatakafpittaFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">वातकफपित्तVKP</div></div>
+                                                        }
+                                                        @if (Model.VatapittakafFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">वातपित्तकफVPK</div></div>
+                                                        }
+                                                        @if (Model.PittaFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">पित्तP</div></div>
+                                                        }
+                                                        @if (Model.PittaKafFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">पित्तकफPK</div></div>
+                                                        }
+                                                        @if (Model.PittaVatFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">पित्तवातPV</div></div>
+                                                        }
+                                                        @if (Model.PittaKafVatFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">पित्तकफवातPKV</div></div>
+                                                        }
+                                                        @if (Model.PittaVatKafFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">पित्तवातकफPVK</div></div>
+                                                        }
+                                                        @if (Model.KafFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">कफK</div></div>
+                                                        }
+                                                        @if (Model.KafPittaFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">कफपित्तKP</div></div>
+                                                        }
+                                                        @if (Model.KafVatFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">कफवातKV</div></div>
+                                                        }
+                                                        @if (Model.KafPittaVatFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">कफपित्तवातKPV</div></div>
+                                                        }
+                                                        @if (Model.KafVatPittaFunction)
+                                                        {
+                                                            <div class="col-md-4"><div class="result-item">कफवातपित्तKVP</div></div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Metabolism (कायाग्नि) Results -->
+                                            bool hasMetabolismData = Model.JatharagniAcids || Model.DhatvagniEnzymes || Model.MahabhutagniHormones ||
+                                                                   Model.Vatavishamagni || Model.PittaTikshnagni || Model.KafMandagni || Model.Samagni;
+
+                                            if (hasMetabolismData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>कायाग्नि Metabolism Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.JatharagniAcids)
+                                                        {
+                                                            <div class="col-md-3 result-item">जाठराग्नि Acids</div>
+                                                        }
+                                                        @if (Model.DhatvagniEnzymes)
+                                                        {
+                                                            <div class="col-md-3 result-item">धात्वाग्नि Enzymes</div>
+                                                        }
+                                                        @if (Model.MahabhutagniHormones)
+                                                        {
+                                                            <div class="col-md-3 result-item">महाभूताग्नि Hormones</div>
+                                                        }
+                                                        @if (Model.Vatavishamagni)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.PittaTikshnagni)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.KafMandagni)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.Samagni)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Bowels (कोष्ठ) Results -->
+                                            if (!string.IsNullOrEmpty(Model.Koshtha))
+                                            {
+                                                <div class="result-section">
+                                                    <h5>कोष्ठ Bowels</h5>
+                                                    <div class="result-item">
+                                                        <strong>Type:</strong> @Model.Koshtha
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Structure (धातू) Results -->
+                                            bool hasStructureData = Model.RasaSentiment || Model.RaktaBlood || Model.MansaMuscles ||
+                                                                  Model.MedaFat || Model.AsthiBones || Model.MajjaNerves || Model.ShukraReproductive;
+
+                                            if (hasStructureData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>धातू Structure Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.RasaSentiment)
+                                                        {
+                                                            <div class="col-md-3 result-item">रस Sentiment</div>
+                                                        }
+                                                        @if (Model.RaktaBlood)
+                                                        {
+                                                            <div class="col-md-3 result-item">रक्त Blood</div>
+                                                        }
+                                                        @if (Model.MansaMuscles)
+                                                        {
+                                                            <div class="col-md-3 result-item">मांस Muscles</div>
+                                                        }
+                                                        @if (Model.MedaFat)
+                                                        {
+                                                            <div class="col-md-3 result-item">मेद Fat</div>
+                                                        }
+                                                        @if (Model.AsthiBones)
+                                                        {
+                                                            <div class="col-md-3 result-item">अस्थि Bones</div>
+                                                        }
+                                                        @if (Model.MajjaNerves)
+                                                        {
+                                                            <div class="col-md-3 result-item">मज्जा Nerves</div>
+                                                        }
+                                                        @if (Model.ShukraReproductive)
+                                                        {
+                                                            <div class="col-md-3 result-item">शुक्र Reproductive</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Substructures (उपधातू) Results -->
+                                            bool hasSubstructureData = Model.StanyaBreastMilk || Model.RajaMenstrualBlood || Model.SnayuLigaments ||
+                                                                     Model.TwakSkin || Model.Danta || Model.Oja;
+
+                                            if (hasSubstructureData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>उपधातू Substructures Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.StanyaBreastMilk)
+                                                        {
+                                                            <div class="col-md-3 result-item">स्तन्य Breast Milk</div>
+                                                        }
+                                                        @if (Model.RajaMenstrualBlood)
+                                                        {
+                                                            <div class="col-md-3 result-item">रज: Menstrual Blood</div>
+                                                        }
+                                                        @if (Model.SnayuLigaments)
+                                                        {
+                                                            <div class="col-md-3 result-item">स्नायू Ligaments</div>
+                                                        }
+                                                        @if (Model.TwakSkin)
+                                                        {
+                                                            <div class="col-md-3 result-item">त्वक Skin</div>
+                                                        }
+                                                        @if (Model.Danta)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.Oja)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Excretion (मल) Results -->
+                                            bool hasExcretionData = Model.Purisha || Model.Mutra || Model.Sweda;
+
+                                            if (hasExcretionData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>मल Excretion Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.Purisha)
+                                                        {
+                                                            <div class="col-md-3 result-item">पुरीष (Stool)</div>
+                                                        }
+                                                        @if (Model.Mutra)
+                                                        {
+                                                            <div class="col-md-3 result-item">मूत्र (Urine)</div>
+                                                        }
+                                                        @if (Model.Sweda)
+                                                        {
+                                                            <div class="col-md-3 result-item">स्वेद (Sweat)</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            <!-- Upmala Results -->
+                                            bool hasUpmalaData = Model.KaphaUpmala || Model.PittaUpmala || Model.RomaHairsUpmala ||
+                                                               Model.NakhaNails || Model.KarnaMal || Model.NetraVit ||
+                                                               Model.MukhikMal || Model.RomKupMal || Model.PrajananAngMal || Model.CharmSnehMal;
+
+                                            if (hasUpmalaData)
+                                            {
+                                                <div class="result-section">
+                                                    <h5>उपमल Upmala Findings</h5>
+                                                    <div class="row">
+                                                        @if (Model.KaphaUpmala)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.PittaUpmala)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.RomaHairsUpmala)
+                                                        {
+                                                            <div class="col-md-3 result-item">रोम Hairs</div>
+                                                        }
+                                                        @if (Model.NakhaNails)
+                                                        {
+                                                            <div class="col-md-3 result-item">नख Nails</div>
+                                                        }
+                                                        @if (Model.KarnaMal)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.NetraVit)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.MukhikMal)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.RomKupMal)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.PrajananAngMal)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                        @if (Model.CharmSnehMal)
+                                                        {
+                                                            <div class="col-md-3 result-item">चर्मस्नेहमल</div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+
+
+                                            <!-- Show message if no Ayurveda diagnosis data -->
+                                            if (!hasDoshaFunctionData && !hasMetabolismData && !hasStructureData && !hasSubstructureData &&
+                                                !hasExcretionData && !hasUpmalaData && string.IsNullOrEmpty(Model.Koshtha) && string.IsNullOrEmpty(Model.Fever))
+                                            {
+                                                <div class="alert alert-info">
+                                                    No Ayurveda diagnosis data available. Please complete the Ayurveda Diagnosis form.
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-info">
+                                                No diagnosis results to display. Please submit the form to see results.
+                                            </div>
+                                        }
+                                    </div>
+
+                                </div>
+
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title"> Vaidya Medicine</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+
+                                    </div>
+
+                                    @*<form action="~/receptionist/reception/MedicineMaster" method="post">*@
+                                    <form id="prescriptionForm" action="/Patient/AayurvedEHR/MedicineMaster" method="post" enctype="">
+
+                                        <div class="p-1 mt-2">
+                                            <div class="section">
+                                                @*<div class="section-heading">
+                                                        <h4 class="card-title">Medicine prescription </h4>
+                                                        <button type="button"
+                                                                class="btn btn-md toggle-btn"
+                                                                onclick="toggleSection(this)">
+                                                            +
+                                                        </button>
+
+                                                    </div>*@
+
+                                                <input type="hidden" id="deleteUrl" value="@Url.Action("DeletePrescription", "AayurvedEHR", new { area = "Patient" })" />
+                                                <input type="hidden" id="PrescriptionID" value="0" />
+                                                <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                                <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+
+                                                @*<input type="hidden" id="PrescriptionID" name="PrescriptionID" />*@
+                                                @Html.HiddenFor(m => m.PrescriptionID)
+                                                <input type="hidden" id="mixingDataJson" name="mixingDataJson" />
+                                                <input type="hidden" id="MixingDataFluid" name="MixingDataFluid" />
+
+
+                                                <div id="dropdownContainer">
+                                                    <div class="row dropdownRow">
+                                                        <!-- Form -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.FormID,
+new SelectList(ViewBag.Forms, "FormID", "FormName"),
+"Select Form", new { @class = "form-control formId", id = "FormID" })
+                                                            <label class="floating-label">Form</label>
+                                                        </div>
+
+                                                        <!-- Package -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.PackageID,
+new SelectList(ViewBag.Packages, "PackageID", "PackageName"),
+"Select Package", new { @class = "form-control packageId", id = "PackageID" })
+                                                            <label class="floating-label">Package</label>
+                                                        </div>
+
+                                                        <!-- Number (Left side) -->
+                                                        <div class="col-md-3 form-group">
+                                                            @Html.DropDownListFor(m => m.NumberLeftID,
+                                  new SelectList(ViewBag.NumberLeft, "Id", "NumberValue"),
+                                      "Select Pack Number",
+                                     new { @class = "form-control numberLeft", id = "NumberLeftID" })
+                                                            <label class="floating-label">Pack Number</label>
+                                                        </div>
+
+                                                        <div class="col-md-1 text-center"><strong>=</strong></div>
+
+                                                        <!-- Number (Right side) -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(m => m.NumberRightID,
+new SelectList(ViewBag.NumberRight, "Id", "NumberQuantity"),
+"Select Medicine Number",
+new { @class = "form-control numberRight" })
+                                                            <label class="floating-label">Medicine Quantity</label>
+                                                        </div>
+
+                                                        <!-- Quantity -->
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(model => model.QuantityID,
+new SelectList(ViewBag.Quantities, "QuantityID", "QuantityName"),
+"Select Quantity", new { @class = "form-control quantityId" })
+                                                            <label class="floating-label">Unit</label>
+                                                        </div>
+
+
+
+
+
+                                                        <!-- Formula -->
+                                                        <div class="col-md-3 form-group">
+                                                            @Html.DropDownListFor(model => model.FormulaID,
+new SelectList(ViewBag.FormulasMain, "FormulaID", "FormulaName"),
+"Select Formula", new { @class = "form-control formulaId" })
+                                                            <label class="floating-label">Medicine</label>
+                                                        </div>
+
+                                                        <!-- + button (for mixing) -->
+                                                        <div class="col-md-1">
+                                                            <button type="button" class="btn btn-primary addMixing">+</button>
+                                                        </div>
+
+                                                        <!-- Processing Quantity -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(m => m.ProcessingQty,
+new SelectList(ViewBag.DoseNumbers, "Id", "NumberQuantity"),
+"Select Processing Number",
+new { @class = "form-control doseNumber", id = "ProcessingQty" })
+                                                            <label class="floating-label processing-label">Processing Qty</label>
+                                                        </div>
+
+
+                                                        <!-- Final Quantity jeva hee select  asl teva too comomon   formula asl  manje too top la asl patinet sathi  -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.ProcessingUnit,
+new SelectList(ViewBag.Quantities, "QuantityID", "QuantityName"),
+"Dose", new { @class = "form-control doseId", id = "ProcessingUnit" })
+                                                            <label class="floating-label processing-label">Processing Unit</label>
+                                                        </div>
+
+
+
+                                                        <!-- Dose Number -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(m => m.DoseNumberID,
+new SelectList(ViewBag.DoseNumbers, "Id", "NumberQuantity"),
+"Select Dose Number",
+new { @class = "form-control doseNumber", id = "DoseNumberID" })
+                                                            <label class="floating-label">Dose Number</label>
+                                                        </div>
+
+                                                        <!-- Final Section (Dose=Quantity, Time, FluidVehicle) -->
+                                                        <div class="col-md-2 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.QuantityIDDose,
+new SelectList(ViewBag.Quantities, "QuantityID", "QuantityName"),
+"Dose", new { @class = "form-control doseId", id = "QuantityIDDose" })
+                                                            <label class="floating-label">Dose</label>
+                                                        </div>
+
+                                                        <div class="col-md-4 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.TimeID,
+new SelectList(ViewBag.Time, "TimeID", "TimeName"),
+"Select Time", new { @class = "form-control timeId", id = "TimeID" })
+                                                            <label class="floating-label">Time</label>
+                                                        </div>
+
+
+
+
+
+
+
+
+
+
+                                                        <!-- Fluid Number -->
+                                                        <div class="col-md-4 form-group final-section">
+                                                            @Html.DropDownListFor(m => m.FluidNumberID,
+new SelectList(ViewBag.FluidNumbers, "Id", "NumberQuantity"),
+"Select Fluid Number",
+new { @class = "form-control doseNumber", id = "FluidNumberID" })
+                                                            <label class="floating-label">Fluid Number</label>
+                                                        </div>
+
+                                                        <!-- Final Section (FluidVehicle) -->
+                                                        <div class="col-md-4 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.FluidQuantityID,
+new SelectList(ViewBag.FluidQuantities, "QuantityID", "QuantityName"),
+"Quantity", new { @class = "form-control doseId", id = "FluidQuantityID" })
+                                                            <label class="floating-label">Fluid Quantity</label>
+                                                        </div>
+
+
+
+                                                        <div class="col-md-3 form-group final-section">
+                                                            @Html.DropDownListFor(model => model.FluidVehicleID,
+new SelectList(ViewBag.FluidVehicle, "VehicleID", "VehicleName"),
+"Select Vehicle", new { @class = "form-control fluidId", id = "FluidVehicleID" })
+                                                            <label class="floating-label">Fluid Vehicle</label>
+                                                        </div>
+
+
+                                                        <div class="col-md-1">
+                                                            <button type="button" class="btn btn-primary addFluidMixing">+</button>
+                                                        </div>
+
+                                                        <div class="fluidMixSection col-md-12"></div>
+
+
+
+
+
+                                                        @*<div class="col-md-4 form-group">
+
+
+
+
+                                                                                                                        @Html.DropDownListFor(m => m.DaysNumber,
+                                                            new SelectList(ViewBag.DaysNumber, "Id", "NumberValue"),
+                                                            "",
+                                                            new { @class = "form-control doseNumber", id = "DaysNumber",
+                                                                @onfocus = "this.size=1;",
+
+                                                            })
+                                                                                                                        < label class="floating-label">Consuming Days </label>
+
+
+                                                                                                                    </div>*@
+
+                                                        <div class="col-md-4 form-group">
+                                                            @Html.DropDownListFor(m => m.DaysNumber,
+new SelectList(ViewBag.DaysNumber, "Id", "NumberValue"),
+"Select Days",
+new
+{
+@class = "form-control doseNumber",
+id = "DaysNumber",
+@onfocus = "this.size=1;"
+})
+                                                            <label class="floating-label">Consuming Days</label>
+                                                        </div>
+
+
+
+                                                        <!-- Buttons -->
+                                                        <div class="col-md-2 ">
+                                                            <button type="button" class="btn btn-success addPrescription">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" id="prescriptionJson" name="prescriptionJson" />
+
+
+
+                                                <hr />
+
+                                                <div style="width:100%; overflow:auto;">
+                                                    <table class="table table-bordered" id="prescriptionTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Instruction</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        @{
+                                                            var activePrescriptions = ((IEnumerable<dynamic>)ViewBag.PrescriptionList)
+                                                                                      .Where(x => x.IsActive == 1); // database column IsActive वापरून filter
+                                                        }
+                                                        <tbody>
+                                                            @if (ViewBag.PrescriptionList != null)
+                                                            {
+                                                                foreach (var item in ViewBag.PrescriptionList)
+                                                                {
+
+                                                                    <tr data-id="@item.PrescriptionID"
+                                                                        data-formid="@item.FormID"
+                                                                        data-packageid="@item.PackageID"
+                                                                        data-numberleftid="@item.NumberLeftID"
+                                                                        data-dosenumberid="@item.DoseNumberID"
+                                                                        data-doseid="@item.DoseID"
+                                                                        data-timeid="@item.TimeID"
+                                                                        data-processingunit="@item.ProcessingUnit"
+                                                                        data-processingqty="@item.ProcessingQty">
+                                                                        @*<td>
+                                                                                @($"{item.FormName} {item.PackageName} {item.NumberLeft} = {item.MixingDetails} = {item.DoseNumber} {item.Dose} {item.TimeName} {item.FluidVehicle}")
+                                                                            </td>*@
+
+
+                                                                        <td class="text-wrap">
+                                                                            @($"{item.FormName} {item.PackageName} {item.NumberLeft} = {item.MixingDetails} = " +
+                             $"{(item.ProcessingNumber ?? "")} {(item.ProcessingUnitType ?? "")} {item.DoseNumber} {item.Dose} {item.TimeName} ={item.MixingDetailsFluid}" +
+                             $"( {item.DaysNumber} Days )" )
+                                                                        </td>
+
+
+
+                                                                        <td>
+                                                                            @*<i class="fa fa-edit text-primary editRow" style="cursor:pointer; margin-right:10px;"></i>*@
+                                                                            <i class="fa fa-trash text-danger deleteRow"></i>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
+                                                            }
+
+
+
+
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="btnBx">
+                                            <button type="submit" class="btn btn-md btn-success mr-1">Submit</button>
+                                            @*<button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                                                <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action("AUList", "reception")'">List</button>*@
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+
+
+
+
+                            </div>

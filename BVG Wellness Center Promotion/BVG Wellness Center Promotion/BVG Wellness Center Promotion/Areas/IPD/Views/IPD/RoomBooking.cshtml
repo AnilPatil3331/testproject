@@ -1,0 +1,1398 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.IPD.Models.StayBookingModel
+
+@{
+    ViewBag.Title = "IPD Stay Booking Form";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    bool isEdit = ViewBag.IsEdit ?? false;
+}
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/js/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f6f8fd 0%, #f1f5f9 100%);
+        min-height: 100vh;
+    }
+
+    .card.shadow {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        padding: 15px 20px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        color: white;
+    }
+
+    .card-header h3 {
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 1.25rem;
+        margin: 0;
+    }
+    
+    .card-header .btn-outline-primary {
+        color: #1e3a8a;
+        border: none;
+        background-color: #ffffff;
+        font-weight: 600;
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+    
+    .card-header .btn-outline-primary:hover {
+        background-color: #f8fafc;
+        color: #1d4ed8;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title-premium {
+        font-weight: 700;
+        color: #312e81;
+        font-size: 1rem;
+        border-bottom: 2px solid #e0e7ff;
+        padding-bottom: 6px;
+        margin-bottom: 15px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .card-title-premium::before {
+        content: "";
+        display: inline-block;
+        width: 4px;
+        height: 14px;
+        background: linear-gradient(to bottom, #8b5cf6, #d946ef);
+        margin-right: 8px;
+        border-radius: 2px;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #c7d2fe;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background-color: #fafafa;
+        color: #1e293b;
+        height: auto;
+    }
+
+    .form-control:focus {
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        background-color: #ffffff;
+        outline: none;
+    }
+
+    .form-control.is-invalid {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+    }
+
+    .invalid-feedback {
+        display: none;
+        width: 100%;
+        margin-top: 4px;
+        font-size: 0.75rem;
+        color: #ef4444;
+        font-weight: 600;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-3px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-control.is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+
+    .form-control-label {
+        font-weight: 600;
+        color: #4338ca;
+        margin-bottom: 4px;
+        font-size: 0.8rem;
+    }
+    
+    .form-control-label .text-danger {
+        color: #ec4899 !important;
+        margin-left: 2px;
+    }
+
+    .live-calc-panel {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 20px;
+        position: sticky;
+        top: 20px;
+        box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25);
+    }
+
+    .live-calc-panel h4, .live-calc-panel h3, .live-calc-panel h3.text-white {
+        color: #ffffff !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+        border-bottom: 2px dashed rgba(255, 255, 255, 0.25);
+        padding-bottom: 10px;
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    .live-calc-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        color: #e0e7ff;
+        font-weight: 500;
+    }
+
+    .live-calc-item span:first-child {
+        flex: 1;
+    }
+
+    .live-calc-item span:last-child {
+        font-weight: 700;
+        color: #ffffff;
+        text-align: right;
+        min-width: 100px;
+    }
+
+    .live-calc-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #ffffff;
+        border-top: 2px solid rgba(255, 255, 255, 0.3);
+        padding-top: 15px;
+    }
+    
+    .live-calc-total span:last-child {
+        text-align: right;
+    }
+
+    .child-age-row {
+        background-color: #f8fafc;
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 10px;
+        border: 2px dashed #c7d2fe;
+    }
+
+    /* Card Footer and Buttons */
+    .card-footer {
+        background-color: transparent;
+        border-top: 1px solid rgba(0,0,0,0.05);
+        padding: 15px 20px;
+        border-bottom-left-radius: 12px !important;
+        border-bottom-right-radius: 12px !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #6366f1 0%, #d946ef 100%);
+        border: none;
+        border-radius: 6px;
+        padding: 8px 20px;
+        font-weight: 600;
+        color: white;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(217, 70, 239, 0.25);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(217, 70, 239, 0.35);
+        background: linear-gradient(135deg, #4f46e5 0%, #c026d3 100%);
+    }
+    
+    .btn-outline-secondary {
+        border-radius: 6px;
+        padding: 7px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid #c7d2fe;
+        color: #475569;
+        background-color: #ffffff;
+    }
+
+    .custom-checkbox .custom-control-label::before {
+        border-radius: 4px;
+        border: 1px solid #c7d2fe;
+        width: 1rem;
+        height: 1rem;
+        top: 0.1rem;
+    }
+    .custom-checkbox .custom-control-label::after {
+        width: 1rem;
+        height: 1rem;
+        top: 0.1rem;
+    }
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background: linear-gradient(135deg, #6366f1 0%, #d946ef 100%);
+        border-color: transparent;
+    }
+    
+    .form-group { margin-bottom: 0 !important; }
+    .mb-3 { margin-bottom: 0.75rem !important; }
+    .mb-4 { margin-bottom: 1rem !important; }
+
+    /* Autocomplete styles */
+    .ui-autocomplete {
+        z-index: 9999 !important;
+        max-height: 250px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #ffffff;
+        border: 1px solid #c7d2fe;
+        border-radius: 6px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 4px 0;
+    }
+    .ui-menu-item-wrapper {
+        padding: 6px 15px !important;
+        font-size: 0.85rem;
+        color: #1e293b;
+        border-bottom: 1px solid #f1f5f9;
+        transition: background-color 0.2s;
+    }
+    .ui-state-active, .ui-widget-content .ui-state-active {
+        background: #e0e7ff !important;
+        color: #312e81 !important;
+        border: none !important;
+        margin: 0 !important;
+    }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/IPD/IPD/SaveRoomBooking" id="frmStayBooking" method="post">
+                @Html.HiddenFor(m => m.BookingId, new { id = "hdnBookingId" })
+                @Html.HiddenFor(m => m.DetailsId, new { id = "hdnDetailsId" })
+                @Html.HiddenFor(m => m.PatientId)
+                @Html.HiddenFor(m => m.Status)
+                @Html.HiddenFor(m => m.BookingStatus)
+                @Html.HiddenFor(m => m.BookingSource)
+                @Html.HiddenFor(m => m.ChildAgeDetails, new { id = "hdnChildAgeDetails" })
+
+                <div class="card p-0 shadow">
+                    <header class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-sm-8">
+                                <h3 class="mb-0">
+                                    <i class="fa fa-bed mr-2 text-primary"></i> @(isEdit ? "Edit Stay Booking" : "New IPD Stay Booking")
+                                </h3>
+                            </div>
+                            <div class="col-sm-4 text-right">
+                                <a href="/IPD/IPD/RoomBookingList" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-angle-double-left"></i> Back to List
+                                </a>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Left Form Section -->
+                            <div class="col-lg-8">
+                                <!-- Dates and Room Selection -->
+                                <h4 class="card-title-premium">1. Stay & Room Details</h4>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label font-weight-bold">Room Type <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(m => m.RoomTypeId, new SelectList(ViewBag.RoomTypes, "Id", "Name"), "-- Select Room Type --", new { @class = "form-control check-avail", id = "ddlRoomType", required = "required" })
+                                            @Html.ValidationMessageFor(m => m.RoomTypeId, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label font-weight-bold">Check-In Date <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.CheckInDate, "{0:yyyy-MM-dd}", new { @class = "form-control check-avail", type = "text", id = "txtCheckIn", required = "required" })
+                                            @Html.ValidationMessageFor(m => m.CheckInDate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label font-weight-bold">Check-Out Date <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.CheckOutDate, "{0:yyyy-MM-dd}", new { @class = "form-control check-avail", type = "text", id = "txtCheckOut", required = "required" })
+                                            @Html.ValidationMessageFor(m => m.CheckOutDate, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center mb-4">
+                                    <div class="col-md-12 d-flex align-items-center flex-wrap">
+                                        <div class="custom-control custom-checkbox custom-checkbox-lg mr-5 mb-2">
+                                            @Html.CheckBoxFor(m => m.TwinSharing, new { @class = "custom-control-input check-avail", id = "chkTwinSharing" })
+                                            <label class="custom-control-label font-weight-bold text-dark" for="chkTwinSharing">
+                                                Twin Sharing / Shared Room
+                                            </label>
+                                        </div>
+                                        <div class="custom-control custom-checkbox custom-checkbox-lg mb-2" id="sameGenderContainer" style="display:none;">
+                                            @Html.CheckBoxFor(m => m.sameGender, new { @class = "custom-control-input check-avail", id = "chkSameGender" })
+                                            <label class="custom-control-label font-weight-bold text-dark" for="chkSameGender">
+                                                Share with Same Gender Only
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Patient Demographics -->
+                                <h4 class="card-title-premium">2. Patient Information</h4>
+                                <div class="row">
+                                    <div class="col-md-5 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Patient Full Name <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.GuestFullName, new { @class = "form-control", id = "txtGuestName", placeholder = "Enter full name", required = "required", autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Mobile Number <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", id = "txtMobile", maxlength = "10", placeholder = "10 digit mobile", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Email ID</label>
+                                            @Html.TextBoxFor(m => m.EmailId, new { @class = "form-control", type = "email", placeholder = "email@example.com" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Gender <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(m => m.Gender, new SelectList(new[] { "Male", "Female", "Other" }), "-- Select --", new { @class = "form-control check-avail", id = "ddlGender", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Age <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Age, new { @class = "form-control", type = "number", id = "txtAge", placeholder = "Age", required = "required", min = "1" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">City</label>
+                                            @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "Enter city" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Address <span class="text-danger">*</span></label>
+                                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", placeholder = "Enter complete address", required = "required" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Occupancy Details -->
+                                <h4 class="card-title-premium mt-3">3. Occupancy & Surcharges</h4>
+                                <div class="row align-items-center mb-3">
+                                    <div class="col-md-6" id="sharingPreferenceCol">
+                                        <label class="form-control-label d-block" style="font-weight:700; color: #10b981;">SHARING PREFERENCE</label>
+                                        <div class="custom-control custom-radio custom-control-inline mt-2">
+                                            @Html.RadioButtonFor(m => m.Own, true, new { @class = "custom-control-input", id = "rbOwn" })
+                                            <label class="custom-control-label" for="rbOwn" style="font-size: 1.05rem; font-weight:500;">Own</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline mt-2">
+                                            @Html.RadioButtonFor(m => m.Own, false, new { @class = "custom-control-input", id = "rbFamily" })
+                                            <label class="custom-control-label" for="rbFamily" style="font-size: 1.05rem; font-weight:500;">Family</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-0">
+                                            <div class="custom-control custom-checkbox mt-4">
+                                                @Html.CheckBoxFor(m => m.IsPet, new { @class = "custom-control-input calc-trigger", id = "chkIsPet" })
+                                                <label class="custom-control-label font-weight-bold" for="chkIsPet" style="font-size:0.95rem; color: #1e3a8a;">
+                                                    Carry Pet (+@ViewBag.PetChargePercentage% charge)
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Family Members Section -->
+                                <div id="familyMembersSection" class="card shadow-sm mb-4" style="display: none; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                    <div class="card-body" style="padding: 1.2rem;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="font-weight-bold mb-0" style="color: #10b981; letter-spacing: 0.5px;">FAMILY MEMBERS (<span id="familyMemberCount">0</span>)</h6>
+                                            <button type="button" class="btn btn-sm text-white rounded-pill px-3 shadow-sm" onclick="addFamilyMemberRow()" style="font-weight:600; background-color: #10b981; border: none;">
+                                                <i class="fa fa-plus"></i> ADD MEMBER
+                                            </button>
+                                        </div>
+                                        
+                                        @*<div class="alert py-2 mb-3 shadow-sm" style="background-color: #fffbeb; border: 1px solid #fde68a; color: #92400e; font-size: 0.85rem; border-radius: 6px;">
+                                            <i class="fa fa-info-circle mr-1" style="color: #f59e0b;"></i> <strong>3rd person charge is age-based:</strong> Age 13+ &rarr; 75% extra bed &bull; Age 6-12 &rarr; 50% surcharge &bull; <span style="color: #059669; font-weight:600;">Age 0-5 &rarr; Free</span>
+                                        </div>*@
+
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-sm mb-0" id="familyMembersTable">
+                                                <thead style="background-color: #f8fafc;">
+                                                    <tr>
+                                                        <th style="color: #10b981; font-weight: 700; font-size: 0.75rem;">FIRST NAME</th>
+                                                        <th style="color: #10b981; font-weight: 700; font-size: 0.75rem;">LAST NAME</th>
+                                                        <th style="color: #10b981; font-weight: 700; font-size: 0.75rem; width: 90px;">AGE</th>
+                                                        <th style="color: #10b981; font-weight: 700; font-size: 0.75rem; width: 130px;">GENDER</th>
+                                                        <th class="text-center" style="color: #10b981; font-weight: 700; font-size: 0.75rem; width: 60px;">ACTION</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="familyMembersBody">
+                                                    @if (Model != null && Model.FamilyMembers != null && Model.FamilyMembers.Count > 0)
+                                                    {
+                                                        int i = 0;
+                                                        foreach (var fm in Model.FamilyMembers)
+                                                        {
+                                                            <tr id="fm_row_@i">
+                                                                <td><input type="text" name="FamilyMembers[@i].FirstName" class="form-control form-control-sm fm-required" value="@fm.FirstName" required /></td>
+                                                                <td><input type="text" name="FamilyMembers[@i].LastName" class="form-control form-control-sm" value="@fm.LastName" /></td>
+                                                                <td><input type="number" name="FamilyMembers[@i].Age" class="form-control form-control-sm fm-age calc-trigger fm-required" value="@fm.Age" min="1" onchange="validateMemberAge(this)" required /></td>
+                                                                <td>
+                                                                    <select name="FamilyMembers[@i].Gender" class="form-control form-control-sm fm-required" required>
+                                                                        <option value="">- Select -</option>
+                                                                        <option value="Male" @(fm.Gender == "Male" ? "selected" : "")>Male</option>
+                                                                        <option value="Female" @(fm.Gender == "Female" ? "selected" : "")>Female</option>
+                                                                        <option value="Other" @(fm.Gender == "Other" ? "selected" : "")>Other</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td class="text-center">
+                                                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFamilyMemberRow(@i)" title="Remove">
+                                                                        <i class="fa fa-minus"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            i++;
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="oldOccupancyRow" style="display: none;">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Adult Count <span class="text-danger">*</span></label>
+                                            @Html.DropDownListFor(m => m.NoOfPersons, new SelectList(new[] { 1, 2, 3 }), new { @class = "form-control calc-trigger", id = "ddlAdultCount" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Child Count</label>
+                                            @Html.DropDownListFor(m => m.NoOfChildren, new SelectList(new[] { 0, 1, 2 }), new { @class = "form-control calc-trigger", id = "ddlChildCount" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Dynamic Child Ages Row -->
+                                <div id="childAgesContainer" class="child-age-row mb-3" style="display: none;">
+                                    <label class="form-control-label">Child Age Details (0-12 years only)</label>
+                                    <div class="row mt-1" id="childAgesFields">
+                                        <!-- Dynamic Inputs generated here -->
+                                    </div>
+                                </div>
+
+                                <!-- Additional Metadata -->
+                                <h4 class="card-title-premium mt-3">4. Additional Information</h4>
+                                <div class="row mb-2">
+                                    <div class="col-md-3 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Reference Doctor</label>
+                                            @Html.TextBoxFor(m => m.RefDoctor, new { @class = "form-control", placeholder = "Doctor name" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Emergency Contact Name/No</label>
+                                            @Html.TextBoxFor(m => m.EmergencyContact, new { @class = "form-control", placeholder = "Emergency info" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 mb-3">
+                                        <div class="form-group">
+                                            <label class="form-control-label">Special Notes</label>
+                                            @Html.TextBoxFor(m => m.SpecialNotes, new { @class = "form-control", placeholder = "Dietary or treatment plans" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Right Charges Breakdown Panel -->
+                            <div class="col-lg-4">
+                                <div class="live-calc-panel shadow">
+                                    <h3 class="text-white mb-4"><i class="fa fa-calculator mr-2"></i> Charges Calculator</h3>
+                                    
+                                    <div class="live-calc-item">
+                                        <span>Stay Duration:</span>
+                                        <span class="font-weight-bold" id="lblNights">0 night(s)</span>
+                                    </div>
+                                    <div class="live-calc-item">
+                                        <span>Base Room Price:</span>
+                                        <span class="font-weight-bold" id="lblBaseRate">₹0.00 / day</span>
+                                    </div>
+                                    <div class="live-calc-item">
+                                        <span>Room Rent (Adults):</span>
+                                        <span class="font-weight-bold" id="lblAdultCost">₹0.00</span>
+                                    </div>
+                                    <div class="live-calc-item">
+                                        <span>Child Charges:</span>
+                                        <span class="font-weight-bold" id="lblChildCost">₹0.00</span>
+                                    </div>
+                                    <div class="live-calc-item">
+                                        <span>Pet Surcharge:</span>
+                                        <span class="font-weight-bold" id="lblPetCost">₹0.00</span>
+                                    </div>
+
+                                    <div class="live-calc-total">
+                                        <span>Grand Total:</span>
+                                        <span id="lblGrandTotal">₹0.00</span>
+                                    </div>
+
+                                    <!-- Live Status Panel -->
+                                    <div id="availabilityPanel" class="mt-4">
+                                        <!-- AJAX updates status message here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <a href="/IPD/IPD/RoomBookingList" class="btn btn-outline-secondary mr-2">
+                                    Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary" id="btnSaveBooking">
+                                    <i class="fa fa-save mr-1"></i> Save Stay Booking
+                                </button>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Raw room details from controller
+    const roomDetails = @Html.Raw(ViewBag.RoomDetailsJson) || [];
+    const petPct = parseFloat("@ViewBag.PetChargePercentage") || 25.0;
+
+    var fpCheckIn, fpCheckOut;
+    var globalBlockedDates = [];
+    var existingTwinChildType = "None";
+
+    $(document).ready(function () {
+        // Init flatpickr
+        var fpConfigBase = {
+            dateFormat: "Y-m-d",
+            disable: [
+                function(date) {
+                    var local = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                    return globalBlockedDates.includes(local);
+                }
+            ],
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                var localDate = new Date(dayElem.dateObj.getTime() - (dayElem.dateObj.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+                if (globalBlockedDates.includes(localDate)) {
+                    dayElem.style.backgroundColor = "#dc3545";
+                    dayElem.style.color = "white";
+                    dayElem.style.borderColor = "#dc3545";
+                }
+            }
+        };
+
+        // Init autocomplete for Patient Full Name
+        $("#txtGuestName").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/IPD/IPD/SearchPatients",
+                    type: "GET",
+                    dataType: "json",
+                    data: { term: request.term },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function (event, ui) {
+                $("#txtGuestName").val(ui.item.value);
+                if (ui.item.mobile) $("#txtMobile").val(ui.item.mobile).trigger('change');
+                if (ui.item.email) $("#EmailId").val(ui.item.email).trigger('change');
+                if (ui.item.gender) $("#ddlGender").val(ui.item.gender).trigger('change');
+                if (ui.item.age) $("#txtAge").val(ui.item.age).trigger('change');
+                if (ui.item.city) $("#City").val(ui.item.city).trigger('change');
+                if (ui.item.address) $("#Address").val(ui.item.address).trigger('change');
+                if (ui.item.patientId) $("#PatientId").val(ui.item.patientId);
+                return false;
+            },
+            change: function (event, ui) {
+                if (!ui.item) {
+                    $(this).val("");
+                    $("#PatientId").val("0");
+                    $("#txtMobile, #EmailId, #txtAge, #City, #Address").val("");
+                    $("#ddlGender").val("");
+                    if (typeof showCustomAlert === "function") {
+                        showCustomAlert("Please select an existing patient from the suggestions. New patients cannot be added from this page.", "warning");
+                    } else {
+                        alert("Please select an existing patient from the suggestions.");
+                    }
+                }
+            }
+        });
+
+        var isEditMode = parseInt($("#hdnBookingId").val()) > 0;
+        
+        var checkInConfig = Object.assign({}, fpConfigBase, {
+            onChange: function(selectedDates, dateStr, instance) {
+                if (selectedDates.length > 0) {
+                    var nextDay = new Date(selectedDates[0]);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    fpCheckOut.set("minDate", nextDay);
+                    
+                    var currentCheckOut = fpCheckOut.selectedDates[0];
+                    if (!currentCheckOut || currentCheckOut < nextDay) {
+                        fpCheckOut.setDate(nextDay);
+                    }
+                }
+                triggerAvailabilityCheck();
+                calculateCharges();
+            }
+        });
+        
+        if (!isEditMode) {
+            checkInConfig.minDate = "today";
+        }
+
+        fpCheckIn = flatpickr("#txtCheckIn", checkInConfig);
+
+        fpCheckOut = flatpickr("#txtCheckOut", Object.assign({}, fpConfigBase, {
+            onChange: function(selectedDates, dateStr, instance) {
+                triggerAvailabilityCheck();
+                calculateCharges();
+            }
+        }));
+
+        // Set initial minDate for CheckOut based on CheckIn
+        var initialCheckIn = $("#txtCheckIn").val();
+        if (initialCheckIn) {
+            var d = new Date(initialCheckIn);
+            d.setDate(d.getDate() + 1);
+            fpCheckOut.set("minDate", d);
+        }
+
+        // Init child ages state on load (Edit mode restore)
+        restoreChildAges();
+        
+        // Initial calculations
+        calculateCharges();
+        
+        // Check availability on load
+        fetchBookedDatesAndRefreshCalendar();
+        triggerAvailabilityCheck();
+
+        // Listen for changes
+        $(".calc-trigger").on("change input", function () {
+            calculateCharges();
+        });
+
+        window.applyOccupancyRules = function() {
+            var isTwinSharing = $("#chkTwinSharing").is(":checked");
+            var adults = parseInt($("#ddlAdultCount").val()) || 1;
+
+            if (!isTwinSharing) {
+                // Private Room
+                if ($("#rbOwn").is(":checked")) {
+                    $("#ddlAdultCount").val('1').prop("disabled", true);
+                    $("#ddlChildCount").val('0').prop("disabled", true).trigger('change');
+                } else {
+                    $("#ddlAdultCount").prop("disabled", false);
+                    $("#ddlChildCount").prop("disabled", false);
+                }
+            } else {
+                // Twin Sharing Room - strict rules
+                console.log("Twin Sharing is ON. Enabling child dropdown.");
+                $("#ddlAdultCount").val('1').prop("disabled", true);
+                $("#ddlChildCount").prop("disabled", false);
+                
+                if (existingTwinChildType === "Two_0_5") {
+                    // Existing has Two_0_5, current can only book Max 1 child
+                    $("#ddlChildCount").find("option[value='2']").prop("disabled", true);
+                    if ($("#ddlChildCount").val() == '2') {
+                        $("#ddlChildCount").val('1').trigger('change');
+                    }
+                } else if (existingTwinChildType === "One_6_12") {
+                    // Existing has One_6_12, current can only book 0-5 children
+                    // Let the age validation handle the age limit, but count can be up to 2
+                    $("#ddlChildCount").find("option[value='2']").prop("disabled", false);
+                } else {
+                    $("#ddlChildCount").find("option[value='2']").prop("disabled", false);
+                }
+            }
+            calculateCharges();
+        };
+
+        window.validateTwinChildAges = function() {
+            var isTwinSharing = $("#chkTwinSharing").is(":checked");
+            if (!isTwinSharing) return true;
+
+            var childCount = parseInt($("#ddlChildCount").val()) || 0;
+            if (childCount === 0) return true;
+
+            var ages = [];
+            var hasError = false;
+            var errMsg = "";
+            $(".child-age-input").each(function () {
+                var val = $(this).val();
+                if (val !== "") ages.push(parseInt(val));
+            });
+
+            if (ages.length === childCount) {
+                if (existingTwinChildType === "Two_0_5" && childCount === 1) {
+                    if (ages[0] < 6 || ages[0] > 12) {
+                        hasError = true;
+                        errMsg = "Cross-Booking Rule: Existing occupant has two 0-5 yr children. You must book one 6-12 yr child.";
+                    }
+                } else if (existingTwinChildType === "One_6_12" && childCount > 0) {
+                    if (ages.some(a => a > 5)) {
+                        hasError = true;
+                        errMsg = "Cross-Booking Rule: Existing occupant has one 6-12 yr child. You can only book 0-5 yr children.";
+                    }
+                } else if (existingTwinChildType === "None" || existingTwinChildType === "Unknown") {
+                    // Standard rules for single Twin occupant
+                    if (childCount === 2) {
+                        if (ages.some(a => a > 5)) {
+                            hasError = true;
+                            errMsg = "Twin Sharing Rule: If you book 2 children, both must be 0-5 years old.";
+                        }
+                    } else if (childCount === 1) {
+                        // Can be anything (either 0-5 or 6-12 is fine)
+                    }
+                }
+            }
+
+            if (hasError) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'warning', title: 'Age Rule Violation', text: errMsg });
+                } else {
+                    alert(errMsg);
+                }
+                return false;
+            }
+            return true;
+        }
+
+        $("#ddlAdultCount").change(function() {
+            applyOccupancyRules();
+        });
+
+        $("#chkTwinSharing").change(function () {
+            if ($(this).is(":checked")) {
+                $("#sameGenderContainer").slideDown();
+                $("#chkSameGender").prop("checked", true).prop("disabled", true); // Auto check and disable
+                $("#sharingPreferenceCol").slideUp();
+                $("#rbOwn").prop("checked", true).trigger("change");
+            } else {
+                $("#sameGenderContainer").slideUp();
+                $("#chkSameGender").prop("checked", false).prop("disabled", false);
+                $("#sharingPreferenceCol").slideDown();
+            }
+            applyOccupancyRules();
+        });
+        // Initial state
+        if ($("#chkTwinSharing").is(":checked")) {
+            $("#sameGenderContainer").show();
+            $("#sharingPreferenceCol").hide();
+        }
+        applyOccupancyRules();
+
+        $(".check-avail").on("change input", function (e) {
+            if (e.target.id !== "txtCheckIn" && e.target.id !== "txtCheckOut") {
+                fetchBookedDatesAndRefreshCalendar();
+            }
+            triggerAvailabilityCheck();
+            calculateCharges();
+        });
+
+        $("#ddlChildCount").change(function () {
+            var count = parseInt($(this).val()) || 0;
+            if (count > 0) {
+                $("#childAgesContainer").show();
+                var html = '';
+                for (var i = 1; i <= count; i++) {
+                    var idx = i - 1;
+                    html += `<div class="col-md-12 mb-2 p-2 border rounded">
+                                <label class="text-sm font-weight-bold">Child ${i} Details: <span class="text-danger">*</span></label>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="text" name="FamilyMembers[${idx}].FirstName" class="form-control form-control-sm" placeholder="First Name" required />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" name="FamilyMembers[${idx}].LastName" class="form-control form-control-sm" placeholder="Last Name" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="number" min="0" max="12" name="FamilyMembers[${idx}].Age" class="form-control form-control-sm child-age-input calc-trigger" data-index="${i}" required placeholder="Age (0 to 12)" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select name="FamilyMembers[${idx}].Gender" class="form-control form-control-sm" required>
+                                            <option value="">Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                             </div>`;
+                }
+                $("#childAgesFields").html(html);
+                
+                // Re-bind change listeners
+                $(".child-age-input").on("change input", function() {
+                    updateChildAgesString();
+                    calculateCharges();
+                    validateTwinChildAges();
+                });
+            } else {
+                $("#childAgesContainer").hide();
+                $("#childAgesFields").html("");
+                $("#hdnChildAgeDetails").val("");
+                calculateCharges();
+            }
+        });
+
+        // Custom interactive validation
+        function validateField(field) {
+            var $field = $(field);
+            var val = $field.val() ? $field.val().trim() : "";
+            var isRequired = $field.prop("required");
+            var isValid = true;
+            var msg = "";
+
+            // Custom checks
+            if (isRequired && (val === "" || val === "-- Select Room Type --" || val === "-- Select --")) {
+                isValid = false;
+                msg = "This field is required.";
+            } else if ($field.attr("id") === "txtMobile") {
+                if (val !== "" && (!/^\d{10}$/.test(val))) {
+                    isValid = false;
+                    msg = "Mobile number must be exactly 10 digits.";
+                }
+            } else if ($field.attr("type") === "email" || $field.attr("id") === "EmailId") {
+                if (val !== "") {
+                    var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+                    if (!emailRegex.test(val)) {
+                        isValid = false;
+                        msg = "Please enter a valid email format.";
+                    }
+                }
+            }
+
+            // Remove existing feedback
+            $field.next(".invalid-feedback").remove();
+
+            if (!isValid) {
+                $field.addClass("is-invalid");
+                $field.after('<div class="invalid-feedback">' + msg + '</div>');
+            } else {
+                $field.removeClass("is-invalid");
+            }
+
+            return isValid;
+        }
+
+        // Bind interactive validation
+        $("#frmStayBooking").on("keyup blur change", "input[required], select[required], #txtMobile, #EmailId", function() {
+            validateField(this);
+        });
+
+        // Form submission constraints
+        $("#frmStayBooking").on("submit", function (e) {
+            
+            // Execute interactive validation
+            var isFormValid = true;
+            $("#frmStayBooking input[required], #frmStayBooking select[required], #frmStayBooking #txtMobile, #frmStayBooking #EmailId").each(function() {
+                if (!validateField(this)) {
+                    isFormValid = false;
+                }
+            });
+
+            if (!isFormValid) {
+                showCustomAlert("Please correct the highlighted errors before submitting.", "error");
+                e.preventDefault();
+                return false;
+            }
+
+            if (!validateTwinChildAges()) {
+                e.preventDefault();
+                return false;
+            }
+
+            var pId = parseInt($("#PatientId").val()) || 0;
+            if (pId <= 0) {
+                showCustomAlert("Please select an existing patient from the autocomplete suggestions. New patients cannot be added from this page.", "error");
+                $("#txtGuestName").focus();
+                e.preventDefault();
+                return false;
+            }
+
+            // Removed old child validation
+
+            // Check final room availability state
+            var isAvail = $("#availabilityPanel").data("available");
+            if (isAvail === false) {
+                showCustomAlert("The selected room is not available for the chosen dates. Please check availability details.", "error");
+                e.preventDefault();
+                return false;
+            }
+
+            // Enable disabled fields before submission so values are posted
+            $("#ddlAdultCount").prop("disabled", false);
+            $("#ddlChildCount").prop("disabled", false);
+        });
+    });
+
+    // Family Member Dynamic Logic
+    let familyMemberIndex = @(Model != null && Model.FamilyMembers != null ? Model.FamilyMembers.Count : 0);
+
+    $(document).ready(function () {
+        $("input[name='Own']").change(function () {
+            if ($("#rbFamily").is(":checked")) {
+                $("#familyMembersSection").slideDown();
+                $("#oldOccupancyRow").slideUp();
+                $("#childAgesContainer").hide();
+                $("#childAgesFields").empty();
+            } else {
+                $("#familyMembersSection").slideUp();
+                $("#familyMembersBody").empty();
+                familyMemberIndex = 0;
+                $("#oldOccupancyRow").slideDown();
+                var cCount = parseInt($("#ddlChildCount").val()) || 0;
+                if (cCount > 0) $("#childAgesContainer").show();
+                updateFamilyCounts();
+                calculateCharges();
+            }
+            if (typeof applyOccupancyRules === "function") {
+                applyOccupancyRules();
+            }
+        });
+
+        // Initialization
+        if ($("#rbFamily").is(":checked")) {
+            $("#familyMembersSection").show();
+            $("#oldOccupancyRow").hide();
+            $("#childAgesContainer").hide();
+        } else {
+            $("#familyMembersSection").hide();
+            $("#oldOccupancyRow").show();
+            if (typeof restoreChildAges === "function") {
+                restoreChildAges();
+            }
+        }
+    });
+
+    function restoreChildAges() {
+        var agesStr = $("#hdnChildAgeDetails").val();
+        var childCount = parseInt($("#ddlChildCount").val()) || 0;
+        if (childCount > 0 && agesStr) {
+            $("#childAgesContainer").show();
+            var ages = agesStr.split(',');
+            var html = '';
+            for (var i = 1; i <= childCount; i++) {
+                var ageVal = ages[i-1] || "";
+                var idx = i - 1;
+                html += `<div class="col-md-12 mb-2 p-2 border rounded">
+                            <label class="text-sm font-weight-bold">Child ${i} Details: <span class="text-danger">*</span></label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <input type="text" name="FamilyMembers[${idx}].FirstName" class="form-control form-control-sm" placeholder="First Name" required />
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" name="FamilyMembers[${idx}].LastName" class="form-control form-control-sm" placeholder="Last Name" />
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="number" min="0" max="12" name="FamilyMembers[${idx}].Age" class="form-control form-control-sm child-age-input calc-trigger" data-index="${i}" required value="${ageVal}" placeholder="Age (0 to 12)" />
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="FamilyMembers[${idx}].Gender" class="form-control form-control-sm" required>
+                                        <option value="">Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                         </div>`;
+            }
+            $("#childAgesFields").html(html);
+
+            $(".child-age-input").on("change input", function() {
+                updateChildAgesString();
+                calculateCharges();
+                validateTwinChildAges();
+            });
+        } else {
+            $("#childAgesContainer").hide();
+            $("#childAgesFields").html('');
+        }
+    }
+
+
+
+    function updateChildAgesString() {
+        var ages = [];
+        $(".child-age-input").each(function () {
+            ages.push($(this).val());
+        });
+        $("#hdnChildAgeDetails").val(ages.join(","));
+    }
+
+    function addFamilyMemberRow() {
+        if (!canAddMember()) return;
+
+        let newRow = `
+            <tr id="fm_row_${familyMemberIndex}">
+                <td>
+                    <input type="text" name="FamilyMembers[${familyMemberIndex}].FirstName" class="form-control form-control-sm fm-required" placeholder="First Name" required />
+                </td>
+                <td>
+                    <input type="text" name="FamilyMembers[${familyMemberIndex}].LastName" class="form-control form-control-sm" placeholder="Last Name" />
+                </td>
+                <td>
+                    <input type="number" name="FamilyMembers[${familyMemberIndex}].Age" class="form-control form-control-sm fm-age calc-trigger fm-required" placeholder="Age" min="1" onchange="validateMemberAge(this)" required />
+                </td>
+                <td>
+                    <select name="FamilyMembers[${familyMemberIndex}].Gender" class="form-control form-control-sm fm-required" required>
+                        <option value="">- Select -</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFamilyMemberRow(${familyMemberIndex})" title="Remove">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        $("#familyMembersBody").append(newRow);
+        familyMemberIndex++;
+        updateFamilyCounts();
+        calculateCharges();
+    }
+
+    function removeFamilyMemberRow(index) {
+        $(`#fm_row_${index}`).remove();
+        updateFamilyCounts();
+        calculateCharges();
+    }
+
+    function canAddMember() {
+        let totalAdults = 1; // Primary
+        let totalChildren = 0;
+
+        $(".fm-age").each(function () {
+            let age = parseInt($(this).val()) || 0;
+            if (age >= 13) totalAdults++;
+            else if (age > 0 && age <= 12) totalChildren++;
+        });
+
+        let totalMembers = totalAdults + totalChildren;
+
+        if (totalMembers >= 4) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'warning', title: 'Limit Reached', text: 'Maximum capacity (4 members) reached.' });
+            } else {
+                alert("Maximum capacity reached.");
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    function validateMemberAge(input) {
+        let currentAge = parseInt($(input).val()) || 0;
+        if (currentAge <= 0) return;
+
+        let totalAdults = 1;
+        let totalChildren = 0;
+        let childrenAges = [];
+
+        $(".fm-age").each(function () {
+            let a = parseInt($(this).val()) || 0;
+            if (a >= 13) totalAdults++;
+            else if (a > 0 && a <= 12) {
+                totalChildren++;
+                childrenAges.push(a);
+            }
+        });
+
+        let hasError = false;
+        let errMsg = "";
+
+        if (totalAdults > 3) {
+            hasError = true;
+            errMsg = "Maximum 3 Adults (1 Patient + 2 Family Members) are allowed.";
+        } else if (totalAdults === 3 && totalChildren > 1) {
+            hasError = true;
+            errMsg = "When there are 3 Adults, only 1 child is allowed.";
+        } else if (totalAdults === 3 && totalChildren === 1 && childrenAges.some(a => a > 5)) {
+            hasError = true;
+            errMsg = "With 3 Adults, the 1 child must be 0-5 years old.";
+        } else if (totalAdults <= 2 && totalChildren > 2) {
+            hasError = true;
+            errMsg = "Maximum 2 children are allowed with 1 or 2 adults.";
+        } else if (totalAdults <= 2 && totalChildren === 2) {
+            let cOld = childrenAges.filter(a => a >= 6 && a <= 12).length;
+            if (cOld > 1) {
+                hasError = true;
+                errMsg = "If there are 2 children, they must be (both 0-5 yrs) OR (one 0-5 yrs and one 6-12 yrs). Two 6-12 yrs children are not allowed.";
+            }
+        }
+
+        if (hasError) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title: 'Occupancy Rule Violation', text: errMsg });
+            } else {
+                alert(errMsg);
+            }
+            $(input).val('');
+        }
+        
+        updateFamilyCounts();
+        calculateCharges();
+    }
+
+    function updateFamilyCounts() {
+        let memberCount = $("#familyMembersBody tr").length;
+        $("#familyMemberCount").text(memberCount);
+
+        let adultCount = 1; 
+        let childCount = 0;
+        
+        if ($("#rbFamily").is(":checked")) {
+            $(".fm-age").each(function () {
+                let age = parseInt($(this).val()) || 0;
+                if (age >= 13) adultCount++;
+                else if (age > 0 && age <= 12) childCount++;
+            });
+        }
+
+        $("#ddlAdultCount").val(adultCount);
+        $("#ddlChildCount").val(childCount);
+    }
+
+    function calculateCharges() {
+        var checkInVal = $("#txtCheckIn").val();
+        var checkOutVal = $("#txtCheckOut").val();
+        var roomId = parseInt($("#ddlRoomType").val()) || 0;
+        var adults = parseInt($("#ddlAdultCount").val()) || 1;
+        var childCount = parseInt($("#ddlChildCount").val()) || 0;
+        var carryPet = $("#chkIsPet").is(":checked");
+
+        if (!checkInVal || !checkOutVal || roomId === 0) return;
+
+        var start = new Date(checkInVal);
+        var end = new Date(checkOutVal);
+        var nights = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        if (nights <= 0) nights = 1;
+
+        $("#lblNights").text(nights + " night(s)");
+
+        var room = roomDetails.find(r => r.RoomTypeId === roomId);
+        if (!room) return;
+
+        var basePrice = parseFloat(room.BasePrice);
+        $("#lblBaseRate").text("₹" + basePrice.toFixed(2) + " / day");
+
+        var isTwinSharing = $("#chkTwinSharing").is(":checked");
+
+        // Adult Cost
+        var adultCostPerDay = 0;
+        if (!isTwinSharing) {
+            // Private room: default to 2 persons charges
+            adultCostPerDay = basePrice * 2;
+            if (adults >= 3) adultCostPerDay += (basePrice * 0.75); // 3rd Adult Extra Bed
+        } else {
+            if (adults >= 1) adultCostPerDay += basePrice;
+            if (adults >= 2) adultCostPerDay += basePrice;
+            if (adults >= 3) adultCostPerDay += (basePrice * 0.75);
+        }
+
+        $("#lblAdultCost").text("₹" + (adultCostPerDay * nights).toFixed(2) + " (₹" + adultCostPerDay.toFixed(2) + "/day)");
+
+        // Child Cost
+        var childCostPerDay = 0;
+        
+        // Old child cost logic
+        if ($("#rbOwn").is(":checked")) {
+            if (isTwinSharing && childCount > 0) {
+                $(".child-age-input").each(function () {
+                    var age = parseInt($(this).val());
+                    if (!isNaN(age)) {
+                        if (age >= 6 && age <= 12) {
+                            childCostPerDay += basePrice * 0.50;
+                        }
+                    }
+                });
+            }
+        }
+        
+        // New family child cost logic
+        if ($("#rbFamily").is(":checked")) {
+            if (childCount > 0) {
+                $(".fm-age").each(function () {
+                    var age = parseInt($(this).val());
+                    if (!isNaN(age) && age <= 12) {
+                        if (age >= 6 && age <= 12) {
+                            // 6-12 years: 50% of adult charge
+                            childCostPerDay += basePrice * 0.50;
+                        }
+                        // 0-5 years is free
+                    }
+                });
+            }
+        }
+        $("#lblChildCost").text("₹" + (childCostPerDay * nights).toFixed(2) + " (₹" + childCostPerDay.toFixed(2) + "/day)");
+
+        var totalBeforePet = adultCostPerDay + childCostPerDay;
+
+        // Pet Cost
+        var petCostPerDay = 0;
+        if (carryPet) {
+            petCostPerDay = basePrice * (petPct / 100);
+        }
+        $("#lblPetCost").text("₹" + (petCostPerDay * nights).toFixed(2) + " (₹" + petCostPerDay.toFixed(2) + "/day)");
+
+        var dailyTotal = totalBeforePet + petCostPerDay;
+        var grandTotal = dailyTotal * nights;
+        $("#lblGrandTotal").text("₹" + grandTotal.toFixed(2));
+    }
+
+    function triggerAvailabilityCheck() {
+        var roomId = parseInt($("#ddlRoomType").val()) || 0;
+        var checkIn = $("#txtCheckIn").val();
+        var checkOut = $("#txtCheckOut").val();
+        var isSharing = $("#chkTwinSharing").is(":checked");
+        var sameGender = $("#chkSameGender").is(":checked");
+        var gender = $("#ddlGender").val();
+        var bookingId = parseInt($("#hdnBookingId").val()) || 0;
+
+        if (roomId === 0 || !checkIn || !checkOut) {
+            $("#availabilityPanel").html("");
+            return;
+        }
+
+        $("#availabilityPanel").html('<div class="text-white"><i class="fa fa-spinner fa-spin mr-1"></i> Checking availability...</div>');
+
+        $.ajax({
+            url: "/IPD/IPD/CheckAvailability",
+            type: "POST",
+            data: {
+                roomTypeId: roomId,
+                checkInDate: checkIn,
+                checkOutDate: checkOut,
+                isTwinSharing: isSharing,
+                gender: gender,
+                sameGender: sameGender,
+                excludeBookingId: bookingId
+            },
+            success: function (res) {
+                var container = $("#availabilityPanel");
+                if (res.success) {
+                    container.data("available", true);
+                    existingTwinChildType = res.existingChildType || "None";
+                    applyOccupancyRules();
+                    container.html(`<div class="suggestion-box success">
+                                        <i class="fa fa-check-circle mr-1"></i> <strong>Room is available!</strong>
+                                    </div>`);
+                } else {
+                    container.data("available", false);
+                    var html = `<div class="suggestion-box danger">
+                                    <i class="fa fa-times-circle mr-1"></i> <strong>Not Available!</strong><br/>
+                                    <span>${res.message}</span>`;
+                    
+                    if (res.suggestMessage) {
+                        html += `<div class="mt-2" style="font-weight:600;">${res.suggestMessage}</div>`;
+                    }
+                    
+                    if (res.freeSlots && res.freeSlots.length > 0) {
+                        html += `<div class="mt-2">Available Slots:<br/><ul>`;
+                        res.freeSlots.forEach(slot => {
+                            html += `<li>${slot}</li>`;
+                        });
+                        html += `</ul></div>`;
+                    }
+                    html += `</div>`;
+                    container.html(html);
+                }
+            },
+            error: function () {
+                $("#availabilityPanel").html('<div class="suggestion-box danger"><i class="fa fa-exclamation-triangle mr-1"></i> Error checking availability.</div>');
+            }
+        });
+    }
+    function fetchBookedDatesAndRefreshCalendar() {
+        var roomId = parseInt($("#ddlRoomType").val()) || 0;
+        var isSharing = $("#chkTwinSharing").is(":checked");
+        var sameGender = $("#chkSameGender").is(":checked");
+        var gender = $("#ddlGender").val() || "";
+        var bookingId = parseInt($("#hdnBookingId").val()) || 0;
+
+        if (roomId === 0) {
+            return;
+        }
+
+        $.ajax({
+            url: "/IPD/IPD/GetBookedDates",
+            type: "GET",
+            data: {
+                roomTypeId: roomId,
+                isTwinSharing: isSharing,
+                gender: gender, 
+                sameGender: sameGender,
+                excludeBookingId: bookingId
+            },
+            success: function (blockedDates) {
+                globalBlockedDates = blockedDates;
+                fpCheckIn.redraw();
+                fpCheckOut.redraw();
+            }
+        });
+    }
+</script>

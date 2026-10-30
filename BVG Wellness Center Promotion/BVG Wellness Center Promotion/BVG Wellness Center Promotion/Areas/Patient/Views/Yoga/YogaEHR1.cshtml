@@ -1,0 +1,3096 @@
+@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.YOGA
+
+@{
+    ViewBag.Title = "YogaEHR";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<style>
+    .body {
+        background-color: white !important;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    hr {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        background: transparent;
+        width: 100%;
+        color: #000;
+        border-radius: 0;
+        min-height: 38px;
+    }
+
+        .form-control::placeholder {
+            color: transparent;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: transparent;
+        }
+
+    .form-row .form-title {
+        font-weight: 600;
+        color: #000;
+        margin: 10px;
+    }
+
+    .form-check {
+        margin: 0 10px;
+    }
+
+    .form-check-input {
+        margin-left: -1rem;
+    }
+
+    .floating-label {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.75rem;
+        transition: all 0.2s ease;
+        pointer-events: none;
+        color: #3f5368;
+        font-size: 14px;
+        z-index: 2;
+        padding: 0 5px;
+        background-color: white;
+    }
+
+    .form-control:focus ~ .floating-label,
+    .form-control:not(:placeholder-shown) ~ .floating-label {
+        top: -0.6rem;
+        left: 0.65rem;
+        font-size: 12px;
+        color: #007bff;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #333;
+    }
+
+    input::placeholder {
+        color: gray !important;
+        opacity: 1;
+        /* Ensure it's not faded */
+    }
+
+    .input-group-supportx {
+        height: max-content;
+        padding: .375rem .75rem;
+        font-size: .875rem;
+        line-height: 1.5;
+        color: #4F5467;
+        text-align: center;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        min-height: 38px;
+    }
+
+    .data-box {
+        border: 1px solid black;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    .data-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .data-field {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding-bottom: 3px;
+        margin-right: 25px;
+        font-size: 14px;
+        color: #000;
+        min-width: 290px;
+        margin-bottom: 10px;
+    }
+
+    .data-label {
+        font-weight: 600;
+        margin-right: 5px;
+    }
+
+    .small-field {
+        min-width: 80px;
+    }
+
+    /* Reduce table cell padding */
+    #config-table td,
+    #config-table th {
+        padding: 6px 10px !important;
+        vertical-align: middle;
+    }
+
+    /* Action icons */
+    .action-icons i {
+        cursor: pointer;
+        margin: 0 5px;
+        color: #007bff;
+        font-size: 14px;
+    }
+
+        .action-icons i.fa-trash {
+            color: red;
+        }
+
+    .btnBx {
+        margin: 10px;
+        display: flex;
+        justify-content: end;
+    }
+
+    .customtab2 li a.nav-link {
+        border: 1px solid lightgray;
+    }
+
+    .tab-content > .active {
+        border: 1px solid lightgrey;
+    }
+
+    .customtab2 li a.nav-link.active {
+        background-color: #1497dee5;
+    }
+
+    .customtab2 li a.nav-link:hover {
+        background-color: #1497dee5;
+    }
+
+    .section {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+        .section .section-heading {
+            background: #1497dee5;
+            padding: 5px;
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    .section-heading .card-title {
+        color: #fff;
+        margin: 0;
+        margin-left: 10px;
+        /*font-size: 16px;*/
+    }
+
+    .section-heading button {
+        color: #fff;
+        font-size: 20px;
+    }
+
+        .section-heading button:hover {
+            color: #f5f5f5;
+        }
+
+    .autosize-textarea {
+        height: 70px !important;
+        overflow: hidden !important;
+    }
+
+
+    /* Diagnosis Results Styles */
+    .diagnosis-results {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .result-item {
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: white;
+        border-left: 4px solid #BE9076;
+        border-radius: 3px;
+    }
+
+        .result-item h5 {
+            color: #BE9076;
+            margin-bottom: 15px;
+        }
+
+    .result-section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+
+    .quick-date {
+        border-radius: 0px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+        .quick-date.btn-primary {
+            color: #fff !important;
+        }
+
+
+    /*.fixed-card {
+           position: fixed;
+           top: 100px;
+           left: 0;
+           right: 0;
+           z-index: 999;
+
+           background-color: white;
+           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+           padding: 10px 20px;
+       }*/
+
+    /*.tab-pane.active{
+               height:280px;
+               overflow:auto;
+           }*/
+</style>
+
+
+<div class="page-wrapper">
+
+
+
+    @*<div style="padding: 9px 20px 6px 20px; color:black; margin-top:-80px; display: flex; justify-content: space-between; align-items: center;">
+            <h4 style="margin: 0;"></h4>
+
+            <div style="position: relative; width: 315px; margin-right: 40%;">
+                <i class="fa fa-search" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #aaa;"></i>
+                <input type="text" class="form-control" id="searchInput" placeholder="Patient Name / Mobile Number / UHID Number"
+                       style="padding:10px;   padding-left: 47px; background-color: white; width: 125%; height: 36px; font-size: 14px; border-radius: 20px;" />
+
+                <div id="searchResult"
+                     style="position: absolute; top: 40px; background: white; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000; width: 125%; display: none;">
+                </div>
+
+            </div>
+        </div>*@
+
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+
+
+                        <div class="d-flex justify-content-end">
+                            @*<button id="status_update_1476"
+                                        data-trigger="hover"
+                                        title="Check out"
+                                        type="button"
+                                        class="btn btn-outline-danger"
+                                        onclick="CloseAppointmentStatus('@ViewBag.TodayPatients.AppointmentFid_Encrypted')">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                    Check Out
+                                </button>*@
+
+                            @*<button class="btn btn-sm btn-outline-danger mb-1 mr-0"
+                                    onclick="closeEncounter('@Model.AppointmentFid_Encrypted')">
+                                <i class="fa fa-check"></i> Check Out
+                            </button>*@
+
+                        </div>
+
+                        @if (ViewBag.TodayPatients == null)
+                        {
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>
+                                    </div>
+
+                                    @*<div class="data-field">
+                        <span class="data-label">Email ID:</span>
+                    </div>*@
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">UHID No:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Department:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Doctor:</span>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        }
+                        else
+                        {
+
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>@ViewBag.TodayPatients.PatientName
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>@ViewBag.TodayPatients.ContactNumber
+                                        @*@if (ViewBag.OPDDetails.VIP_Masking)
+                        {
+                            var mobile = ViewBag.OPDDetails.MobileNumber != null ? ViewBag.OPDDetails.MobileNumber.ToString() : "";
+                            if (mobile.Length > 5)
+                            {
+                                var visiblePart = mobile.Substring(0, mobile.Length - 5);
+                                                        <span class="masked-data">@visiblePart*****</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="masked-data">*****</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @ViewBag.OPDDetails.MobileNumber
+                                                }*@
+                                    </div>
+
+                                    @*<div class="data-field">
+                        <span class="data-label">Email ID:</span> @ViewBag.OPDDetails.EmailID
+                    </div>*@
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>@ViewBag.TodayPatients.Age
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>@ViewBag.TodayPatients.Gender
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">UHID No:</span> @ViewBag.TodayPatients.UHIDNO
+                                    </div>
+
+                                    @*<div class="data-field">
+                        <span class="data-label">Department:</span> @ViewBag.OPDDetails.Department
+                    </div>*@
+
+                                    <div class="data-field">
+                                        <span class="data-label">Doctor:</span>@ViewBag.TodayPatients.DoctorName
+                                    </div>
+
+                                    @*<div class="data-field">
+                        <span class="data-label">Clinic Name:</span>@ViewBag.TodayPatients.ClinicName
+                    </div>*@
+                                </div>
+
+
+
+                            </div>
+
+                        }
+
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-0">
+                    <div class="card-body p-b-0">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs customtab2" role="tablist">
+
+
+
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#EmancipationGame" data-bs-toggle="tab" data-bs-target="#EmancipationGame" role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">EmancipationGame मुक्तिखेला</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#CasePaper" data-bs-toggle="tab" data-bs-target="#CasePaper" role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">CASE PAPER</span>
+                                </a>
+                            </li>                           
+
+                         
+                            @*<li class="nav-item">
+                                <a class="nav-link active"  data-toggle="tab" data-bs-target="#PulseExam"  role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">चित्तक्लेशपरीक्षाMentalSufferingsExam </span>
+                                </a>
+                            </li>*@
+                          
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" data-bs-target="#PulseExam"
+                                   role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">
+                                     चित्तक्लेशपरीक्षाMentalSufferingsExam
+                                    </span>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#AyurvedaDiagnosis"
+                                   role="tab">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-email"></i>
+                                    </span> <span class="hidden-xs-down">YOGA Diagnosis योगर्विनिश्चय</span>
+                                </a>
+                            </li>
+
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#AdvisedTherapy"
+                                   role="tab">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-email"></i>
+                                    </span> <span class="hidden-xs-down">Advised Therapy</span>
+                                </a>
+                            </li>
+                     
+
+                         
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+
+                            <!--1st Tab -->
+                            <div class="tab-pane  p-20" id="EmancipationGame" role="tabpanel">
+
+                                <h3 style="margin-left:200PX; margin-top:50PX;">
+                                    This section is under development and will be available soon.
+                                    Thank you !!
+                                </h3>
+
+                            </div>
+
+                            <!--2nd Tab -->
+
+                            <!--case papper tab -->
+                            <div class="tab-pane  p-20" id="CasePaper" role="tabpanel">
+
+                                @using (Html.BeginForm("CasePaper", "AayurvedEHR", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                {
+
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">GENERAL EXAMINATION</h4>
+                                        <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <input type="hidden" name="CasePaperId" value="@Model.CasePaperId" />
+                                    <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? " ")" />
+                                    <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? " ")" />
+
+                                    <div class="row">
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold">Height (cm)</label>
+                                            @Html.TextBoxFor(m => m.Height, new
+                                            {
+                                            @class = "form-control",
+                                            type = "number",
+                                            placeholder = "cm",
+                                            id = "Height",
+                                            min = "30",
+                                            max = "250",
+                                            required = "required",
+                                            oninput = "calculateBMI()"
+                                            })
+                                            <span class="error-text" id="HeightError"></span>
+                                        </div>
+
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold">Weight (kg)</label>
+                                            @Html.TextBoxFor(m => m.Weight, new
+                                            {
+                                            @class = "form-control",
+                                            type = "number",
+                                            placeholder = "kg",
+                                            id = "Weight",
+                                            min = "1",
+                                            max = "300",
+                                            required = "required",
+                                            oninput = "calculateBMI()"
+                                            })
+                                            <span class="error-text" id="WeightError"></span>
+                                        </div>
+
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold">BMI</label>
+                                            @Html.TextBoxFor(m => m.BMI, new
+                                            {
+                                            @class = "form-control",
+                                            placeholder = "BMI",
+                                            id = "BMI",
+                                            @readonly = "readonly",
+                                            required = "required"
+                                            })
+                                            <span class="error-text">&nbsp;</span>
+                                            <span id="BMICategory" class="ml-2 font-weight-bold"></span>
+                                        </div>
+
+                                        @*<div class="col-md-3 form-group">
+                                            <label class="font-weight-bold">BMI Category</label>
+                                            <input type="text" id="BMICategory" class="form-control" placeholder="Category" readonly="readonly" />
+                                        </div>*@
+                                    </div>
+                                </div>
+
+
+
+
+                                <hr />
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">VITAL SIGNS</h4>
+                                        <button type="button" class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <div class="form-row align-items-end">
+                                        <div class="col-md-2 form-group">
+                                            <label>Pulse(bpm)</label>
+                                            @*@Html.TextBoxFor(m => m.Pulse,
+                                            new { @class = "form-control" , id= "Pulse" })*@
+                                            @Html.TextBoxFor(m => m.Pulse, new { @class = "form-control", id = "Pulse", type = "number", required = "required" })
+                                            <span class="error-text" id="PulseError"></span>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <label>BP (Sys/Dia)</label>
+                                            <div class="d-flex">
+                                                <input type="text" id="BPSys" class="form-control me-1" placeholder="Sys" required />
+                                                <span class="mx-1">/</span>
+                                                <input type="text" id="BPDia" class="form-control ms-1" placeholder="Dia" required />
+
+                                            </div>
+                                            <span class="error-text" id="BPError"></span>
+                                            @*@Html.TextBoxFor(m => m.BloodPressure,
+                                            new { @class = "form-control", placeholder = "120/80", id = "BloodPressure" })*@
+                                            @Html.TextBoxFor(m => m.BloodPressure, new { style = "display:none;", id = "BloodPressure", required = "required" })
+
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <label>Temperature</label>
+                                            @*@Html.TextBoxFor(m => m.TemperatureCasepaper,
+                                            new { @class = "form-control", placeholder = "°F / °C", id = "TemperatureCasepaper" })*@
+                                            @Html.TextBoxFor(m => m.TemperatureCasepaper, new { @class = "form-control", placeholder = "Value", id = "TemperatureCasepaper", type = "number", step = "0.1", required = "required" })
+                                            <span class="error-text" id="TemperatureCasepaperError"></span>
+                                        </div>
+
+
+                                        <div class="col-md-2 form-group">
+                                            <label>Temperature Unit</label>
+                                            @Html.DropDownListFor(m => m.TempUnitCP,
+                                            new SelectList(new[] {
+                                            new { Value = "°F", Text = "°F" }
+                                            }, "Value", "Text"),
+                                            new { @class = "form-control" }
+                                            )
+                                            <span class="error-text">&nbsp;</span>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <label>Respiratory Rate</label>
+                                            @*@Html.TextBoxFor(m => m.RespiratoryRate,
+                                            new { @class = "form-control", placeholder = "/min", id = "RespiratoryRate" })*@
+                                            @Html.TextBoxFor(m => m.RespiratoryRate, new { @class = "form-control", placeholder = "/min", id = "RespiratoryRate", type = "number", required = "required" })
+
+                                            <span class="error-text" id="RespiratoryRateError"></span>
+                                        </div>
+
+                                        <div class="col-md-2 form-group">
+                                            <label>SpO₂ (%)</label>
+                                            @*@Html.TextBoxFor(m => m.SpO2,
+                                            new { @class = "form-control", placeholder = "%", id = "SpO2" })*@
+                                            @Html.TextBoxFor(m => m.SpO2, new { @class = "form-control", placeholder = "%", id = "SpO2", type = "number", required = "required" })
+
+                                            <span class="error-text" id="SpO2Error"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                @*CHIEF COMPLAINTS*@
+
+
+                                @*<div class="container">
+
+                                    <div id="complaintsContainer">
+
+
+
+
+
+                                    </div>
+
+                                    <button type="button" class="btn btn-success mt-3" onclick="addComplaint()">
+                                        + Add Complaint
+                                    </button>
+
+                                </div>*@
+                                <div class="w-100">
+                                    <div id="complaintsContainer">
+
+
+
+
+
+                                    </div>
+
+                                    <button type="button" class="btn btn-success mt-3" onclick="addComplaint()">
+                                        + Add Complaint
+                                    </button>
+
+                                </div>
+
+
+
+                                // MAIN WORKING CODE BY ANIL WITH VALIDATION
+                                @*<div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">PAST HISTORY (Purva Vyadhi)</h4>
+                                        <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> - </button>
+                                    </div>
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                                            <label class="font-weight-bold">Chronic Illnesses</label>
+                                            @Html.DropDownListFor(m => m.ChronicIllnessId, new SelectList(ViewBag.ChronicIllness, "Id", "Name"), "Select Illness", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.ChronicIllnessDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                                            <label>Duration</label>
+                                            @Html.TextBoxFor(m => m.ChronicIllnessDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                                            <small class="text-danger error-msg" style="display:none;"></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                                            <label class="font-weight-bold">Past Surgeries / Hospitalizations</label>
+                                            @Html.DropDownListFor(m => m.PastSurgeryId, new SelectList(ViewBag.PastSurgery, "Id", "Name"), "Select Surgery", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.PastSurgeryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit",disabled = "disabled", onchange = "validateDuration(this)" })
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                                            <label>Duration</label>
+                                            @Html.TextBoxFor(m => m.PastSurgeryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                                            <small class="text-danger error-msg" style="display:none;"></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                                            <label class="font-weight-bold">History of Trauma / Accident</label>
+                                            @Html.DropDownListFor(m => m.TraumaHistoryId, new SelectList(ViewBag.Trauma, "Id", "Name"), "Select Trauma History", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.TraumaHistoryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                                            <label>Duration</label>
+                                            @Html.TextBoxFor(m => m.TraumaHistoryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                                            <small class="text-danger error-msg" style="display:none;"></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                                            <label class="font-weight-bold">Drug / Food Allergies</label>
+                                            @Html.DropDownListFor(m => m.AllergyId, new SelectList(ViewBag.Allergy, "Id", "Name"), "Select Allergy", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.AllergyHistoryDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                                            <label>Duration</label>
+                                            @Html.TextBoxFor(m => m.AllergyHistoryDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                                            <small class="text-danger error-msg" style="display:none;"></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-5 col-md-12 form-group mb-lg-0">
+                                            <label class="font-weight-bold">Long-term Medication History</label>
+                                            @Html.DropDownListFor(m => m.LongTermMedicationId, new SelectList(ViewBag.Medication, "Id", "Name"), "Select Medication", new { @class = "form-control", onchange = "handleDropdownChange(this)" })
+                                        </div>
+                                        <div class="col-lg-3 col-md-6 col-6 form-group mb-lg-0">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.LongTermMedicationDurationUnit, new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 col-6 form-group mb-lg-0 duration-container">
+                                            <label>Duration</label>
+                                            @Html.TextBoxFor(m => m.LongTermMedicationDuration, new { @class = "form-control durationField", type = "number", disabled = "disabled", oninput = "validateDuration(this)" })
+                                            <small class="text-danger error-msg" style="display:none;"></small>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>*@
+                                <hr />
+
+                                //anil ppatil ADD MULTIPLE ROW
+                                <div id="pastHistorySection" class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">PAST HISTORY (Purva Vyadhi)</h4>
+                                        <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> + </button>
+                                    </div>
+
+                                    <div id="container-ChronicIllness" class="history-container mt-3">
+                                        <label class="font-weight-bold">Chronic Illnesses</label>
+                                        <div class="form-row align-items-end history-row mb-3">
+                                            <input type="hidden" name="ChronicIllnessList[0].Id" class="record-id" value="" />
+                                            <div class="col-lg-4 col-md-12 form-group mb-0">
+                                                @Html.DropDownList("ChronicIllnessList[0].ChronicIllnessId", new SelectList(ViewBag.ChronicIllness, "Id", "Name"), "Select Illness", new { @class = "form-control form-control-sm main-field search-dropdown", @style = "height: 31px !important;", onchange = "handleDropdownChange(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.DropDownList("ChronicIllnessList[0].DurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.TextBox("ChronicIllnessList[0].Duration", null, new
+                                                {
+                                                @class = "form-control form-control-sm duration-field durationField",
+                                                type = "number",
+                                                placeholder = "Duration",
+                                                step = "0.01",
+                                                disabled = "disabled", // 'disabled' काढले
+                                                style = "background-color: #e9ecef;",
+                                                onblur = "validateDuration(this)"
+                                                })
+                                                <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                                            </div>
+                                            <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                                                <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-ChronicIllness')">Add +</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <div id="container-PastSurgery" class="history-container">
+                                        <label class="font-weight-bold">Past Surgeries / Hospitalizations</label>
+                                        <div class="form-row align-items-end history-row mb-3">
+                                            <!-- 🔥 HIDDEN ID FIELD -->
+                                            <input type="hidden" name="PastSurgeryList[0].Id" class="record-id" value="" />
+                                            <div class="col-lg-4 col-md-12 form-group mb-0">
+                                                @Html.DropDownList("PastSurgeryList[0].PastSurgeryId", new SelectList(ViewBag.PastSurgery, "Id", "Name"), "Select Surgery", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.DropDownList("PastSurgeryList[0].PastSurgeryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.TextBox("PastSurgeryList[0].PastSurgeryDuration", null, new
+                                                {
+                                                @class = "form-control form-control-sm duration-field durationField",
+                                                type = "number",
+                                                placeholder = "Duration",
+                                                step = "0.01",
+                                                disabled = "disabled", // 'disabled' काढले
+                                                style = "background-color: #e9ecef;",
+                                                onblur = "validateDuration(this)"
+                                                })
+                                                <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                                            </div>
+                                            <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                                                <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-PastSurgery')">Add +</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <div id="container-Trauma" class="history-container">
+                                        <label class="font-weight-bold">History of Trauma / Accident</label>
+                                        <div class="form-row align-items-end history-row mb-3">
+                                            <!-- 🔥 HIDDEN ID FIELD -->
+                                            <input type="hidden" name="TraumaHistoryList[0].Id" class="record-id" value="" />
+                                            <div class="col-lg-4 col-md-12 form-group mb-0">
+                                                @Html.DropDownList("TraumaHistoryList[0].TraumaHistoryId", new SelectList(ViewBag.Trauma, "Id", "Name"), "Select Trauma", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.DropDownList("TraumaHistoryList[0].TraumaHistoryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.TextBox("TraumaHistoryList[0].TraumaHistoryDuration", null, new
+                                                {
+                                                @class = "form-control form-control-sm duration-field durationField",
+                                                type = "number",
+                                                placeholder = "Duration",
+                                                step = "0.01",
+                                                disabled = "disabled", // 'disabled' काढले
+                                                style = "background-color: #e9ecef;",
+                                                onblur = "validateDuration(this)"
+                                                })
+                                                <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                                            </div>
+                                            <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                                                <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Trauma')">Add +</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <div id="container-Allergy" class="history-container">
+                                        <label class="font-weight-bold">Drug / Food Allergies</label>
+                                        <div class="form-row align-items-end history-row mb-3">
+                                            <!-- 🔥 HIDDEN ID FIELD -->
+                                            <input type="hidden" name="AllergyList[0].Id" class="record-id" value="" />
+                                            <div class="col-lg-4 col-md-12 form-group mb-0">
+                                                @Html.DropDownList("AllergyList[0].AllergyId", new SelectList(ViewBag.Allergy, "Id", "Name"), "Select Allergy", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.DropDownList("AllergyList[0].AllergyHistoryDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.TextBox("AllergyList[0].AllergyHistoryDuration", null, new
+                                                {
+                                                @class = "form-control form-control-sm duration-field durationField",
+                                                type = "number",
+                                                placeholder = "Duration",
+                                                step = "0.01",
+                                                disabled = "disabled", // 'disabled' काढले
+                                                style = "background-color: #e9ecef;",
+                                                onblur = "validateDuration(this)"
+                                                })
+                                                <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                                            </div>
+                                            <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                                                <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Allergy')">Add +</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+
+                                    <div id="container-Medication" class="history-container">
+                                        <label class="font-weight-bold">Long-term Medication History</label>
+                                        <div class="form-row align-items-end history-row mb-3">
+                                            <!-- 🔥 HIDDEN ID FIELD -->
+                                            <input type="hidden" name="LongTermMedicationList[0].Id" class="record-id" value="" />
+                                            <div class="col-lg-4 col-md-12 form-group mb-0">
+                                                @Html.DropDownList("LongTermMedicationList[0].LongTermMedicationId", new SelectList(ViewBag.Medication, "Id", "Name"), "Select Medication", new { @class = "form-control form-control-sm main-field search-dropdown", onchange = "handleDropdownChange(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.DropDownList("LongTermMedicationList[0].LongTermMedicationDurationUnit", new SelectList(ViewBag.DurationUnits, "Id", "Name"), "Select Unit", new { @class = "form-control form-control-sm unit-field durationUnit", disabled = "disabled", onchange = "validateDuration(this)" })
+                                            </div>
+                                            <div class="col-lg-3 col-md-4 col-4 form-group mb-0">
+                                                @Html.TextBox("LongTermMedicationList[0].LongTermMedicationDuration", null, new
+                                                {
+                                                @class = "form-control form-control-sm duration-field durationField",
+                                                type = "number",
+                                                placeholder = "Duration",
+                                                step = "0.01",
+                                                disabled = "disabled", // 'disabled' काढले
+                                                style = "background-color: #e9ecef;",
+                                                onblur = "validateDuration(this)"
+                                                })
+                                                <small class="text-danger error-msg" style="display:none; font-size: 10px;"></small>
+                                            </div>
+                                            <div class="col-lg-2 col-md-4 col-4 btn-container d-flex">
+                                                <button type="button" class="btn btn-sm btn-success add-btn px-2" onclick="addNewRow(this, 'container-Medication')">Add +</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*family History*@
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">FAMILY HISTORY (Kulavruttanta)</h4>
+                                        <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)">-</button>
+                                    </div>
+
+                                    <div class="form-row align-items-end">
+                                        <div class="col-md-6 form-group">
+
+                                            <label>Family History (Kulavruttanta)</label>
+
+                                            @*@Html.ListBoxFor(m => m.FamilyHistoryIds,
+                                            new MultiSelectList(ViewBag.FamilyHistory, "Id", "Name"),
+                                            new { @class = "form-control", id = "FamilyHistory" ,multiple="multiple[]"})*@
+
+                                            @Html.ListBoxFor(m => m.FamilyHistoryIdsList,
+                                            new MultiSelectList(ViewBag.FamilyHistory, "Id", "Name", Model.FamilyHistoryIdsList),
+                                            new { @class = "form-control", id = "FamilyHistory" })
+
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                if (ViewBag.TodayPatients != null && ViewBag.TodayPatients.Gender != null && (ViewBag.TodayPatients.Gender == "Female" || ViewBag.TodayPatients.Gender == "Other"))
+                                {
+                                <div class="section" id="menstrualSection">
+                                    <div class="section-heading">
+                                        <h4 class="card-title"> MENSTRUAL / OBSTETRIC HISTORY</h4>
+                                        <button type="button" class="btn btn-md toggle-btn" onclick="toggleSection(this)"> - </button>
+                                    </div>
+
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-3 col-md-6 col-12 form-group">
+                                            <label class="font-weight-bold">Menarche Age (Years)</label>
+                                            @Html.TextBoxFor(m => m.MenarcheAge, new
+                                            {
+                                            @class = "form-control",
+                                            type = "number",
+                                            //min = "8",
+                                            //max = "25",
+                                            oninput = "limitMenarcheAge(this)"
+                                            })
+                                            @*<small id="menarcheError" class="text-danger" style="display:none;">Max age allowed is 25</small>*@
+                                        </div>
+
+
+
+                                        <div class="col-lg-3 col-md-6 col-12 form-group">
+                                            <label class="font-weight-bold">LMP (Last Period)</label>
+                                            @Html.TextBoxFor(m => m.LMP, "{0:yyyy-MM-dd}", new
+                                            {
+                                            @type = "date",
+                                            @class = "form-control",
+                                            @id = "lmpDatePicker", // Navin ID add kela
+                                            @max = DateTime.Now.ToString("yyyy-MM-dd") // Server-side block
+                                            })
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label class="font-weight-bold">Cycle Regularity</label>
+
+                                            <div class="radio-group mt-2 d-flex align-items-center">
+
+                                                <label style="cursor: pointer;" class="mr-4 mb-0 d-flex align-items-center">
+                                                    @Html.RadioButtonFor(m => m.CycleRegular, "Yes", new { id = "rbRegularYes" })
+                                                    <span>Regular (Yes)</span>
+
+                                                </label>
+
+                                                <label style="cursor: pointer;" class="mb-0 d-flex align-items-center">
+                                                    @Html.RadioButtonFor(m => m.CycleRegular, "No", new { id = "rbRegularNo" })
+                                                    <span>Irregular (No)</span>
+
+                                                </label>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row align-items-end history-row">
+                                        <div class="col-lg-2 col-md-4 col-6 form-group">
+                                            <label>Unit</label>
+                                            @Html.DropDownListFor(m => m.MENSTRUALDurationUnit,
+                                            new SelectList(((IEnumerable<dynamic>
+                                                )ViewBag.DurationUnits)
+                                                .Where(x => x.Name.Contains("Day")),
+                                                "Id", "Name"),
+                                                null,
+                                                new { @class = "form-control durationUnit", onchange = "validateDuration(this)" })
+                                        </div>
+
+                                        <div class="col-lg-2 col-md-4 col-6 form-group duration-container">
+                                            <label>Flow Duration</label>
+                                            @Html.TextBoxFor(m => m.MENSTRUALDurationC, new
+                                            {
+                                            @class = "form-control durationField",
+                                            type = "number",
+                                            min = "1",
+                                            oninput = "validateFlowDuration(this)"
+                                            })
+                                            <small id="flowError" class="text-danger error-msg" style="display:none; font-size: 11px;"></small>
+                                        </div>
+
+
+
+                                        <div class="col-lg-3 col-md-4 col-12 form-group">
+                                            <label>Amount Of Flow</label>
+                                            @Html.DropDownListFor(m => m.AmountOfFlow, new SelectList(new[] { "Low", "Moderate", "Heavy", "Excessive" }), "Select Amount", new { @class = "form-control" })
+                                        </div>
+
+                                        <div class="col-lg-5 col-md-12 col-12 form-group">
+                                            <label class="font-weight-bold">Pain During Menstruation</label>
+
+                                            <div class="radio-group mt-2 d-flex align-items-center flex-wrap" style="font-size: 0.9rem;">
+
+                                                <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                                    @Html.RadioButtonFor(m => m.MenstrualPain, "No Pain")
+                                                    <span class="ml-1">None</span>
+                                                </label>
+
+
+                                                <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                                    @Html.RadioButtonFor(m => m.MenstrualPain, "Mild Pain")
+                                                    <span class="ml-1">Mild</span>
+                                                </label>
+
+
+                                                <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                                    @Html.RadioButtonFor(m => m.MenstrualPain, "Moderate Pain")
+                                                    <span class="ml-1">Mod</span>
+                                                </label>
+
+
+                                                <label style="cursor: pointer;" class="mb-0 d-flex align-items-center mr-3">
+                                                    @Html.RadioButtonFor(m => m.MenstrualPain, "Severe Pain")
+                                                    <span class="ml-1">Severe</span>
+                                                </label>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row history-row">
+                                        <div class="col-md-12 form-group">
+                                            <label>Obstetric History (G P L A)</label>
+                                            @Html.TextBoxFor(m => m.ObstetricHistory, new { @class = "form-control", @id = "ObstetricHistory", maxlength = "50", placeholder = "Type numbers only (e.g. 2110)" })
+                                        </div>
+                                    </div>
+                                    <hr />
+                                </div>
+                                }
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">INVESTIGATIONS</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn" p
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>
+
+                                    <!-- Row 1 : Lab Tests -->
+                                    <div class="form-row">
+                                        <div class="col-md-12 form-group">
+                                            <label>Lab Tests Advised</label>
+                                            @*@Html.ListBoxFor(m => m.LabTestsAdvisedIds,
+                                            new MultiSelectList(ViewBag.LabTests, "Id", "Name"),
+                                            new { @class = "form-control", id = "LabTestsAdvised", size = "5" })*@
+
+                                            @Html.ListBoxFor(m => m.LabTestsAdvisedIdsList,
+                                            new MultiSelectList(ViewBag.LabTests, "Id", "Name", Model.LabTestsAdvisedIdsList),
+                                            new { @class = "form-control select2", id = "LabTestsAdvised", multiple = "multiple" })
+
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 2 : Imaging -->
+                                    <div class="form-row">
+                                        <div class="col-md-12 form-group">
+                                            <label>Imaging Advised</label>
+                                            @Html.ListBoxFor(m => m.ImagingAdvisedIdsList,
+                                            new MultiSelectList(ViewBag.Imaging, "Id", "Name", Model.ImagingAdvisedIdsList),
+                                            new { @class = "form-control select2", id = "ImagingAdvised", multiple = "multiple" })
+
+
+                                        </div>
+                                    </div>
+
+                                    @*Row 3 : File Upload*@
+                                    @*<div class="form-row">
+                                        <div class="col-md-6 form-group">
+                                            <label>Previous Reports Uploaded</label>
+                                            <input type="file"
+                                                   name="PreviousReports"
+                                                   class="form-control-file" />
+                                        </div>
+                                    </div>*@
+                                </div>
+
+                                <hr />
+
+                                <div class="section">
+
+                                    @*<div class="form-row">
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold" style="color: #2c3e50;">Previous Follow-up (Date & Time)</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+
+                                                </div>
+                                                <input type="text"
+                                                       class="form-control shadow-sm"
+                                                       value="@ViewBag.LastFollowUpDate"
+                                                       readonly="readonly"
+                                                       style="background-color: #f4f7f6; font-weight: bold; color: #2c3e50;" />
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div class="form-row">
+                                        <!-- 1. Juni Date Dakvnya sathi (Read-only) -->
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold" style="color: #2c3e50;">Previous Follow-up</label>
+                                            <input type="text" class="form-control bg-light" value="@ViewBag.LastFollowUpDate" readonly="readonly" />
+                                        </div>
+
+                                        <!-- 2. Navin Date Select Karnya sathi (Calendar) -->
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold" style="color: #2c3e50;">Set Next Follow-up Date</label>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-white text-primary"><i class="fa fa-calendar"></i></span>
+                                                </div>
+                                                <input type="date"
+                                                       name="FollowUpDate"
+                                                       id="FollowUpDate"
+                                                       class="form-control shadow-sm"
+                                                       min="@DateTime.Now.ToString(" yyyy-MM-dd")"
+                                                       value="@(Model.FollowUpDate.HasValue ? Model.FollowUpDate.Value.ToString(" yyyy-MM-dd")
+                                                       "" )" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div class="section-heading">
+                                        <h4 class="card-title"> PREVIOUS FOLLOW-UP & PROGNOSIS</h4>
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+                                    </div>*@
+
+                                    <!-- Row 1 : Follow-up Date -->
+                                    @*<div class="form-row">
+                                        <div class="col-md-4 form-group">
+                                            <label>Follow-up Date</label>
+
+                                            @Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}", new { @type = "date", @class = "form-control",@max = DateTime.Now.ToString("yyyy-MM-dd") })*@
+                                            @*@Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}" , new { @class = "form-control", type = "date" })*@
+                                            @*
+                                        </div>
+                                    </div>*@
+
+                                    @*<div class="form-row">
+                                        <div class="col-md-4 form-group">
+                                            <label class="font-weight-bold">Follow-up Date</label>
+                                            <div class="input-group custom-date-container">
+
+                                                @Html.TextBoxFor(m => m.FollowUpDate, "{0:yyyy-MM-dd}", new
+                                                {
+                                                @type = "date",
+                                                @class = "form-control shadow-sm",
+                                                @max = DateTime.Now.ToString("yyyy-MM-dd")
+                                                })
+                                            </div>
+                                        </div>
+                                    </div>*@
+
+
+
+                                    <!-- Row 2 : Expected Outcome -->
+                                    @*<div class="form-row">
+                                        <div class="col-md-12 form-group">
+                                            <label>Expected Outcome</label>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    @Html.RadioButtonFor(m => m.ExpectedOutcome, "Complete relief")
+                                                    Complete relief
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @Html.RadioButtonFor(m => m.ExpectedOutcome, "Partial relief")
+                                                    Partial relief
+                                                </div>
+                                                <div class="col-md-4">
+                                                    @Html.RadioButtonFor(m => m.ExpectedOutcome, "Condition under control")
+                                                    Condition under control
+                                                </div>
+                                                <div class="col-md-4 mt-2">
+                                                    @Html.RadioButtonFor(m => m.ExpectedOutcome, "Requires further treatment")
+                                                    Requires further treatment
+                                                </div>
+                                                <div class="col-md-4 mt-2">
+                                                    @Html.RadioButtonFor(m => m.ExpectedOutcome, "Chronic / long-term management")
+                                                    Chronic / long-term management
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                        <div class="form-row">
+                                            <div class="col-md-12 form-group">
+                                                <label class="font-weight-bold">Expected Outcome</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label style="cursor: pointer;">
+                                                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Complete relief", new { id = "outcome1" })
+                                                            <span class="ml-1">Complete relief</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="cursor: pointer;">
+                                                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Partial relief", new { id = "outcome2" })
+                                                            <span class="ml-1">Partial relief</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label style="cursor: pointer;">
+                                                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Condition under control", new { id = "outcome3" })
+                                                            <span class="ml-1">Condition under control</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <label style="cursor: pointer;">
+                                                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Requires further treatment", new { id = "outcome4" })
+                                                            <span class="ml-1">Requires further treatment</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <label style="cursor: pointer;">
+                                                            @Html.RadioButtonFor(m => m.ExpectedOutcome, "Chronic / long-term management", new { id = "outcome5" })
+                                                            <span class="ml-1">Chronic / long-term management</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <!-- Row 3 : Red Flag Advice -->
+                                        <div class="form-row">
+                                            <div class="col-md-12 form-group">
+                                                <label>Red-Flag Advice</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_FeverIncrease) Fever increases
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_SeverePain) Severe pain
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_SuddenWorsening) Sudden worsening of symptoms
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_VomitingBleeding) Vomiting / bleeding
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_DizzinessFainting) Dizziness / fainting
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <label>
+                                                            @Html.CheckBoxFor(m => m.RF_NoImprovement) No improvement after treatment
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Other -->
+                                        <div class="form-row">
+                                            <div class="col-md-6 form-group">
+                                                <label>Other (if any)</label>
+                                                @Html.TextBoxFor(m => m.RF_Other,
+                                                new { @class = "form-control onlyChar", placeholder = "Specify other red-flag advice", maxlength = "100" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr />
+
+
+
+                                    <div class="btnBx">
+                                        <button type="submit" class="btn btn-md btn-success submit-action-btn mr-1" id="submitBtn">Submit</button>
+                                        @*<button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                                        <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action(" AUList", "reception" )'">List</button>*@
+
+                                    </div>
+
+                                    }
+                                </div> <!-- case  paper Tab panel end div -->
+                                <!--3rd Tab -->
+                                <div class="tab-pane active" id="PulseExam" role="tabpanel">
+
+                                    <form action="~/Yoga/MentalSufferingsExam" method="post">
+
+                                        <div class="p-1 mt-2">
+                                            <div class="section">
+                                                <div class="section-heading">
+                                                    <h4 class="card-title">चित्तक्लेशपरीक्षाMentalSufferingsExam </h4>
+                                                </div>
+
+                                                @Html.HiddenFor(m => m.AppointmentFid)
+                                                @Html.HiddenFor(m => m.ExamID)
+                                                @*<input type="hidden" name="OPDNO" value="@(ViewBag.OPDDetails?.OPDNO ?? " ")" />*@
+
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">अविद्याUnAware</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-10 form-group">
+                                                        @Html.TextAreaFor(model => model.DescriptionUnAware, new
+                                                        {
+                                                        @class = "form-control",
+                                                        @placeholder = " ",
+                                                        @maxlength = "100",
+                                                        @id = "Description",
+                                                        required = "required"
+                                                        })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">अस्मिताEgoism</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-10 form-group">
+                                                        @Html.TextAreaFor(model => model.DescriptionEgoism, new
+                                                        {
+                                                        @class = "form-control",
+                                                        @placeholder = " ",
+                                                        @maxlength = "100",
+                                                        @id = "Description",
+                                                        required = "required"
+                                                        })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <hr />
+
+
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">रागDesire</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-10 form-group">
+                                                        @Html.TextAreaFor(model => model.DescriptionDesire, new
+                                                        {
+                                                        @class = "form-control",
+                                                        @placeholder = " ",
+                                                        @maxlength = "100",
+                                                        @id = "Description",
+                                                        required = "required"
+                                                        })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+                                                <hr />
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">द्वेषHatred</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-10 form-group">
+                                                        @Html.TextAreaFor(model => model.DescriptionHatred, new
+                                                        {
+                                                        @class = "form-control",
+                                                        @placeholder = " ",
+                                                        @maxlength = "100",
+                                                        @id = "Description",
+                                                        required = "required"
+                                                        })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+                                                <hr />
+
+                                                <div class="form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">Fear of death</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-10 form-group">
+                                                        @Html.TextAreaFor(model => model.Fearofdeath, new
+                                                        {
+                                                        @class = "form-control",
+                                                        @placeholder = " ",
+                                                        @maxlength = "100",
+                                                        @id = "Fearofdeath",
+                                                        required = "required"
+                                                        })
+                                                        <label class="floating-label" for="Description">Fear of death</label>
+
+                                                    </div>
+                                                </div>
+
+
+
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="btnBx">
+                                            <button type="submit" class="btn btn-md btn-success mr-1">Submit</button>
+                                            <button type="reset" class="btn btn-md btn-primary ml-1">Reset</button>
+                                            <button type="button" class="btn btn-md btn-primary ml-1" onclick="window.location.href='@Url.Action(" AUList", "reception" )'">List</button>
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+
+                                <!--3st Tab-->
+                                <div class="tab-pane p-20" id="AyurvedaDiagnosis" role="tabpanel">
+                                    <div class="section">
+
+
+                                        <div class="section-heading">
+                                            <h5 class="card-title">YOGA Diagnosis</h5>
+
+                                        </div>
+
+                                        <form action="/Patient/Yoga/YogaDiagnosis" method="post">
+
+                                            @Html.HiddenFor(m => m.YogaDiagnosisID)
+
+                                            <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? " ")" />
+                                            <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? " ")" />
+
+
+                                            <div class="form-row">
+                                                <div class="col-md-4 form-group">
+                                                    <div class="form-title">योगर्विनिश्चयYogaDiagnosis</div>
+                                                </div>
+                                                <div class="col-md-5">
+                                                    @*@Html.DropDownListFor(model => model.Fever,
+                                                    new SelectList(new[] { "ज्वरFever" }),
+                                                    "-- Select Fever --",
+                                                    new { @class = "form-control", required = "required" })*@
+
+                                                    @Html.ListBoxFor(m => m.DiseaseIDList,
+                                                    new MultiSelectList(ViewBag.Disease, "Id", "Name", Model.DiseaseIDList),
+                                                    new { @class = "form-control", id = "DiseaseID" })
+
+
+                                                    <label class="floating-label">व्याधिDisease</label>
+                                                </div>
+                                            </div>
+
+                                            <hr />
+                                            <div class="btnBx">
+                                                <button type="submit" class="btn btn-md btn-success mr-1">Submit</button>
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
+
+
+                                <!--4th tab -->
+                                <div class="tab-pane p-20" id="AdvisedTherapy" role="tabpanel">
+
+                                    <div class="section">
+                                        <div class="section-heading">
+                                            <h4 class="card-title">Medicine Prescription</h4>
+                                        </div>
+
+                                        <form id="AdvisedTherapyForm" method="post" action="/Patient/Yoga/AdvisedTherapy">
+
+                                            <!-- Hidden JSON -->
+                                            <input type="hidden" id="AdvisedTherapyJson" name="AdvisedTherapyJson" />
+
+                                            <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? 0)" />
+                                            <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? 0)" />
+
+                                            <div class="row">
+
+                                                <!-- Service -->
+                                                <div class="col-md-4 form-group">
+                                                    <label>Service</label>
+                                                    @Html.DropDownList("ServiceFid",
+                                                    new SelectList(ViewBag.Service, "Id", "Name"),
+                                                    "Select Service",
+                                                    new { @class = "form-control", id = "ATserviceFid" })
+                                                </div>
+
+                                                <!-- Duration -->
+                                                <div class="col-md-4 form-group">
+                                                    <label>Duration</label>
+                                                    @Html.DropDownList("Duration",
+                                                    new SelectList(ViewBag.Duration, "Id", "NumberValue"),
+                                                    "Select Duration",
+                                                    new { @class = "form-control", id = "Duration" })
+                                                </div>
+
+                                                <!-- Duration Unit -->
+                                                <div class="col-md-4 form-group">
+                                                    <label>Duration Unit</label>
+                                                    <select class="form-control" id="DurationUnit">
+                                                        <option value="">Select Unit</option>
+                                                        <option value="Minutes">Minutes</option>
+                                                        <option value="Hours">Hours</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Repetition -->
+                                                <div class="col-md-4 form-group">
+                                                    <label>Repetition</label>
+                                                    @Html.DropDownList("Repetition",
+                                                    new SelectList(ViewBag.Repetition, "Id", "NumberValue"),
+                                                    "Select Days",
+                                                    new { @class = "form-control", id = "ATDaysNumber" })
+                                                </div>
+
+                                                <!-- Repetition Unit -->
+                                                <div class="col-md-4 form-group">
+                                                    <label>Repetition Unit</label>
+                                                    <select class="form-control" id="RepetitionUnit">
+                                                        <option value="">Select Unit</option>
+                                                        <option value="Days">Days</option>
+                                                        <option value="Weeks">Weeks</option>
+                                                        <option value="Months">Months</option>
+                                                        <option value="Years">Years</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Add Button -->
+                                                <div class="col-md-4 form-group mt-4">
+                                                    <button type="button" class="btn btn-success" id="AddTherapy">
+                                                        Add
+                                                    </button>
+                                                </div>
+
+                                            </div>
+
+                                            <hr />
+
+                                            <!-- TABLE -->
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="AdvisedTherapyTable">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Service</th>
+                                                            <th>Duration</th>
+                                                            <th>Repetition</th>
+                                                            <th style="width:100px;">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+
+
+                                                        @if (ViewBag.AdvisedTherapyList != null)
+                                                        {
+                                                        foreach (var item in ViewBag.AdvisedTherapyList)
+                                                        {
+                                                        <tr>
+                                                            <td>@item.ServiceName</td>
+                                                            <td>@item.Duration @item.DurationUnit</td>
+                                                            <td>@item.Repetition @item.RepetitionUnit</td>
+                                                            <td>
+                                                                <button class="btn btn-danger btn-sm">Delete</button>
+                                                            </td>
+                                                        </tr>
+                                                        }
+                                                        }
+
+
+
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <button type="submit" class="btn btn-primary">
+                                                    Submit
+                                                </button>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+                            </div>
+                        </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+</div>
+
+
+<script>
+    document.addEventListener("input", function (event) {
+        if (event.target.classList.contains("autosize-textarea")) {
+            event.target.style.height = "auto"; // reset first
+            event.target.style.height = (event.target.scrollHeight) + "px"; // fit content
+        }
+    });
+
+    // Run once on page load to fit default text
+    window.addEventListener("load", function () {
+        document.querySelectorAll(".autosize-textarea").forEach(function (el) {
+            el.style.height = "auto";
+            el.style.height = el.scrollHeight + "px";
+        });
+    });
+</script>
+
+
+<!-- ================= TEMPLATE (Hidden) case paper script================= -->
+    <script type="text/template" id="complaintTemplate">
+
+        <div class="card p-3 mb-4 complaint-section border">
+
+            <h5 class="mb-3">Chief Complaint</h5>
+
+            @*<div class="section-heading">
+                <h4 class="card-title">PAST HISTORY (Purva Vyadhi)</h4>
+
+            </div>*@
+
+            <!-- Complaint + Duration -->
+            @*<div class="form-row">
+
+                <div class="col-md-6">
+                    <label>Complaint</label>
+                    <select name="Complaints[__i__].ComplaintId" class="form-control">
+                        <option value="">Select Complaint</option>
+                        @foreach (var c in ViewBag.Complaints)
+                        {
+                        <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Duration</label>
+                    <input type="number" name="Complaints[__i__].DurationC" class="form-control durationField" maxlength="3" />
+                </div>
+
+                <div class="col-md-3">
+                    <label>Unit</label>
+                    <select name="Complaints[__i__].DurationUnitId" class="form-control">
+                        <option value="">Select Unit</option>
+                        @foreach (var u in ViewBag.DurationUnits)
+                        {
+                        <option value="@u.Id">@u.Name</option>
+                        }
+                    </select>
+                </div>
+
+            </div>*@
+
+            <div class="form-row align-items-end">
+                <div class="col-md-6 form-group">
+                    <label>Complaint</label>
+                    <select name="Complaints[__i__].ComplaintId" class="form-control search-dropdown" required>
+                        <option value="" disabled selected hidden>Select Complaint</option>
+                        @foreach (var c in ViewBag.Complaints)
+                        {
+                        <option value="@c.Id">@c.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Unit</label>
+                    <select name="Complaints[__i__].DurationUnitId" class="form-control durationUnit" onchange="validateDuration(this)" required>
+                        <option value="">Select Unit</option>
+                        @foreach (var u in ViewBag.DurationUnits)
+                        {
+                        <option value="@u.Id">@u.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3 form-group">
+                    <label>Duration</label>
+                    <input type="text"
+                           name="Complaints[__i__].DurationC"
+                           class="form-control durationField"
+                           oninput="validateDuration(this)"
+                           placeholder="0" />
+                    <small class="text-danger error-msg" style="display:none; font-weight:bold;"></small>
+                </div>
+            </div>
+
+
+            <!-- Onset -->
+            @*<div class="mt-3">
+                <label>Onset</label><br />
+                <input type="radio" name="Complaints[__i__].Onset" value="Acute" /> Acute
+                <input type="radio" name="Complaints[__i__].Onset" value="Chronic" class="ml-3" /> Chronic
+            </div>*@
+
+            <div class="mt-3">
+                <label class="font-weight-bold">Onset</label>
+                <div class="d-flex align-items-center">
+                    <div class="custom-control custom-radio mr-3">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="Complaints[__i__].Onset" value="Acute" />
+                            <span class="ml-1">Acute</span>
+                        </label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="Complaints[__i__].Onset" value="Subacute" />
+                            <span class="ml-1">Subacute</span>
+                        </label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <label style="cursor: pointer;">
+                            <input type="radio" name="Complaints[__i__].Onset" value="Chronic" />
+                            <span class="ml-1">Chronic</span>
+                        </label>
+                    </div>
+                </div>
+
+            <!-- Nature + Progression -->
+            <div class="form-row mt-3">
+                <div class="col-md-6">
+                    <label>Nature of Illness</label>
+                    <select name="Complaints[__i__].NatureOfIllnessId" class="form-control">
+                        <option value="" disabled selected hidden>Select Nature</option>
+                        @foreach (var n in ViewBag.NatureList)
+                        {
+                            <option value="@n.Id">@n.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>Progression</label>
+                    <select name="Complaints[__i__].ProgressionId" class="form-control">
+                        <option value="" disabled selected hidden>Select Progression</option>
+                        @foreach (var p in ViewBag.Progressions)
+                        {
+                            <option value="@p.Id">@p.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Symptoms + Aggravating -->
+            <div class="form-row mt-3">
+                <div class="col-md-6">
+                    <label>Associated Symptoms</label>
+                    <select name="Complaints[__i__].AssociatedSymptomsId" class="form-control search-dropdown">
+                        <option value="" disabled selected hidden>Select Symptoms</option>
+                        @foreach (var s in ViewBag.Symptoms)
+                        {
+                            <option value="@s.Id">@s.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>Aggravating Factors</label>
+                    <select name="Complaints[__i__].AggravatingFactorsId" class="form-control search-dropdown">
+                        <option value="" disabled selected hidden>Select Factor</option>
+                        @foreach (var a in ViewBag.Aggravating)
+                        {
+                            <option value="@a.Id">@a.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Relieving -->
+            <div class="mt-3">
+                <label>Relieving Factors</label>
+                <select name="Complaints[__i__].RelievingFactorsId" class="form-control search-dropdown">
+                    <option value="" disabled selected hidden>Select Factor</option>
+                    @foreach (var r in ViewBag.Relieving)
+                    {
+                        <option value="@r.Id">@r.Name</option>
+                    }
+                </select>
+            </div>
+            </div>
+
+
+            <!-- Previous Treatment -->
+            @*<div class="mt-3">
+                    <label>Previous Treatment</label><br />
+                    <input type="radio" name="Complaints[__i__].PreviousTreatment" value="Allopathy"  /> Allopathy
+                    <input type="radio" name="Complaints[__i__].PreviousTreatment" value="Other" class="ml-3" /> Other
+
+                    @if (Model.Complaints != null && Model.Complaints.Count > 0)
+                    {
+                        <input type="text"
+                               name="Complaints[0].PreviousTreatmentOther"
+                               value="@Model.Complaints[0].PreviousTreatmentOther"
+                               class="form-control mt-2 other-text previousTreatmentText"
+                               placeholder="Please specify"
+                               maxlength="100" />
+                    }
+                    else
+                    {
+                        <input type="text"
+                               name="Complaints[0].PreviousTreatmentOther"
+                               class="form-control mt-2 other-text previousTreatmentText"
+                               placeholder="Please specify"
+                               maxlength="100" />
+                    }
+
+                </div>*@
+
+            <div class="mt-3">
+                <label class="font-weight-bold">Previous Treatment</label>
+
+<select name="Complaints[__i__].PreviousTreatment" class="form-control previousTreatmentSelect">
+                    <option value="" disabled selected hidden>Select Treatment</option>
+                    @if (ViewBag.PreviousTreatments != null)
+                    {
+                        foreach (var item in ViewBag.PreviousTreatments)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    }
+                </select>
+
+                <input type="text"
+                       name="Complaints[__i__].PreviousTreatmentOther"
+                       class="form-control mt-2 other-text previousTreatmentText"
+                       placeholder="Please specify"
+                       maxlength="100" readonly />
+            </div>
+
+
+            <!-- Response -->
+            <div class="mt-3">
+                <label>Response to Previous Treatment</label>
+                <select name="Complaints[__i__].ResponsePreviousTreatmentId" class="form-control">
+                    <option value="" disabled selected hidden>Select Response</option>
+                    @foreach (var rt in ViewBag.ResponseTreatment)
+                    {
+                    <option value="@rt.Id">@rt.Name</option>
+                    }
+                </select>
+            </div>
+
+
+            <div class="text-right mt-3">
+                <button type="button" class="btn btn-danger" onclick="removeComplaint(this)">
+                    Remove
+                </button>
+            </div>
+
+        </div>
+
+    </script>
+
+
+
+
+
+
+
+    <script>
+    $(document).on("change", "select[name*='PreviousTreatment']", function () {
+
+        let name = $(this).attr("name");
+        let otherName = name.replace("PreviousTreatment", "PreviousTreatmentOther");
+
+        let input = $("input[name='" + otherName + "']");
+
+        if ($(this).find("option:selected").text().trim().toLowerCase() === "other") {
+            input.prop("disabled", false);   // 🔥 main fix
+            input.removeAttr("readonly");
+        } else {
+            input.val("");
+            input.prop("disabled", true);    // 🔥 back disable
+            input.attr("readonly", true);
+        }
+    });
+    </script>
+    <script>
+    let complaintIndex = 0;
+
+    function addComplaint(data) {
+        // --- 1. VALIDATION START (Fakt jeva manual click hoto tevach) ---
+        debugger;
+        if (!data) {
+            let allSections = document.querySelectorAll(".complaint-section");
+
+            if (allSections.length > 0) {
+                let lastIndex = allSections.length - 1; // ✅ FIX
+                let lastSection = allSections[lastIndex];
+
+                // Mandatory fields ghene
+                let complaintField = lastSection.querySelector('[name="Complaints[' + lastIndex + '].ComplaintId"]');
+                let durationField = lastSection.querySelector('[name="Complaints[' + lastIndex + '].DurationC"]');
+                let unitField = lastSection.querySelector('[name="Complaints[' + lastIndex + '].DurationUnitId"]');
+
+                let isValid = true;
+
+                // Borders Reset
+                [complaintField, durationField, unitField].forEach(el => {
+                    if(el) el.style.borderColor = "";
+                });
+
+                // Validation logic
+                if (!complaintField || complaintField.value === "") {
+                    if(complaintField) complaintField.style.borderColor = "red";
+                    isValid = false;
+                }
+                if (!durationField || durationField.value === "") {
+                    if(durationField) durationField.style.borderColor = "red";
+                    isValid = false;
+                }
+                if (!unitField || unitField.value === "") {
+                    if(unitField) unitField.style.borderColor = "red";
+                    isValid = false;
+                }
+
+                if (!isValid) {
+                    alert("Please complete the highlighted fields before adding a new complaint.");
+                    return;
+                }
+            }
+        }
+
+        // 2. Template Rendering
+        let template = document
+            .getElementById("complaintTemplate")
+            .innerHTML
+            .replace(/__i__/g, complaintIndex);  // 🔥 Use complaintIndex instead of index
+
+        document
+            .getElementById("complaintsContainer")
+            .insertAdjacentHTML("beforeend", template);
+
+        let section = document.querySelectorAll(".complaint-section")[complaintIndex];
+
+        // 3. Data Filling Logic
+        if (data) {
+            let complaintIdField = section.querySelector('[name="Complaints[' + complaintIndex + '].ComplaintId"]');
+            if (complaintIdField) complaintIdField.value = data.ComplaintId || "";
+
+            let durationField = section.querySelector('[name="Complaints[' + complaintIndex + '].DurationC"]');
+            if (durationField) durationField.value = data.DurationC != null ? parseFloat(data.DurationC) : "";
+
+            let unitField = section.querySelector('[name="Complaints[' + complaintIndex + '].DurationUnitId"]');
+            if (unitField) unitField.value = data.DurationUnitId || "";
+
+            let natureField = section.querySelector('[name="Complaints[' + complaintIndex + '].NatureOfIllnessId"]');
+            if (natureField) natureField.value = data.NatureOfIllnessId || "";
+
+            let progressionField = section.querySelector('[name="Complaints[' + complaintIndex + '].ProgressionId"]');
+            if (progressionField) progressionField.value = data.ProgressionId || "";
+
+            let symptomsField = section.querySelector('[name="Complaints[' + complaintIndex + '].AssociatedSymptomsId"]');
+            if (symptomsField) symptomsField.value = data.AssociatedSymptomsId || "";
+
+            let aggravatingField = section.querySelector('[name="Complaints[' + complaintIndex + '].AggravatingFactorsId"]');
+            if (aggravatingField) aggravatingField.value = data.AggravatingFactorsId || "";
+
+            let relievingField = section.querySelector('[name="Complaints[' + complaintIndex + '].RelievingFactorsId"]');
+            if (relievingField) relievingField.value = data.RelievingFactorsId || "";
+
+            let responseField = section.querySelector('[name="Complaints[' + complaintIndex + '].ResponsePreviousTreatmentId"]');
+            if (responseField) responseField.value = data.ResponsePreviousTreatmentId || "";
+
+            let otherField = section.querySelector('[name="Complaints[' + complaintIndex + '].PreviousTreatmentOther"]');
+            if (otherField) otherField.value = data.PreviousTreatmentOther || "";
+
+            // Onset Radio
+            if (data.Onset) {
+                let onsetRadio = section.querySelector('[name="Complaints[' + complaintIndex + '].Onset"][value="' + data.Onset + '"]');
+                if (onsetRadio) onsetRadio.checked = true;
+            }
+            debugger;
+            // Previous Treatment Dropdown
+            if (data.PreviousTreatment) {
+                let prevSelect = section.querySelector('[name="Complaints[' + complaintIndex + '].PreviousTreatment"]');
+                if (prevSelect) {
+                    prevSelect.value = data.PreviousTreatment;
+
+                    // 🔥 IMPORTANT LINE
+                    $(prevSelect).trigger("change");
+                }
+
+                // Handle Other text field is done by the trigger above
+            }
+        }
+
+        complaintIndex++;  // 🔥 Increment complaintIndex
+
+
+
+        // 2. Navin row add kelyavar Select2 parat chalu kara:
+        $('.search-dropdown').select2({
+
+            allowClear: false,
+            width: '100%',
+            sorter: function(data) {
+                return data.sort(function(a, b) {
+                    if (a.text > b.text) return 1;
+                    if (a.text < b.text) return -1;
+                    return 0;
+                });
+            }
+        });
+    }
+
+    //function removeComplaint(btn){
+    //    btn.closest(".complaint-section").remove();
+    //    // Optional: Renumber remaining complaints
+    //    renumberComplaints();
+    //}
+
+    // Optional: Renumber complaints after removal
+    function renumberComplaints() {
+        let sections = document.querySelectorAll(".complaint-section");
+        sections.forEach((section, newIndex) => {
+            section.querySelectorAll('[name*="Complaints["]').forEach(field => {
+                let name = field.getAttribute('name');
+                if (name) {
+                    let newName = name.replace(/Complaints\[\d+\]/, 'Complaints[' + newIndex + ']');
+                    field.setAttribute('name', newName);
+                }
+            });
+        });
+        complaintIndex = sections.length;
+    }
+    </script>
+
+
+
+    <script>
+    function removeComplaint(btn){
+    btn.closest(".complaint-section").remove();
+}
+
+    </script>
+
+
+    <!-- Load existing complaints -->
+    @if (Model.Complaints != null && Model.Complaints.Count > 0)
+    {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            @for (int i = 0; i < Model.Complaints.Count; i++)
+            {
+                var c = Model.Complaints[i];
+                <text>
+                addComplaint({
+                    ComplaintId: "@c.ComplaintId",
+                    DurationC: "@c.DurationC",
+                    DurationUnitId: "@c.DurationUnitId",
+                    Onset: "@c.Onset",
+                    NatureOfIllnessId: "@c.NatureOfIllnessId",
+                    ProgressionId: "@c.ProgressionId",
+                    AssociatedSymptomsId: "@c.AssociatedSymptomsId",
+                    AggravatingFactorsId: "@c.AggravatingFactorsId",
+                    RelievingFactorsId: "@c.RelievingFactorsId",
+                    PreviousTreatment: "@c.PreviousTreatment",
+                    PreviousTreatmentOther: "@c.PreviousTreatmentOther",
+                    ResponsePreviousTreatmentId: "@c.ResponsePreviousTreatmentId"
+                });
+                </text>
+            }
+        });
+    </script>
+    }
+    else
+    {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            addComplaint();
+        });
+    </script>
+    }
+
+
+
+
+
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        // ---------- Select2 for Medicines ----------
+        $('#FamilyHistory').select2({
+            placeholder: "Select Dropdown",
+            allowClear: true,
+            width: '100%'
+        });
+
+
+});
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        // ---------- Select2 for Medicines ----------
+        $('#LabTestsAdvised').select2({
+            placeholder: "Select Dropdown",
+            allowClear: true,
+            width: '100%'
+        });
+
+
+});
+</script>
+
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        // ---------- Select2 for Medicines ----------
+        $('#ImagingAdvised').select2({
+            placeholder: "Select Dropdown",
+            allowClear: true,
+            width: '100%'
+        });
+
+
+});
+</script>
+
+
+
+<script>
+
+    $(document).ready(function () {
+        debugger
+        // ---------- Select2 for Medicines ----------
+        $('#DiseaseID').select2({
+            placeholder: "Select Dropdown",
+            allowClear: true,
+            width: '100%'
+        });
+
+
+});
+</script>
+
+    <script>
+function calculateBMI() {
+    var hVal = $("#Height").val();
+    var wVal = $("#Weight").val();
+    var bmiField = $("#BMI");
+    var categoryField = $("#BMICategory");
+
+    if (hVal !== "" && wVal !== "") {
+
+        var height = parseFloat(hVal);
+        var weight = parseFloat(wVal);
+
+        if (height >= 30 && height <= 250 && weight > 0&& weight > 1 && weight <= 300) {
+
+            var bmi = weight / ((height / 100) * (height / 100));
+            var finalBmi = bmi.toFixed(2);
+
+            bmiField.val(finalBmi);
+
+            // BMI Category Logic
+            if (finalBmi < 18.5) {
+                categoryField.text("Underweight").css("color", "blue");
+            }
+            else if (finalBmi >= 18.5 && finalBmi <= 24.9) {
+                categoryField.text("Healthy Weight").css("color", "green");
+            }
+            else if (finalBmi >= 25.0 && finalBmi <= 29.9) {
+                categoryField.text("Overweight").css("color", "orange");
+            }
+            else {
+                categoryField.text("Obese").css("color", "red");
+            }
+
+        } else {
+            bmiField.val("");
+            categoryField.text("");
+        }
+
+    } else {
+        bmiField.val("");
+        categoryField.text("");
+    }
+}
+
+
+// Height किंवा Weight change झाल्यावर auto calculate
+$(document).on("input", "#Height, #Weight", function () {
+    calculateBMI();
+});
+
+
+// Height Validation
+$("#Height").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+    calculateBMI();
+});
+
+$("#Height").on("blur", function () {
+
+    var val = parseInt(this.value);
+
+    if (val && val < 30) {
+        alert("Height should be minimum 30 cm");
+        this.value = "";
+        calculateBMI();
+    }
+
+});
+
+
+// Weight Validation
+$("#Weight").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9.]/g, '');
+
+    if ((this.value.match(/\./g) || []).length > 1) {
+        this.value = this.value.slice(0, -1);
+    }
+
+    if (this.value.length > 6) {
+        this.value = this.value.slice(0, 6);
+    }
+
+    calculateBMI();
+});
+
+
+// Page refresh / Update नंतर category परत show होईल
+$(document).ready(function () {
+    calculateBMI();
+});
+
+    </script>
+
+    <script>
+
+// Only 3 digit number validation
+    $("#Pulse,#TemperatureCasepaper,#SpO2").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+});
+    // RespiratoryRate साठी फक्त २ डिजिट व्हॅलिडेशन
+    $("#RespiratoryRate").on("input", function () {
+        this.value = this.value.replace(/[^0-9]/g, ''); // फक्त नंबर्स घेईल
+        if (this.value.length > 2) {
+            this.value = this.value.slice(0, 2); // २ पेक्षा जास्त आकडे असतील तर कट करेल
+        }
+    });
+
+// BP validation (120/80 format)
+$("#BloodPressure").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9\/]/g, '');
+
+    // only one /
+    if ((this.value.match(/\//g) || []).length > 1) {
+        this.value = this.value.slice(0, -1);
+    }
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+
+});
+
+$(document).ready(function () {
+
+    // ✅ Load (Edit case)
+    function loadBP() {
+        var bp = $('#BloodPressure').val();
+
+        if (bp && bp.includes('/')) {
+            var parts = bp.split('/');
+            $('#BPSys').val(parts[0].trim());
+            $('#BPDia').val(parts[1] ? parts[1].trim() : "");
+        }
+    }
+
+    // ✅ Update (Sys/Dia → Hidden BP)
+    function updateBP() {
+        var sys = $('#BPSys').val();
+        var dia = $('#BPDia').val();
+
+        if (sys && dia) {
+            $('#BloodPressure').val(sys + '/' + dia);
+        } else if (sys) {
+            $('#BloodPressure').val(sys);
+        } else {
+            $('#BloodPressure').val('');
+        }
+    }
+
+    $('#BPSys, #BPDia').on('input', function () {
+        updateBP();
+    });
+
+    loadBP();
+
+});
+
+    </script>
+    <script>
+
+//// Duration → only number + max 4 digit
+//$(document).on("input", ".durationField", function () {
+
+//    this.value = this.value.replace(/[^0-9]/g, '');
+
+//    if (this.value.length > 3) {
+//        this.value = this.value.slice(0, 3);
+//    }
+
+//});
+    $(document).on("input", ".durationField", function () {
+
+        let input = this;
+        let value = input.value;
+
+        let cursorPos = input.selectionStart;
+
+        // Remove invalid characters (keep digits and ONE dot)
+        let cleaned = value.replace(/[^0-9.]/g, '');
+        // 👉 Allow only numbers + decimal
+        //value = value.replace(/[^0-9.]/g, '');
+
+        // Allow only one decimal point
+        let parts = cleaned.split('.');
+        if (parts.length > 2) {
+            cleaned = parts[0] + '.' + parts[1];
+        }
+
+        // Max 4 digits before decimal
+        if (parts[0] && parts[0].length > 4) {
+            parts[0] = parts[0].slice(0, 4);
+            cleaned = parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+        }
+
+        // 🔥 KEY: Only reassign if value actually changed
+        if (input.value !== cleaned) {
+            input.value = cleaned;
+            // Restore cursor position
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+
+        // 🔥 KEY: Skip validation if user is mid-typing decimal
+        // e.g. "2." or "2.0" being typed - don't validate yet
+        if (cleaned === '' ||
+            cleaned.endsWith('.') ||
+            cleaned === '0.' ||
+            cleaned.match(/\.\d?$/)) {  // still typing after decimal
+            return;
+        }
+
+
+        // 👉 Get same row elements
+        let row = $(input).closest(".form-row");
+        let unitDropdown = row.find(".durationUnit")[0];
+        let errorSpan = row.find(".error-msg")[0];
+
+        if (!unitDropdown || unitDropdown.value === "") return;
+
+        let unitText = unitDropdown.options[unitDropdown.selectedIndex].text.toLowerCase();
+
+        let num = parseFloat(cleaned) || 0;
+        let max = 999;
+        let message = "";
+
+        // 👉 Unit wise validation
+        let isInvalid = false;
+
+        if (unitText.includes("day") && num > 365) {
+            message = "More than 365 days? Select Weeks";
+            isInvalid = true;
+        }
+        else if (unitText.includes("week") && num > 99) {
+            message = "More than 99 weeks? Select Months";
+            isInvalid = true;
+        }
+        else if (unitText.includes("month") && num > 99) {
+            message = "More than 99 months? Select Years";
+            isInvalid = true;
+        }
+        else if (unitText.includes("year") && num > 120) {
+            message = "Maximum 120 years allowed";
+            isInvalid = true;
+        }
+
+        // 👉 Show error (NO auto change)
+        if (isInvalid) {
+
+            if (errorSpan) {
+                errorSpan.innerText = message;
+                errorSpan.style.display = "block";
+            }
+
+            input.style.borderColor = "red";
+
+        } else {
+
+            if (errorSpan) errorSpan.style.display = "none";
+            input.style.borderColor = "";
+        }
+
+
+
+        //input.value = value;
+    });
+
+
+    // 👉 Unit change var pan validation run kara
+    $(document).on("change", ".durationUnit", function () {
+        let row = $(this).closest(".form-row");
+        let input = row.find(".durationField");
+        input.trigger("input");
+    });
+// PreviousTreatmentOther → only letters + numbers
+$(document).on("input", ".previousTreatmentText", function () {
+
+    this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '');
+
+    if (this.value.length > 100) {
+        this.value = this.value.slice(0, 100);
+    }
+
+});
+
+    </script>
+
+    <script>
+
+$(document).on("input", ".obstetricText", function () {
+
+    // only alphabets and space
+    this.value = this.value.replace(/[^a-zA-Z ]/g, '');
+
+    if (this.value.length > 20) {
+        this.value = this.value.slice(0, 20);
+    }
+
+});
+
+    </script>
+
+    <script>
+
+$(document).on("input", ".onlyChar", function () {
+
+    // allow only alphabets and space
+    this.value = this.value.replace(/[^a-zA-Z ]/g, '');
+
+});
+
+
+$('#pulseRate, #BPSys, #BPDia').on('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);
+});
+    </script>
+
+    <script>
+function validateTextOnly(input) {
+    input.value = input.value.slice(0, 50);             // limit to 20 characters
+}
+    </script>
+    <script>
+$(document).ready(function () {
+    // Utility function to show error
+    function showError(msg) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid Range',
+            text: msg,
+            confirmButtonColor: '#f44336'
+        });
+    }
+
+    // Generic Range Validator
+    function validateRange(id, min, max, name) {
+        $(document).on("blur", "#" + id, function () {
+            var val = parseFloat($(this).val());
+            if (!isNaN(val)) {
+                if (val < min || val > max) {
+                    showError(name + " must be between " + min + " and " + max);
+                    $(this).val(""); // Clear invalid value
+                }
+            }
+        });
+    }
+
+    // Apply validations
+    validateRange("Height", 30, 250, "Height (cm)");
+    validateRange("Weight", 1, 300, "Weight (kg)");
+    validateRange("Pulse", 30, 220, "Pulse (bpm)");
+    validateRange("RespiratoryRate", 5, 60, "Respiratory Rate");
+    validateRange("SpO2", 50, 100, "SpO₂ (%)");
+
+    // Special Case: Blood Pressure (Systolic/Diastolic)
+    $(document).on("blur", "#BPSys, #BPDia", function () {
+
+        var sys = parseInt($('#BPSys').val());
+        var dia = parseInt($('#BPDia').val());
+
+        if (!isNaN(sys)) {
+            if (sys < 50 || sys > 250) {
+                showError("Systolic BP must be between 50 and 250");
+                $('#BPSys').val('');
+            }
+        }
+
+        if (!isNaN(dia)) {
+            if (dia < 30 || dia > 150) {
+                showError("Diastolic BP must be between 30 and 150");
+                $('#BPDia').val('');
+            }
+        }
+    });
+    // Special Case: Temperature (Depends on Unit)
+    $(document).on("blur", "#TemperatureCasepaper", function () {
+        var val = parseFloat($(this).val());
+        var unit = $("#TempUnitCP").val(); // DropDown ID
+
+        if (!isNaN(val)) {
+            if (unit === "°F") {
+                if (val < 86 || val > 110) {
+                    showError("Temperature (°F) must be between 86 and 110");
+                    $(this).val("");
+                }
+            } else { // Celsius
+                if (val < 30 || val > 43) {
+                    showError("Temperature (°C) must be between 30 and 43");
+                    $(this).val("");
+                }
+            }
+        }
+    });
+});
+    </script>
+    <script>
+    // पेज लोड झाल्यावर "Select Service" या पर्यायाची व्हॅल्यू रिकामी करणे
+    document.addEventListener("DOMContentLoaded", function() {
+        var dropdown = document.getElementById("ATserviceFid");
+        if (dropdown && dropdown.options.length > 0) {
+            dropdown.options[0].value = ""; // पहिल्या पर्यायाची (Select Service) व्हॅल्यू रिकामी केली
+            dropdown.options[0].disabled = false; // युजरला तो पाहू द्या पण बॅकएंडला काही जाणार नाही
+        }
+
+
+    });
+    </script>
+
+    <script>
+    $(document).ready(function() {
+        // Gender dropdown chya ID var event lava
+        $('#GenderId').on('change', function() {
+            var selectedGender = $(this).find("option:selected").text(); // "Female" text check kara
+
+            if (selectedGender === "Female") {
+                $('#femaleHistorySection').slideDown(); // Section dakhva
+            } else {
+                $('#femaleHistorySection').slideUp(); // Section lapva
+                // Optional: Hide kartana values clear karne
+                $('#femaleHistorySection').find('input[type="text"], input[type="number"]').val('');
+            }
+        });
+    });
+    </script>
+
+    <script>
+    function limitMenarcheAge(input) {
+        var val = parseInt(input.value);
+        var errorSpan = document.getElementById('menarcheError');
+
+        // Jar input rikame asel tar error hide kara
+        if (isNaN(val)) {
+            errorSpan.style.display = "none";
+            input.style.borderColor = "";
+            return;
+        }
+
+        //if (val > 25) {
+        //    input.value = 25;
+        //    errorSpan.innerText = "Maximum age allowed is 25";
+        //    errorSpan.style.display = "block";
+        //    input.style.borderColor = "red";
+        //}
+        //else if (val < 8) {
+        //    // Ithe value reset naka karu (karan type kartana adhi 1, mag 12 asu shakto)
+        //    // Fakt doctor la warning dakhva
+        //    errorSpan.innerText = "Minimum age should be 8";
+        //    errorSpan.style.display = "block";
+        //    input.style.borderColor = "red";
+        //}
+        //else {
+        //    errorSpan.style.display = "none";
+        //    input.style.borderColor = "";
+        //}
+    }
+    </script>
+
+    <script>
+    function validateFlowDuration(input) {
+        var value = parseInt(input.value) || 0;
+        var errorSpan = document.getElementById('flowError');
+        var maxLimit = 15; // Flow sathi 15 divas chi limit thevli aahe
+
+        if (value > maxLimit) {
+            input.value = maxLimit; // 15 var reset karel
+            errorSpan.innerText = "Flow duration usually doesn't exceed 15 days.";
+            errorSpan.style.display = "block";
+            input.style.borderColor = "red";
+        } else if (value < 0) {
+            input.value = 0;
+        } else {
+            errorSpan.style.display = "none";
+            input.style.borderColor = "";
+        }
+    }
+    </script>
+
+    <script>
+    $(document).ready(function () {
+
+        var today = new Date().toISOString().split('T')[0];
+
+
+        var lmpField = $('#lmpDatePicker');
+
+        if (lmpField.length > 0) {
+            lmpField.attr('max', today);
+
+
+            lmpField.on('change', function() {
+                if ($(this).val() > today) {
+                    alert("Future date is not allowed for LMP. Setting it to today.");
+                    $(this).val(today);
+                }
+            });
+        }
+    });
+
+    $(document).ready(function () {
+        // तुमच्या मॉडेल किंवा हिडन फील्ड मधून PatientFid घ्या
+        var patientFid = "@Model.PatientFid";
+
+        if (patientFid && patientFid !== "0") {
+            $.ajax({
+                url: '/Patient/AayurvedEHR/GetLastFollowUpDate', // तुमच्या एरिया आणि कंट्रोलरनुसार पाथ तपासा
+                type: 'GET',
+                data: { patientFid: patientFid },
+                success: function (response) {
+                    if (response.success && response.lastDate) {
+                        // तारीख फॉरमॅट करून डिस्प्ले फील्डमध्ये सेट करा
+                        $("#prevFollowUpDisplay").val(response.lastDate);
+                    }
+                },
+                error: function () {
+                    console.log("Error fetching previous follow-up date.");
+                }
+            });
+        }
+    });
+    </script>
+
+    <script>
+$(document).ready(function () {
+    // १. Pulse(bpm) मधून 'Pulse Rate नाडीगती' मध्ये डेटा नेणे
+    $('#Pulse').on('input', function () {
+        var pulseVal = $(this).val();
+        $('#pulseRate').val(pulseVal); // PulseExam टॅबमधील फील्डचा ID
+    });
+
+//    // २. BP (Sys/Dia) मधून 'BP Sys' आणि 'BP Dia' मध्ये डेटा नेणे
+//    $('#BloodPressure').on('input', function () {
+//        var bpFullValue = $(this).val(); // उदा. "120/80"
+
+//        if (bpFullValue.includes('/')) {
+//            var parts = bpFullValue.split('/');
+//            var systolic = parts[0].trim();
+//            var diastolic = parts[1] ? parts[1].trim() : "";
+
+//            $('#BPSys').val(systolic); // PulseExam टॅबमधील Sys ID
+//            $('#BPDia').val(diastolic); // PulseExam टॅबमधील Dia ID
+//        } else {
+//            // जर फक्त एकच व्हॅल्यू टाकली तर ती Sys मध्ये जाईल
+//            $('#BPSys').val(bpFullValue);
+//        }
+//    });
+});
+// पेज लोड झाल्यावर डेटा सिंक करण्यासाठी
+var initialPulse = $('#Pulse').val();
+if(initialPulse) { $('#pulseRate').val(initialPulse); }
+
+//var initialBP = $('#BloodPressure').val();
+//if(initialBP && initialBP.includes('/')) {
+//    var parts = initialBP.split('/');
+//    $('#BPSys').val(parts[0].trim());
+//    $('#BPDia').val(parts[1] ? parts[1].trim() : "");
+//}
+    </script>
+    <script>
+$(document).ready(function () {
+
+    // जेव्हा 'Regular (Yes)' वर क्लिक होईल
+    $('#rbRegularYes').change(function () {
+        if ($(this).is(':checked')) {
+            // 'Irregular (No)' ला अन-सिलेक्ट करा
+            $('#rbRegularNo').prop('checked', false);
+        }
+    });
+
+    // जेव्हा 'Irregular (No)' वर क्लिक होईल
+    $('#rbRegularNo').change(function () {
+        if ($(this).is(':checked')) {
+            // 'Regular (Yes)' ला अन-सिलेक्ट करा
+            $('#rbRegularYes').prop('checked', false);
+        }
+    });
+
+});
+    </script>
+<script>
+
+    var advisedTherapyList = [];
+
+    $("#AddTherapy").click(function () {
+
+        var serviceId = $("#ATserviceFid").val();
+        var serviceText = $("#ATserviceFid option:selected").text();
+        var duration = $("#Duration option:selected").text();
+        var durationUnit = $("#DurationUnit").val();
+        var repetition = $("#ATDaysNumber option:selected").text();
+        var repetitionUnit = $("#RepetitionUnit").val();
+
+        if (!serviceId || serviceText === "Select Service") {
+            alert("Please select Service");
+            return;
+        }
+
+        var obj = {
+            ServiceFid: serviceId,
+            ServiceName: serviceText,
+            Duration: duration,
+            DurationUnit: durationUnit,
+            Repetition: repetition,
+            RepetitionUnit: repetitionUnit
+        };
+
+        advisedTherapyList.push(obj);
+
+        renderTable();
+
+        $("#AdvisedTherapyJson").val(JSON.stringify(advisedTherapyList));
+
+        clearFields();
+    });
+
+
+    function renderTable() {
+
+        var tbody = $("#AdvisedTherapyTable tbody");
+        tbody.empty();
+
+        $.each(advisedTherapyList, function (index, item) {
+
+            var row = "<tr>" +
+                "<td>" + item.ServiceName + "</td>" +
+                "<td>" + item.Duration + " " + item.DurationUnit + "</td>" +
+                "<td>" + item.Repetition + " " + item.RepetitionUnit + "</td>" +
+                "<td><button type='button' class='btn btn-danger btn-sm' onclick='removeRow(" + index + ")'>Remove</button></td>" +
+                "</tr>";
+
+            tbody.append(row);
+        });
+    }
+
+    function removeRow(index) {
+        advisedTherapyList.splice(index, 1);
+        renderTable();
+        $("#AdvisedTherapyJson").val(JSON.stringify(advisedTherapyList));
+    }
+
+    function clearFields() {
+        $("#ATserviceFid").val("");
+        $("#Duration").val("");
+        $("#DurationUnit").val("");
+        $("#ATDaysNumber").val("");
+        $("#RepetitionUnit").val("");
+    }
+
+</script>
+
+@*<script>
+    function closeEncounter(AppointmentFid_Encrypted) {
+    window.location.href = '/Appointment/CloseAppointmentStatus?AppointmentFid_Encrypted=' + AppointmentFid_Encrypted;
+}
+</script>*@
+
+
+
+
+
+<script>
+
+function calculateBMI() {
+
+    var height = parseFloat($("#Height").val());
+    var weight = parseFloat($("#Weight").val());
+
+    if (height >= 30 && height <= 999 && weight > 0) {
+
+        var bmi = weight / ((height / 100) * (height / 100));
+        $("#BMI").val(bmi.toFixed(2));
+
+    } else {
+        $("#BMI").val("");
+    }
+}
+
+// Height validation
+$("#Height").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+    calculateBMI();
+});
+
+// Height min check after typing
+$("#Height").on("blur", function () {
+
+    var val = parseInt(this.value);
+
+    if (val && val < 30) {
+        alert("Height should be minimum 30 cm");
+        this.value = "";
+    }
+});
+
+// Weight validation
+$("#Weight").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9.]/g, '');
+
+    if ((this.value.match(/\./g) || []).length > 1) {
+        this.value = this.value.slice(0, -1);
+    }
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+    calculateBMI();
+});
+
+</script>
+
+
+<script>
+
+// Only 3 digit number validation
+    $("#Pulse,#TemperatureCasepaper,#RespiratoryRate,#SpO2").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+});
+
+
+// BP validation (120/80 format)
+$("#BloodPressure").on("input", function () {
+
+    this.value = this.value.replace(/[^0-9\/]/g, '');
+
+    // only one /
+    if ((this.value.match(/\//g) || []).length > 1) {
+        this.value = this.value.slice(0, -1);
+    }
+
+    if (this.value.length > 7) {
+        this.value = this.value.slice(0, 7);
+    }
+
+});
+
+</script>
+
+<script>
+
+// Duration → only number + max 4 digit
+$(document).on("input", ".durationField", function () {
+
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+    if (this.value.length > 3) {
+        this.value = this.value.slice(0, 3);
+    }
+
+});
+
+
+// PreviousTreatmentOther → only letters + numbers
+$(document).on("input", ".previousTreatmentText", function () {
+
+    this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '');
+
+    if (this.value.length > 100) {
+        this.value = this.value.slice(0, 100);
+    }
+
+});
+
+</script>
+
+<script>
+
+$(document).on("input", ".obstetricText", function () {
+
+    // only alphabets and space
+    this.value = this.value.replace(/[^a-zA-Z ]/g, '');
+
+    if (this.value.length > 20) {
+        this.value = this.value.slice(0, 20);
+    }
+
+});
+
+</script>
+
+<script>
+
+$(document).on("input", ".onlyChar", function () {
+
+    // allow only alphabets and space
+    this.value = this.value.replace(/[^a-zA-Z ]/g, '');
+
+});
+
+
+$('#pulseRate, #BPSys, #BPDia').on('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3);
+});
+</script>
+
+<script>
+function validateTextOnly(input) {
+    input.value = input.value
+        .replace(/[^A-Za-z ]/g, '')  // remove numbers & symbols
+        .slice(0, 100);               // limit to 20 characters
+}
+</script>

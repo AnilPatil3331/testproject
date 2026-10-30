@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1270F323-AA51-4BB8-9BED-4190483D6B43}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BVG_Wellness_Center_Promotion</RootNamespace>
+    <AssemblyName>BVG Wellness Center Promotion</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <Use64BitIISExpress />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.143\lib\net461\Dapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.0.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.0.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.0.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.0.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.0.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.0.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="QRCoder, Version=1.6.0.0, Culture=neutral, PublicKeyToken=c4ed5b9ae8358a28, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.6.0\lib\net40\QRCoder.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Select.HtmlToPdf, Version=24.1.0.0, Culture=neutral, PublicKeyToken=e0ae9f6e27a97018, processorArchitecture=MSIL">
+      <HintPath>..\packages\Select.HtmlToPdf.24.1.0\lib\net40\Select.HtmlToPdf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Deployment">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="assets\css\app.min.css" />
+    <Content Include="assets\css\book-appointment.css" />
+    <Content Include="assets\css\bootstrap.min.css" />
+    <Content Include="assets\css\bootstrapcdnbootstrap.min.css" />
+    <Content Include="assets\css\calendar.min.css" />
+    <Content Include="assets\css\CustomeAlertCSS\customAlert.css" />
+    <Content Include="assets\css\flatpicker.min.css" />
+    <Content Include="assets\css\font-awesome-all.min.css" />
+    <Content Include="assets\css\front-app.min.css" />
+    <Content Include="assets\css\kcElementor.css" />
+    <Content Include="assets\css\magnific-popup.min.css" />
+    <Content Include="assets\css\poppins-google-fonts.css" />
+    <Content Include="assets\css\redux-banner.css" />
+    <Content Include="assets\css\register_login.css" />
+    <Content Include="assets\css\select2.min.css" />
+    <Content Include="assets\css\thickbox.css" />
+    <Content Include="assets\dist\js\bootstrap.bundle.min.js" />
+    <Content Include="assets\dist\js\xlsx.full.min.js" />
+    <Content Include="assets\images\appointment-booked.png" />
+    <Content Include="assets\images\BackGroundImage.jpg" />
+    <Content Include="assets\images\BVG.png" />
+    <Content Include="assets\images\check-circle.gif" />
+    <Content Include="assets\images\circles-menu-1.gif" />
+    <Content Include="assets\images\doctor-avatar-3.jpeg" />
+    <Content Include="assets\images\favicon-1.ico" />
+    <Content Include="assets\images\female-doctor.png" />
+    <Content Include="assets\images\getProImage.png" />
+    <Content Include="assets\images\google.svg" />
+    <Content Include="assets\images\hospital1.png" />
+    <Content Include="assets\images\icon-12.png" />
+    <Content Include="assets\images\icon-123.png" />
+    <Content Include="assets\images\icon-13.png" />
+    <Content Include="assets\images\JnanaYugAyog.png" />
+    <Content Include="assets\images\kc-demo-img.png" />
+    <Content Include="assets\images\kivi-Loader-400.gif" />
+    <Content Include="assets\images\life.png" />
+    <Content Include="assets\images\logo-banner-01.png" />
+    <Content Include="assets\images\logo-banner.png" />
+    <Content Include="assets\images\logo-zoom-blue.svg" />
+    <Content Include="assets\images\male-doctor.png" />
+    <Content Include="assets\images\patient-avatar-1.jpeg" />
+    <Content Include="assets\images\patient-profile-1.png" />
+    <Content Include="assets\images\payment-error.svg" />
+    <Content Include="assets\images\paymentOffline.png" />
+    <Content Include="assets\images\paymentPaypal.png" />
+    <Content Include="assets\images\paymentWoocommerce.png" />
+    <Content Include="assets\images\sale_banner.jpg" />
+    <Content Include="assets\images\sidebar-icon.svg" />
+    <Content Include="assets\images\Swagram.jpeg" />
+    <Content Include="assets\images\top-header.png" />
+    <Content Include="assets\images\wp-logo.png" />
+    <Content Include="assets\js\app.min.js" />
+    <Content Include="assets\js\app.min.js.LICENSE.txt" />
+    <Content Include="assets\js\axios.min.js" />
+    <Content Include="assets\js\book-appointment-widget.js" />
+    <Content Include="assets\js\calendar.min.js" />
+    <Content Include="assets\js\custom.js" />
+    <Content Include="assets\js\CustomeAlert\customAlert.js" />
+    <Content Include="assets\js\flatpicker.min.js" />
+    <Content Include="assets\js\front-app.min.js" />
+    <Content Include="assets\js\front-app.min.js.LICENSE.txt" />
+    <Content Include="assets\js\HtmlToPdf\html2pdf.bundle.min.js" />
+    <Content Include="assets\js\imgareaselect\imgareaselect.css" />
+    <Content Include="assets\js\iq-admin-notice.js" />
+    <Content Include="assets\js\jquery-3.6.4.min.js" />
+    <Content Include="assets\js\jquery-print.min.js" />
+    <Content Include="assets\js\jquery.js" />
+    <Content Include="assets\js\jquery.min.js" />
+    <Content Include="assets\js\jquery\jquery-migrate.min.js" />
+    <Content Include="assets\js\json2.min.js" />
+    <Content Include="assets\js\KC-appointment-block.js" />
+    <Content Include="assets\js\KC-book-appointment-block.js" />
+    <Content Include="assets\js\kc-patient-dashboard-block.js" />
+    <Content Include="assets\js\KC-popup-book-appointment-block.js" />
+    <Content Include="assets\js\kc-register-login-block.js" />
+    <Content Include="assets\js\magnific-popup.min.js" />
+    <Content Include="assets\js\mediaelement\mediaelementplayer-legacy.min.css" />
+    <Content Include="assets\js\mediaelement\wp-mediaelement.min.css" />
+    <Content Include="assets\js\moxie.min.js" />
+    <Content Include="assets\js\plugin-deactivate.js" />
+    <Content Include="assets\js\plupload.min.js" />
+    <Content Include="assets\js\redux-banner-admin.js" />
+    <Content Include="assets\js\select2.min.js" />
+    <Content Include="assets\js\SweetAlert.js" />
+    <Content Include="assets\js\utils.min.js" />
+    <Content Include="assets\webfonts\fa-brands-400.svg" />
+    <Content Include="assets\webfonts\fa-regular-400.svg" />
+    <Content Include="assets\webfonts\fa-solid-900.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="images\404.png" />
+    <Content Include="images\BackGroundImage.jpg" />
+    <Content Include="images\doctor-avatar-3.jpeg" />
+    <Content Include="images\error-bg-2.png" />
+    <Content Include="images\error-bg-3.png" />
+    <Content Include="images\error-bg-5.png" />
+    <Content Include="images\error-bg-6 %281%29.png" />
+    <Content Include="images\error-bg-6.png" />
+    <Content Include="images\female-doctor.png" />
+    <Content Include="images\flags.9c96e0ed.png" />
+    <Content Include="images\JnanaYugAyog.png" />
+    <Content Include="images\male-doctor.png" />
+    <Content Include="images\Swagram.jpeg" />
+    <Content Include="images\vendor\owl.carousel\dist\owl.video.play.png" />
+    <Content Include="images\vendor\owl.carousel\dist\vue-phone-number-input\flags.9c96e0ed.png" />
+    <Content Include="images\vendor\tui-image-editor\dist\svg\icon-a.svg" />
+    <Content Include="images\vendor\tui-image-editor\dist\svg\icon-b.svg" />
+    <Content Include="images\vendor\tui-image-editor\dist\svg\icon-c.svg" />
+    <Content Include="images\vendor\tui-image-editor\dist\svg\icon-d.svg" />
+    <Content Include="images\vendor\vue-json-editor\jsoneditor-icons.svg" />
+    <Content Include="images\vendor\vue-phone-number-input\dist\flags.9c96e0ed.png" />
+    <Content Include="images\logopng.png" />
+    <Content Include="images\LOADER.jpeg" />
+    <Content Include="resources\assets\fonts\nucleo\nucleo-icons.svg" />
+    <Content Include="resources\assets\images\doctor-avatar-3.jpeg" />
+    <Content Include="resources\assets\images\kivi-Loader-400.gif" />
+    <Content Include="scripts\ai.0.22.9-build00167.js" />
+    <Content Include="scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\AddClinicController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AddDoctorController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AddDoctorSessionController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AddTherapySessionController.cs" />
+    <Compile Include="Areas\Admin\Controllers\AdminDashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\GameController.cs" />
+    <Compile Include="Areas\Admin\Controllers\MastersController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ReceptionistController.cs" />
+    <Compile Include="Areas\Admin\Controllers\RolePermissionsController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ServicesController.cs" />
+    <Compile Include="Areas\Admin\Models\ClinicService.cs" />
+    <Compile Include="Areas\Admin\Models\ClsClinic.cs" />
+    <Compile Include="Areas\Admin\Models\DispensingFormula.cs" />
+    <Compile Include="Areas\Admin\Models\DoctorSessions.cs" />
+    <Compile Include="Areas\Admin\Models\Game.cs" />
+    <Compile Include="Areas\Admin\Models\Master.cs" />
+    <Compile Include="Areas\Admin\Models\Pathya.cs" />
+    <Compile Include="Areas\Admin\Models\RolePermissionsVM.cs" />
+    <Compile Include="Areas\Admin\Models\TherapySessions.cs" />
+    <Compile Include="Areas\IPD\Controllers\IPDController.cs" />
+    <Compile Include="Areas\IPD\Controllers\IPD_BookingController.cs" />
+    <Compile Include="Areas\IPD\Controllers\IPD_MastersController.cs" />
+    <Compile Include="Areas\IPD\Controllers\IPD_RoomController.cs" />
+    <Compile Include="Areas\IPD\IPDAreaRegistration.cs" />
+    <Compile Include="Areas\IPD\Models\IPD.cs" />
+    <Compile Include="Areas\IPD\Models\IPDRoomBookingModel.cs" />
+    <Compile Include="Areas\IPD\Models\IPD_Models.cs" />
+    <Compile Include="Areas\IPD\Models\StayBookingModel.cs" />
+    <Compile Include="Areas\Patient\Controllers\AayurvedEHRController.cs" />
+    <Compile Include="Areas\Patient\Controllers\AddPatientController.cs" />
+    <Compile Include="Areas\Patient\Controllers\AppointmentController.cs" />
+    <Compile Include="Areas\Patient\Controllers\BillingRecordController.cs" />
+    <Compile Include="Areas\Patient\Controllers\CloseEncounterController.cs" />
+    <Compile Include="Areas\Patient\Controllers\CounterMedicineController.cs" />
+    <Compile Include="Areas\Patient\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Patient\Controllers\EncounterController.cs" />
+    <Compile Include="Areas\Patient\Controllers\HomopathyEHRController.cs" />
+    <Compile Include="Areas\Patient\Controllers\MobileAppEHRController.cs" />
+    <Compile Include="Areas\Patient\Controllers\PrescriptionController.cs" />
+    <Compile Include="Areas\Patient\Controllers\QRScanePatientController.cs" />
+    <Compile Include="Areas\Patient\Controllers\ReportsController.cs" />
+    <Compile Include="Areas\Patient\Controllers\ServicesBillController.cs" />
+    <Compile Include="Areas\Patient\Controllers\TaxesController.cs" />
+    <Compile Include="Areas\Patient\Controllers\TherapyBookingController.cs" />
+    <Compile Include="Areas\Patient\Controllers\VisitController.cs" />
+    <Compile Include="Areas\Patient\Controllers\YogaController.cs" />
+    <Compile Include="Areas\Patient\Models\Appointment.cs" />
+    <Compile Include="Areas\Patient\Models\AyurvedaDiagnosis.cs" />
+    <Compile Include="Areas\Patient\Models\Billing.cs" />
+    <Compile Include="Areas\Patient\Models\CasePaperModel.cs" />
+    <Compile Include="Areas\Patient\Models\ClsPatientEncounter.cs" />
+    <Compile Include="Areas\Patient\Models\ClsPrescription.cs" />
+    <Compile Include="Areas\Patient\Models\ClsTaxes.cs" />
+    <Compile Include="Areas\Patient\Models\EHR.cs" />
+    <Compile Include="Areas\Patient\Models\HomopathyPrescriptionModel.cs" />
+    <Compile Include="Areas\Patient\Models\HomopathyEHR.cs" />
+    <Compile Include="Areas\Patient\Models\JsonPropertyAttribute.cs" />
+    <Compile Include="Areas\Patient\Models\Medicine.cs" />
+    <Compile Include="Areas\Patient\Models\MobileEHRViewModel.cs" />
+    <Compile Include="Areas\Patient\Models\Patient.cs" />
+    <Compile Include="Areas\Patient\Models\PlusExam.cs" />
+    <Compile Include="Areas\Patient\Models\PrescriptionModel.cs" />
+    <Compile Include="Areas\Patient\Models\TherapyBookingMaster.cs" />
+    <Compile Include="Areas\Patient\Models\YOGA.cs" />
+    <Compile Include="Areas\Patient\PatientAreaRegistration.cs" />
+    <Compile Include="Areas\Setting\Controllers\SettingController.cs" />
+    <Compile Include="Areas\Setting\Models\LocationS.cs" />
+    <Compile Include="Areas\Setting\SettingAreaRegistration.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Filters\AuthorizeUserAttribute.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BVGWellnessCenterDapparORM.cs" />
+    <Compile Include="Models\DropdownItem.cs" />
+    <Compile Include="Models\UserMaster.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="packages.config" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Areas\Admin\Views\web.config" />
+    <Content Include="Areas\Admin\Views\AddClinic\AddClinic.cshtml" />
+    <Content Include="Areas\Admin\Views\AddClinic\ClinicList.cshtml" />
+    <Content Include="Areas\Admin\Views\AddDoctor\AddDoctor.cshtml" />
+    <Content Include="Areas\Admin\Views\Receptionist\AddReceptionist.cshtml" />
+    <Content Include="Areas\Admin\Views\Receptionist\ReceptionistList.cshtml" />
+    <Content Include="Areas\Admin\Views\AdminDashboard\AdminDashboard.cshtml" />
+    <Content Include="Areas\Patient\Views\web.config" />
+    <Content Include="Views\Home\Login.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_AdminLayout.cshtml" />
+    <Content Include="Areas\Patient\Views\AddPatient\AddPatient.cshtml" />
+    <Content Include="Areas\Patient\Views\AddPatient\PatientList.cshtml" />
+    <Content Include="Areas\Patient\Views\Encounter\EncounterList.cshtml" />
+    <Content Include="Areas\Patient\Views\Encounter\PatientEncounter.cshtml" />
+    <Content Include="assets\css\app.min.css.map" />
+    <Content Include="assets\css\front-app.min.css.map" />
+    <Content Include="assets\helper_assets\CountryCodes.json" />
+    <Content Include="assets\js\app.min.js.map" />
+    <Content Include="assets\js\front-app.min.js.map" />
+    <Content Include="assets\webfonts\fa-brands-400.eot" />
+    <Content Include="assets\webfonts\fa-brands-400.ttf" />
+    <Content Include="assets\webfonts\fa-brands-400.woff" />
+    <Content Include="assets\webfonts\fa-brands-400.woff2" />
+    <Content Include="assets\webfonts\fa-regular-400.eot" />
+    <Content Include="assets\webfonts\fa-regular-400.ttf" />
+    <Content Include="assets\webfonts\fa-regular-400.woff" />
+    <Content Include="assets\webfonts\fa-regular-400.woff2" />
+    <Content Include="assets\webfonts\fa-solid-900.eot" />
+    <Content Include="assets\webfonts\fa-solid-900.ttf" />
+    <Content Include="assets\webfonts\fa-solid-900.woff" />
+    <Content Include="assets\webfonts\fa-solid-900.woff2" />
+    <Content Include="assets\webfonts\Poppins-Regular.woff2" />
+    <Content Include="assets\mix-manifest.json" />
+    <Content Include="resources\assets\fonts\nucleo\nucleo-icons.eot" />
+    <Content Include="resources\assets\fonts\nucleo\nucleo-icons.ttf" />
+    <Content Include="resources\assets\fonts\nucleo\nucleo-icons.woff" />
+    <Content Include="resources\assets\fonts\nucleo\nucleo-icons.woff2" />
+    <Content Include="resources\assets\lang\ar.json" />
+    <Content Include="resources\assets\lang\en.json" />
+    <Content Include="resources\assets\lang\fr.json" />
+    <Content Include="resources\assets\lang\gr.json" />
+    <Content Include="resources\assets\lang\hi.json" />
+    <Content Include="resources\assets\lang\temp.json" />
+    <Content Include="resources\assets\lang\temp.php" />
+    <Content Include="Views\Home\ErrorPage.cshtml" />
+    <Content Include="Areas\Admin\Views\AddDoctor\DoctorList.cshtml" />
+    <Content Include="Areas\Admin\Views\Services\ServicesList.cshtml" />
+    <Content Include="Areas\Admin\Views\AddDoctorSession\DoctorSessionList.cshtml" />
+    <Content Include="Areas\Patient\Views\Dashboard\Dashboard.cshtml" />
+    <Content Include="Areas\Patient\Views\Taxes\Tax.cshtml" />
+    <Content Include="Areas\Patient\Views\Taxes\AddTax.cshtml" />
+    <Content Include="Areas\Patient\Views\BillingRecord\BillingRecord.cshtml" />
+    <Content Include="Areas\Patient\Views\Reports\Reports.cshtml" />
+    <Content Include="Areas\Setting\Views\web.config" />
+    <Content Include="Areas\Setting\Views\Setting\Setting.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\Holidays.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\SettingSidebar.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\Configuration.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\AppConfigurations.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\EmailTemplate.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\SMSWatsUpTemplate.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\Webhooks.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\CreateWebhook.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\CustomNotification.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\CustomForm.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\CustomFormCreate.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\ProSetting.cshtml" />
+    <Content Include="Areas\Patient\Views\BillingRecord\PaidBillRecords.cshtml" />
+    <Content Include="Areas\Patient\Views\Dashboard\PatientAppointmentList.cshtml" />
+    <Content Include="Areas\Admin\Views\Services\AddMedicine.cshtml" />
+    <Content Include="Areas\Patient\Views\QRScanePatient\AddPatientQRScane.cshtml" />
+    <Content Include="Areas\Patient\Views\QRScanePatient\QRScanner.cshtml" />
+    <Content Include="Areas\Patient\Views\QRScanePatient\GetQRCodeImage.cshtml" />
+    <Content Include="Areas\Patient\Views\CloseEncounter\CloseEncounterList.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\AayurvedEHR.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\AayurvedEHRList.cshtml" />
+    <Content Include="Areas\Admin\Views\Masters\SuchnaMaster.cshtml" />
+    <Content Include="Areas\Patient\Views\BillingRecord\OutstandingBill.cshtml" />
+    <Content Include="Areas\IPD\Views\web.config" />
+    <Content Include="Areas\IPD\Views\IPD\RoomBooking.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD\RoomBookingList.cshtml" />
+    <Content Include="Areas\Admin\Views\Game\AddQuestion.cshtml" />
+    <Content Include="Areas\Admin\Views\Game\QuestionList.cshtml" />
+    <Content Include="Areas\Patient\Views\Prescription\MedicinePrescription.cshtml" />
+    <Content Include="Areas\Patient\Views\Prescription\BillingRecordMedicine.cshtml" />
+    <Content Include="Areas\Patient\Views\Prescription\PaidBillMedicineRecords.cshtml" />
+    <Content Include="Areas\Patient\Views\Prescription\MedicineOutstandingBill.cshtml" />
+    <Content Include="Areas\Admin\Views\Masters\RoomTypeMaster.cshtml" />
+    <Content Include="Areas\Patient\Views\CounterMedicine\CounterMedicine.cshtml" />
+    <Content Include="Areas\Patient\Views\ServicesBill\AddServices.cshtml" />
+    <Content Include="Areas\Patient\Views\Visit\Visit.cshtml" />
+    <Content Include="Areas\Patient\Views\ServicesBill\BillingRecordServices.cshtml" />
+    <Content Include="Areas\Patient\Views\ServicesBill\PaidBillRecordsServices.cshtml" />
+    <Content Include="Areas\Patient\Views\ServicesBill\OutstandingBill.cshtml" />
+    <Content Include="Areas\Patient\Views\CounterMedicine\BillingRecordCounterMedicine.cshtml" />
+    <Content Include="Areas\Patient\Views\CounterMedicine\PaidBillRecordCounter.cshtml" />
+    <Content Include="Areas\Patient\Views\CounterMedicine\OutstandingBillCounter.cshtml" />
+    <Content Include="Areas\Admin\Views\AddTherapySession\TherapySessionList.cshtml" />
+    <Content Include="Areas\Patient\Views\TherapyBooking\TherapyBooking.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\Location.cshtml" />
+    <Content Include="Areas\Patient\Views\Appointment\AppoinmentsPaidBillRecords.cshtml" />
+    <Content Include="Areas\Patient\Views\Appointment\Appointment.cshtml" />
+    <Content Include="Areas\Patient\Views\TherapyBooking\TherapyBookingList.cshtml" />
+    <Content Include="Areas\Patient\Views\AddPatient\ListingPage.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\PatientHistory.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\AppointmentList.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\ChangePassword.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\ForgotPassword.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\VerifyOTP.cshtml" />
+    <Content Include="Areas\Setting\Views\Setting\ResetPassword.cshtml" />
+    <Content Include="Areas\Patient\Views\Yoga\YogaEHR.cshtml" />
+    <Content Include="Areas\Admin\Views\Masters\PathyaMaster.cshtml" />
+    <Content Include="Areas\Patient\Views\HomopathyEHR\HomopathyEHR.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\MobilePrescription.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\CounterProductDetails.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\MobileBill.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\MobileDispensingBill.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\MobileCounterBill.cshtml" />
+    <Content Include="Areas\Patient\Views\MobileAppEHR\MobileServicesBill.cshtml" />
+    <Content Include="Areas\Patient\Views\DispensingMasters\DispensingFormulaMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\ActiveBookings.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\BedDashboard12.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\Discharge.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\NewAdmission.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\_BedGrid.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\CategoryMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\FloorMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\FoodPlanMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\HospitalSetting.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\RoomChargesMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Masters\WardMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Room\BedMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Room\RoomMaster.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\BedDashboard.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\DischargedBookings.cshtml" />
+    <Content Include="Areas\IPD\Views\Shared\_IPDNav.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD_Booking\PrintBill.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD\Index.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD\PrintRoomBill.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD\RoomBilling.cshtml" />
+    <Content Include="Areas\IPD\Views\IPD\RoomBillingList.cshtml" />
+    <Content Include="Areas\Patient\Views\Appointment\ReceptionSkippedQuestions.cshtml" />
+    <Content Include="Areas\Patient\Views\Shared\_SectionDetailsPartial.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_AdvisedTherapyTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_AyurvedaDiagnosisTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_CasePaperTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_CounterDispensingTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_CounterMedicineTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_DispensingTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_EmancipationGameTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_MedicineTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_PulseExamTab.cshtml" />
+    <Content Include="Areas\Patient\Views\AayurvedEHR\_ReportsTab.cshtml" />
+    <Content Include="Areas\Admin\Views\RolePermissions\Index.cshtml" />
+    <None Include="Properties\PublishProfiles\BVGLifeScience.pubxml" />
+    <Content Include="Views\Home\ForgotPassword.cshtml" />
+    <Content Include="Views\Home\ResetPassword.cshtml" />
+    <Content Include="Views\Home\VerifyOTP.cshtml" />
+    <Content Include="Views\Shared\_LayoutPageOriginal.cshtml" />
+    <Content Include="Views\Shared\_LayoutPage.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Areas\Setting\Views\Shared\" />
+    <Folder Include="Views\IPD\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>51552</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:51553/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

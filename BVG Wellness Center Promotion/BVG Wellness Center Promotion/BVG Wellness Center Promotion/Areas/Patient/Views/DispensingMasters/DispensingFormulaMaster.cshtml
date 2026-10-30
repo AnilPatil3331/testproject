@@ -1,0 +1,330 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.DispensingFormula
+
+@{
+    ViewBag.Title = "DispensingFormulaMaster";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/dist/js/xlsx.full.min.js"></script>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card p-0 shadow">
+
+                <header class="card-header">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3 class="mb-0">Dispensing Medicine List</h3>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-sm btn-primary"
+                                        id="addFormula">
+                                    <i class="fa fa-plus"></i>
+                                    Add Formula
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="card-body p-0">
+
+                    <div id="static-data-add-tab"
+                         style="display:none;">
+
+                        <div class="row">
+
+                            @if (TempData["Message"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        var message = '@TempData["Message"]';
+                                        var alertType = '@TempData["Icon"]';
+                                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+
+                                        showCustomAlert(
+                                            message,
+                                            alertType,
+                                            imageUrl
+                                        );
+                                    };
+                                </script>
+                            }
+
+                            <div class="col-sm-12">
+
+                                <form action="/Admin/Masters/SaveAddDispensingFormula"
+                                      method="post"
+                                      id="formulaForm">
+
+                                    <div class="card p-0 shadow">
+                                        <div class="card-body">
+
+                                            @Html.HiddenFor(m => m.FormulaID)
+
+                                            <div class="row">
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Medicine Name
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+
+                                                        @Html.TextBoxFor(
+                                                        m => m.FormulaName,
+                                                        new
+                                                        {
+                                                            @class = "form-control",
+                                                            required = "required"
+                                                        })
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Department <span class="text-danger">*</span></label>
+                                                        @Html.DropDownListFor(m => m.Department, new List<SelectListItem>
+                                                        {
+                                                            new SelectListItem { Text = "Ayurveda", Value = "Ayurveda" },
+                                                            new SelectListItem { Text = "Homeopathy", Value = "Homeopathy" },
+                                                            new SelectListItem { Text = "Yoga", Value = "Yoga" }
+                                                        }, "--Select Department--", new { @class = "form-control", required = "required" })
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Is Active?</label>
+                                                        <div class="form-check form-switch mt-2">
+                                                            @Html.CheckBoxFor(
+                                                            m => m.IsActive,
+                                                            new
+                                                            {
+                                                                @class = "form-check-input",
+                                                                id = "IsActive"
+                                                            })
+                                                            <label class="form-check-label" for="IsActive">Yes</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="row mt-3">
+                                                <div class="col-md-12 text-end">
+
+                                                    <button type="submit"
+                                                            class="btn btn-primary">
+                                                        <i class="fa fa-save"></i>
+                                                        Save
+                                                    </button>
+
+                                                    <button type="button"
+                                                            class="btn btn-outline-primary"
+                                                            id="btnCancel">
+                                                        Cancel
+                                                    </button>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3">
+
+                        <div class="row mb-3">
+
+                            <div class="col-md-6">
+                                <input type="text"
+                                       id="SearchInput"
+                                       class="form-control"
+                                       placeholder="Search Formula..." />
+                            </div>
+
+                        </div>
+
+                        <div class="table-responsive">
+
+                            <table id="tblFormulaList"
+                                   class="table table-bordered table-striped">
+
+                                <thead>
+                                    <tr>
+                                        <th>Action</th>
+                                        <th>Medicine ID</th>
+                                        <th>Medicine Name</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @if (ViewBag.FormulaList != null)
+                                    {
+                                        foreach (var item in ViewBag.FormulaList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <a href="@Url.Action("DispensingFormulaMaster", "Masters", new { id = item.FormulaID })" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fa fa-pen-alt"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="DeleteFormula(@item.FormulaID)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td>@item.FormulaID</td>
+                                                <td>@item.FormulaName</td>
+                                                <td>@item.Department</td> <!-- डिपार्टमेंट व्हॅल्यू -->
+                                                <td>
+                                                    @if (item.IsActive == true)
+                                                    {
+                                                        <span class="badge badge-success">Active</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge badge-danger">Inactive</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#addFormula").click(function () {
+
+            $("#static-data-add-tab")
+            .slideToggle(function () {
+
+                if ($("#static-data-add-tab")
+                    .is(":visible")) {
+
+                    $("#addFormula").html(
+                        '<i class="fa fa-times"></i> Close Form'
+                    );
+
+                } else {
+
+                    $("#addFormula").html(
+                        '<i class="fa fa-plus"></i> Add Formula'
+                    );
+                }
+            });
+        });
+
+        $("#btnCancel").click(function () {
+            location.reload();
+        });
+
+        var CheckUpdate = @Html.Raw(Json.Encode(ViewBag.Update));
+
+        if (CheckUpdate != null) {
+
+            $("#static-data-add-tab").show();
+
+            $("#addFormula").html(
+                '<i class="fa fa-times"></i> Close Form'
+            );
+        }
+
+    });
+
+    function DeleteFormula(id) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you sure you want to delete this record?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            customClass: { popup: 'fullscreen-popup' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("DeleteDispensingFormula","Masters")',
+                    type: 'GET',
+                    data: { id: id },
+                    success: function () {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: 'Record deleted successfully.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Error while deleting record.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    document.getElementById('SearchInput')
+    .addEventListener('input', function () {
+
+        const filterText =
+        this.value.toLowerCase();
+
+        const rows =
+        document.querySelectorAll(
+            '#tblFormulaList tbody tr'
+        );
+
+        rows.forEach(row => {
+
+            const match =
+            row.textContent
+            .toLowerCase()
+            .includes(filterText);
+
+            row.style.display =
+            match ? '' : 'none';
+        });
+
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        $('#tblFormulaList').DataTable({
+            "pageLength": 10,
+            "lengthMenu": [10, 25, 50, 100]
+        });
+    });
+</script>

@@ -1,0 +1,394 @@
+﻿@{
+    ViewBag.Title = "Skipped Questions - Reception";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var skippedQuestions = ViewBag.SkippedQuestions as List<dynamic> ?? new List<dynamic>();
+    int totalSkipped = ViewBag.TotalSkipped ?? 0;
+    int userId = ViewBag.UserId ?? 0;
+}
+
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem;
+    }
+
+    .header-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+    }
+
+    .question-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #f59e0b;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+    }
+
+        .question-card:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+    .question-number {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #6b7280;
+        background: #f3f4f6;
+        padding: 0.25rem 0.75rem;
+        border-radius: 1rem;
+        display: inline-block;
+    }
+
+    .level-tag {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.8rem;
+        border-radius: 1rem;
+        background: #dbeafe;
+        color: #1e40af;
+        font-weight: 600;
+    }
+
+    .question-text {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-top: 0.75rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    .option-btn {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 0.75rem;
+        background: #fafafa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+        .option-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .option-btn.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .option-btn .current-badge {
+            float: right;
+            font-size: 0.7rem;
+            color: #2563eb;
+            background: #dbeafe;
+            padding: 0.1rem 0.6rem;
+            border-radius: 1rem;
+        }
+
+    .btn-submit {
+        background: #10b981;
+        color: white;
+        padding: 0.75rem 2.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+        .btn-submit:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    .btn-back {
+        background: #6b7280;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+        .btn-back:hover {
+            background: #4b5563;
+            text-decoration: none;
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #94a3b8;
+    }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+    .submit-section {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e5e7eb;
+        margin-top: 1.5rem;
+    }
+
+    .selected-count {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.5rem;
+    }
+
+        .selected-count strong {
+            color: #3b82f6;
+        }
+</style>
+
+<div class="container-fluid" style="padding-left:15px !important; padding-top:50px">
+    <!-- Header -->
+    <div class="header-card">
+        <div class="d-flex flex-wrap align-items-center justify-content-between">
+            <div>
+                <h1 class="h4 mb-1">📋 Skipped Questions</h1>
+                <p class="text-muted mb-0">Total Skipped: <strong>@totalSkipped</strong></p>
+            </div>
+            @*<a href="@Url.Action("AppointmentList", "Appointment")" class="btn btn-secondary">
+                    ← Back
+                </a>*@
+        </div>
+    </div>
+
+    <!-- Questions -->
+    @if (skippedQuestions.Any())
+    {
+        int index = 1;
+        foreach (var item in skippedQuestions)
+        {
+            string questionText = item.Question?.ToString() ?? "";
+            string levelName = item.LevelName?.ToString() ?? "Level " + item.LevelId;
+            string selectedAnswer = item.SelectedAnswer?.ToString() ?? "";
+
+            // Parse options
+            string allOptionsStr = item.AllOptions?.ToString() ?? "";
+            string allScoresStr = item.AllScores?.ToString() ?? "";
+            string allSuggestionsStr = item.AllSuggestions?.ToString() ?? "";
+
+            var optionsList = string.IsNullOrEmpty(allOptionsStr)
+                ? new List<string>()
+                : allOptionsStr.Split(new[] { "|||" }, StringSplitOptions.None).ToList();
+            var scoresList = string.IsNullOrEmpty(allScoresStr)
+                ? new List<string>()
+                : allScoresStr.Split(new[] { "|||" }, StringSplitOptions.None).ToList();
+            var suggestionsList = string.IsNullOrEmpty(allSuggestionsStr)
+                ? new List<string>()
+                : allSuggestionsStr.Split(new[] { "|||" }, StringSplitOptions.None).ToList();
+
+            <div class="question-card" id="question-@item.QuestionId">
+                <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
+                    <span class="question-number">Question @index</span>
+                    <span class="level-tag">@levelName</span>
+                </div>
+
+                <p class="question-text">@questionText</p>
+
+                <div class="mt-3">
+                    <p class="text-muted small mb-2">Select Answer:</p>
+                    @for (int i = 0; i < optionsList.Count; i++)
+                    {
+                        string opt = optionsList[i];
+                        string score = i < scoresList.Count ? scoresList[i] : "0";
+                        string suggestion = i < suggestionsList.Count ? suggestionsList[i] : "";
+                        bool isSelected = opt == selectedAnswer;
+
+                        <button class="option-btn @(isSelected ? "selected" : "")"
+                                data-questionid="@item.QuestionId"
+                                data-option="@opt"
+                                data-score="@score"
+                                data-suggestion="@suggestion"
+                                onclick="selectOption(this, @item.QuestionId)">
+                            @opt
+                            @if (isSelected)
+                            {
+                                <span class="current-badge">✓ Current</span>
+                            }
+                        </button>
+                    }
+                </div>
+
+                <input type="hidden" id="selected_@item.QuestionId" value="@selectedAnswer" />
+            </div>
+            index++;
+        }
+
+        <!-- Submit Section -->
+        <div class="submit-section">
+            <button class="btn-submit" onclick="submitAllAnswers()" id="submitBtn">
+                ✅ Submit All Answers
+            </button>
+            <div class="selected-count" id="selectedCount">
+                <span id="answeredCount">0</span> / <strong>@totalSkipped</strong> questions answered
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="empty-state">
+                <span class="icon">🎉</span>
+                <h3>No Skipped Questions</h3>
+                <p class="text-muted">This user has no skipped questions.</p>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    // Store selections
+    var selections = {};
+    var totalQuestions = @totalSkipped;
+
+    function updateAnsweredCount() {
+        var answered = Object.keys(selections).length;
+        document.getElementById('answeredCount').textContent = answered;
+    }
+
+    function selectOption(btn, questionId) {
+        // Deselect other options for this question
+        var parent = btn.closest('.question-card');
+        parent.querySelectorAll('.option-btn').forEach(function(b) {
+            b.classList.remove('selected');
+            // Remove current badge from others
+            var badge = b.querySelector('.current-badge');
+            if (badge) badge.remove();
+        });
+
+        // Select this option
+        btn.classList.add('selected');
+
+        // Add current badge
+        var badge = document.createElement('span');
+        badge.className = 'current-badge';
+        badge.textContent = '✓ Current';
+        btn.appendChild(badge);
+
+        // Store selection
+        var optionText = btn.dataset.option;
+        var score = btn.dataset.score;
+        var suggestion = btn.dataset.suggestion;
+
+        selections[questionId] = {
+            option: optionText,
+            score: score,
+            suggestion: suggestion
+        };
+
+        document.getElementById('selected_' + questionId).value = optionText;
+
+        updateAnsweredCount();
+    }
+
+    function submitAllAnswers() {
+        var allAnswered = true;
+        @foreach (var item in skippedQuestions)
+        {
+            <text>
+            if (!selections[@item.QuestionId]) {
+                allAnswered = false;
+            }
+            </text>
+        }
+
+        if (!allAnswered) {
+            alert('Please select an answer for all skipped questions.');
+            return;
+        }
+
+        if (!confirm('Are you sure you want to submit all answers?')) {
+            return;
+        }
+
+        // Show loading
+        var submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Submitting...';
+
+        var promises = [];
+
+        @foreach (var item in skippedQuestions)
+        {
+            <text>
+            promises.push(
+                $.ajax({
+                    url: '@Url.Action("UpdateSkippedAnswer", "Appointment")',
+                    type: 'POST',
+                    data: {
+                        userGameId: @item.GameId,
+                        questionId: @item.QuestionId,
+                        levelId: @item.LevelId,
+                        newAnswer: selections[@item.QuestionId].option,
+                        receptionistId: 1
+                    }
+                })
+            );
+            </text>
+        }
+
+        Promise.all(promises)
+            .then(function(results) {
+                alert('✅ All answers updated successfully!');
+                window.location.href = '@Url.Action("Appointment", "Appointment")';
+            })
+            .catch(function(error) {
+                alert('❌ Error updating answers. Please try again.');
+                console.error(error);
+            })
+            .finally(function() {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Submit All Answers';
+            });
+    }
+
+    // Initialize answered count
+    $(document).ready(function() {
+        updateAnsweredCount();
+    });
+</script>

@@ -1,0 +1,1385 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.ClsPrescription
+
+@{
+    ViewBag.Title = "OutstandingBill";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+    int count = 1;
+}
+<style>
+         input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 10px;
+    opacity: 1;
+}
+    .dynamic-btn {
+        margin-top: 3rem !important;
+    }
+
+    #ddlServiceName + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlServiceName + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlServiceName + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+
+    #bill-modal {
+        max-height: 100%; /* Maximum height for the modal */
+        overflow-y: auto; /* Enable vertical scrolling if content overflows */
+    }
+
+    #bill-details-modal {
+        max-height: 100% !important; /* Maximum height for the modal */
+        overflow-y: auto !important; /* Enable vertical scrolling if content overflows */
+    }
+
+    #billingTable table tbody tr:last-child td {
+        color: inherit !important;
+        font-weight: normal !important;
+    }
+</style>
+
+
+
+
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="b-overlay-wrap position-relative">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Dispensing Outstanding Bill List
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button class="btn btn-sm btn-primary" id="btnPaidBillList">
+                                        @*<i class="fa fa-plus">
+                                            </i>*@
+                                        Paid Bill List
+                                    </button>
+
+
+                                    <button class="btn btn-sm btn-primary" id="btnUNPAIDBillList">
+
+                                        Unpaid Bill List
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body p-0">
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <div class="page-loader-section" style="display: none;">
+                                    <div class="text-center loader-2-container">
+                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                            <div class="vld-background">
+                                                @*<div class="vld-background" style="backdrop-filter: blur(2px);">*@
+                                            </div>
+                                            <div class="vld-icon">
+                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                     height="64" stroke="var(--primary)">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                            </circle>
+                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                                </animateTransform>
+                                                            </path>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="billingTable">
+                                    <div class="vgt-wrap ">
+                                        <!---->
+                                        <div class="vgt-inner-wrap">
+                                            <!---->
+                                            <div class="vgt-global-search vgt-clearfix">
+                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                    <form role="search">
+                                                        <label for="vgt-search-390878681313">
+                                                            <span aria-hidden="true" class="input__icon">
+                                                                <div class="magnifying-glass">
+                                                                </div>
+                                                            </span>
+                                                            <span class="sr-only">
+                                                                Search
+                                                            </span>
+                                                        </label>
+                                                        <input id="SearchInput" type="text" placeholder="Search bills data by id,Encounter ID, clinic, doctor, patient, total amount, discount ,amount due  and status(0 or 1)"
+                                                               class="vgt-input vgt-pull-left">
+                                                    </form>
+                                                </div>
+                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                    <div>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-fixed-header">
+                                                <!---->
+                                            </div>
+                                            <div class="vgt-responsive">
+                                                <table id="tblBillingRecords" class="vgt-table striped vgt-compact">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-11" class="vgt-left-align"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Action
+                                                                </span>
+                                                                <!---->
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-10" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Status in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            @*<th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                    style="min-width: 130px; max-width: 130px; width: 130px;">
+                                                                    <span>
+                                                                        Encounter ID
+                                                                    </span>
+                                                                    <button>
+                                                                        <span class="sr-only">
+                                                                            Sort table by Encounter ID in descending order
+                                                                        </span>
+                                                                    </button>
+                                                                </th>*@
+
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Patient Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Patient Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Doctor Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Doctor Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Clinic Name
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Clinic Name in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                          
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Total
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Total in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    Total Amount Paid
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Discount in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+                                                                style="min-width: 130px; max-width: 130px; width: 130px;">
+                                                                <span>
+                                                                    Amount due
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Amount due in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-9" class="vgt-left-align sortable"
+                                                                style="min-width: 160px; max-width: 160px; width: 160px;">
+                                                                <span>
+                                                                    Date
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Date in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>
+
+                                                        </tr>
+                                                        <tr>
+                                                            <!---->
+                                                            <!---->
+                                                            <th class="filter-th">
+                                                            </th>
+                                                            <th class="filter-th">
+
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-patient_name" type="text" id="FilterByPatient" placeholder="Filter by patient name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-doctor_name" type="text" id="FilterByDoctor" placeholder="Filter by doctor"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-clinic_name" type="text" id="FilterByClinic" placeholder="Filter clinic name"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                         
+                                                            @*<th class="filter-th">
+                                                                    <div>
+                                                                        <input name="vgt-service_name" type="text" id="FilterByService" placeholder="Filter service by name"
+                                                                               class="vgt-input">
+                                                                        <!---->
+                                                                        <!---->
+                                                                    </div>
+                                                                </th>*@
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-total_amount" id="filterByTotal" type="text" placeholder="Total"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-discount" type="text" id="FilterByDiscount" placeholder="Discount"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="text" id="FilterAmoutDue" placeholder="Amount due"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                <div>
+                                                                    <input name="vgt-actual_amount" type="date" id="FilterDate" placeholder="Date"
+                                                                           class="vgt-input">
+                                                                    <!---->
+                                                                    <!---->
+                                                                </div>
+                                                            </th>
+                                                            <th class="filter-th">
+                                                                @*<div>
+                                                                        <!---->
+                                                                        <!---->
+                                                                        <select name="vgt-status" class="vgt-select">
+                                                                            <option value="">
+                                                                                Filter by status
+                                                                            </option>
+                                                                            <option value="1">
+                                                                                Unpaid
+                                                                            </option>
+                                                                            <option value="0">
+                                                                                Paid
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>*@
+                                                            </th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!---->
+                                                        <!---->
+                                                    </tbody>
+                                                    <tbody>
+                                                        @if (ViewBag.OutstandingList != null)
+                                                        {
+                                                            foreach (var item in ViewBag.OutstandingList)
+                                                            {
+                                                                <tr>
+                                                                    <td data-label="Action" class="vgt-left-align">
+                                                                        <div class="btn-group">
+                                                                            <button title="Edit" class="btn btn-sm btn-outline-primary" id="EditBill" onclick="OpenBillModel('@item.Id', '@item.AppointmentFid')">
+                                                                                <i class="fa fa-pen-alt">
+                                                                                </i>
+                                                                            </button>
+                                                                            <button title="Bill Details" class="btn btn-sm btn-outline-primary" id="BillDetails" onclick="GetPatientDetails('@item.AppointmentFid', 'Outstanding')">
+                                                                                <i class="fa fa-file-invoice">
+                                                                                </i>
+                                                                            </button>
+                                                                            @*<button title="Bill Details" class="btn btn-sm btn-outline-primary" id="BillDetails" onclick="GetPatientDetails('@item.AppointmentFid')">
+                                                                                    <i class="fa fa-file-invoice">
+                                                                                    </i>
+                                                                                </button>*@
+
+
+
+                                                                            @*<a href="@Url.Action("PatientEncounter","Encounter",new { EncountrFid=@item.EncounterFid})" class="btn btn-sm btn-outline-primary"
+                                                                                   title="Encounter details" target="_self">
+                                                                                    <i class="fas fa-tachometer-alt">
+                                                                                    </i>
+                                                                                </a>*@
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge badge-danger">
+                                                                            @item.Status
+                                                                        </span>
+
+                                                                    </td>
+                                                                    @*<td>@item.EncounterFid</td>*@
+                                                                    <td>@item.PatientName</td>
+                                                                    <td>@item.DoctorName</td>
+                                                                    <td>@item.ClinicName</td>
+                                                                   
+                                                                    <td>@item.TotalAmount</td>
+                                                                    <td>@item.TotalPaid</td>
+                                                                    <td>@item.RemainingAmount</td>
+
+                                                                    <td>
+                                                                        @Convert.ToDateTime(@item.CreatedDate).ToString("dd/MM/yyyy")
+                                                                    </td>
+
+                                                                </tr>
+                                                            }
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="12">
+                                                                    <div class="text-center mtb-100">
+                                                                        No Data Found
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!---->
+                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                <div class="footer__row-count vgt-pull-left">
+                                                    <form>
+                                                        <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                        <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                            <option value="10">10</option>
+                                                            <option value="20">20</option>
+                                                            <option value="30">30</option>
+                                                            <option value="40">40</option>
+                                                            <option value="50">50</option>
+                                                            <option value="-1">ALL</option>
+                                                        </select>
+                                                    </form>
+                                                </div>
+                                                <div class="footer__navigation vgt-pull-right">
+
+                                                    <div class="footer__navigation__page-info">
+                                                        <form>
+                                                            <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                                <span>Page</span>
+                                                                <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                                <span>of <span id="total-pages">1</span></span>
+                                                            </label>
+                                                        </form>
+                                                    </div>
+                                                    <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span class="chevron left"></span><span>Prev</span>
+                                                    </button>
+                                                    <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                        <span>Next</span><span class="chevron right"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!---->
+                    <!---->
+                </div>
+                <!---->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+@*//Bill Model Start*@
+<div id="bill-modal___BV_modal_outer_" style="position: absolute; z-index: 1040; display: none;">
+    <div id="bill-modal" role="dialog" aria-describedby="bill-modal___BV_modal_body_"
+         class="modal fade show" aria-modal="true" style="display: block; padding-left: 4px;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <span tabindex="0">
+            </span>
+            <div id="bill-modal___BV_modal_content_" tabindex="-1" class="modal-content">
+                <header id="bill-modal___BV_modal_header_" class="modal-header">
+                    <h2 class="text-primary w-100 text-center">
+                        Generate invoice
+                    </h2>
+                    <button type="button" aria-label="Close" class="close" id="Closemodel">
+                        ×
+                    </button>
+                </header>
+                <div id="bill-modal___BV_modal_body_" class="modal-body pt-0">
+                    <form id="patientBillDataForm" novalidate="novalidate">
+                        @Html.HiddenFor(m => m.AppointmentFid, new { id = "txtAppointmentFid" })
+                        @Html.HiddenFor(m => m.PatientFid, new { id = "txtPatientFid" })
+                        @Html.HiddenFor(m => m.EncounterFid, new { id = "txtEncounterFid" })
+                        @Html.HiddenFor(m => m.Bill_Fid, new { id = "Id" })
+                        @*@Html.HiddenFor(m => m.finalAmount, new { id = "txtFinalTotal" })*@
+                        @Html.HiddenFor(m => m.FinalPaybalAmount, new { id = "txtFinalPaybalAmount" })
+                        @Html.HiddenFor(m => m.Discount, new { id = "txtDiscount" })
+
+
+                        <hr class="my-4">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="total_amount" class="form-control-label">
+                                        Total
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    Rs
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.finalAmount, new { @class = "form-control", id = "txtFinalTotal", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <!---->
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="discount" class="form-control-label">
+                                        Total Paid Amount
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    Rs
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.TotalPaid, new { @class = "form-control", type = "number", id = "TotalPaid", placeholder = "Enter discount", autocomplete = "off", @readonly = "readonly" })
+
+
+                                        </div>
+                                        <!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="actual_amount" class="form-control-label">
+                                        Payable Amount
+                                    </label>
+                                    <div>
+                                        <div role="group" class="input-group input-group-md">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text">
+                                                    Rs
+                                                </div>
+                                            </div>
+                                            @Html.TextBoxFor(m => m.RemainingAmount, new { @class = "form-control", id = "RemainingAmount", placeholder = "Total Amount", autocomplete = "off", @readonly = "readonly" })
+
+
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    /-
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div id="paymentRowsContainer">
+                            <!-- First payment row (default) -->
+                            <div class="row payment-row align-items-end"">
+                                <div class="col-md-4">
+                                    <label class="form-control-label mt-1">
+                                        Payment Type
+                                    </label>
+                                    @Html.DropDownListFor(m => m.PaymentType, new SelectList(
+                                                            new[] {
+                                                            new { Value = "", Text = "Select Status" },
+                                                            new { Value="UPI", Text = "UPI" },
+                                                            new { Value = "Cash", Text = "Cash" },
+                                                            new { Value = "CreditCard", Text = "Credit Card" },
+                                                            new { Value = "DebitCard", Text = "Debit Card" }
+
+                                                            }, "Value", "Text"),
+                                                            new { @id = "ddlPaymentType", @class = "form-control custom-select paymentType" })
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-control-label mt-1">
+                                        Reference
+                                    </label>
+                                    @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control referenceNumber", maxlength = "50", id = "txtReference" })
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-control-label mt-1">
+                                        Amount
+                                    </label>
+                                    @Html.TextBoxFor(m => m.ReferenceNumber, new { @class = "form-control amount", type = "number", id = "txtAmount",
+                                   onkeypress = "return event.charCode >= 48 && event.charCode <= 57 || event.charCode == 46"
+                               })
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <button type="button" class="btn btn-success btn-primary" title="Add Row" id="BtnAddRow">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div id="payment-status-section" class="row">
+                            <div class="offset-md-10 col-md-2 float-right mb-3">
+                              
+                            </div>
+                           
+
+                            </span>
+                        </div>
+                        <div id="payment-status-section" class="row">
+                            <span class="text-center small text-danger" id="idmismatchAmount"></span>
+                                <div class="offset-md-7 col-md-5 float-right mb-3">
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label class="form-control-label mt-1">
+                                                Payment Status
+                                            </label>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div role="radiogroup" tabindex="-1" class="bv-no-focus-ring" id="__BVID__341">
+                                                <div class="custom-control custom-control-inline custom-radio">
+                                                    @Html.RadioButtonFor(m => m.PaymentStatus, "Paid", new { @class = "custom-control-input", id = "paidRadio", name = "PaymentStatus", required = "required" })
+                                                    @*<input type="radio" class="custom-control-input" value="paid" id="paidRadio" name="paymentStatus">*@
+                                                    <label class="custom-control-label" for="paidRadio">
+                                                        Paid
+                                                    </label>
+                                                </div>
+                                                @*<div class="custom-control custom-control-inline custom-radio">
+                            @Html.RadioButtonFor(m => m.PaymentStatus, "Unpaid", new { @class = "custom-control-input", id = "unpaidRadio", name = "PaymentStatus" })
+                            @*<input type="radio" class="custom-control-input" value="unpaid" id="unpaidRadio" name="paymentStatus">*@
+                                                @*<label class="custom-control-label" for="unpaidRadio">
+                                    Unpaid
+                                </label>
+                            </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+</div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="float-left">
+                                    <h4 class="text-center small text-danger">
+                                        Note: To close the encounter, invoice payment is mandatory
+                                    </h4>
+                                </div>
+                                <div class="float-right">
+                                    <button type="button" class="btn btn-primary" id="submitButton">
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn btn-outline-primary btn-secondary" id="Cancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!---->
+            </div>
+            <span tabindex="0">
+            </span>
+        </div>
+    </div>
+    <div id="bill-modal___BV_modal_backdrop_" class="modal-backdrop">
+    </div>
+</div>
+@*//Bill Model End*@
+
+
+
+
+
+
+
+<script>
+    $("#btnPaidBillList").click(function () {
+        var url = '@Url.Action("PaidBillRecords", "BillingRecord")';
+        window.location.href = url;
+    });
+
+
+
+    $("#btnUNPAIDBillList").click(function () {
+        var url = '@Url.Action("BillingRecord", "BillingRecord")';
+        window.location.href = url;
+    });
+
+    function GetPatientDetails(AppointmentFid, fromPage) {
+        debugger;
+        // Correct the URL assignment
+        $("#bill-details-modal___BV_modal_outer_")
+         .css("display", "block")  // Remove 'display: none' by setting it to 'block'
+         .attr("aria-hidden", "false")  // Update ARIA attribute to indicate visibility
+         .addClass("show");
+
+        var url = '@Url.Action("PaidBillRecords", "BillingRecord")' + '?AppointmentFid=' + AppointmentFid + '&fromPage=' + fromPage;
+           window.location.href = url;
+           // 👉 Open in popup window (same like modal feel)
+         
+    }
+
+
+</script>
+
+<script>
+
+function OpenBillModel(Id, AppointmentFid) {
+    $('#Id').val(Id);
+    $('#AppointmentFid').val(AppointmentFid);
+
+    $.ajax({
+        type: 'GET',
+        dataType: 'JSON',
+        url: '@Url.Action("GetOutstandingBillDetails", "BillingRecord")',
+        data: { Id: Id, AppointmentFid: AppointmentFid },
+        success: function (data) {
+            debugger
+            //var GenerateBill = data.GetBillList || [];
+            //var tableBody = $("#tblGenerateBillRecord tbody");
+            //tableBody.empty();
+            var TotalAmount = data.TotalAmount;
+            var TotalPaid = data.TotalPaid;
+            var RemainingAmount = data.RemainingAmount;
+
+            $("#txtFinalTotal").val(TotalAmount.toFixed(2));
+            $("#RemainingAmount").val(RemainingAmount.toFixed(2));
+            $("#TotalPaid").val(TotalPaid.toFixed(2));
+            $("#txtAmount").val(RemainingAmount.toFixed(2));
+
+            $("#txtAppointmentFid").val(AppointmentFid);
+            $("#txtPatientFid").val(data.PatientFid);
+            $("#txtEncounterFid").val(data.EncounterFid);
+            $("#txtBill_Fid").val(data.FinalBillFid);
+            $("#txtDiscount").val(data.DiscountAmt);
+            $("#txtFinalPaybalAmount").val(data.TotalAmount);
+
+            //$("#").val(totalPayableAmount.toFixed(2));
+
+            // set Total + Remaining
+
+
+            // Reset dynamic rows container
+            $("#paymentRowsContainer").find(".payment-row").not(":first").remove();
+
+            // If previous payment exists, refill
+            var FinalBills = data.GetFinalbillDetails || [];
+            if (FinalBills.length > 0) {
+                let usedAmount = 0;
+                let count = 1;
+
+                $.each(FinalBills, function (i, item) {
+                    function getVal(key) {
+                        let f = item.find(obj => obj.Key === key);
+                        return f ? f.Value : "";
+                    }
+
+                    let pMode = getVal("PaymentMode");
+                    let pRef = getVal("PaymentReferenceNumber");
+                    let amt = parseFloat(getVal("Amount")) || 0;
+
+                    if (count === 1) {
+                        $("#ddlPaymentType").val(pMode);
+                        $("#txtReference").val(pRef);
+                        $("#txtAmount").val(amt);
+                    } else {
+                        addPaymentRow(pMode, pRef, amt);
+                    }
+                    usedAmount += amt;
+                    count++;
+                });
+
+                let remaining = TotalAmount - usedAmount;
+                $("#RemainingAmount").val(remaining.toFixed(2));
+            }
+
+            $("#bill-modal___BV_modal_outer_").show().addClass("show");
+        }
+    });
+}
+
+// Auto Recalculation when amount changes
+//$(document).on("input", ".amount", function () {
+//    calculateRemaining();
+//});
+
+
+
+
+
+$("#BtnAddRow").click(function () {
+    debugger;
+    var FinalPaybalAmt = parseFloat($("#RemainingAmount").val());
+    var PayAmount = parseFloat($("#txtAmount").val());
+    var FinalTotal = 0;
+    var DiffenceAmount = 0;
+    $(".payment-row").each(function () {
+        debugger;
+        var amount = $(this).find(".amount").val();
+        FinalTotal += parseFloat(amount) || 0;
+
+    });
+
+    DiffenceAmount = FinalPaybalAmt - FinalTotal;
+
+    var newRow = `
+        <div class="row payment-row dynamic-row">
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Payment Type</label>
+                <select class="form-control custom-select paymentType">
+                    <option value="">Select Status</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cash">Cash</option>
+                    <option value="CreditCard">Credit Card</option>
+                    <option value="DebitCard">Debit Card</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-control-label mt-1">Reference</label>
+                <input type="text" class="form-control referenceNumber" placeholder="Enter Reference">
+            </div>
+            <div class="col-md-3">
+                <label class="form-control-label mt-1">Amount</label>
+                <input type="number" class="form-control amount" placeholder="Enter Amount" value=${DiffenceAmount}>
+            </div>
+             <div class="col-md-1 mt-3 dynamic-btn">
+               <button title="Remove" class="btn btn-sm btn-outline-danger btn-remove-row">
+                <i class="fa fa-trash"></i>
+            </button>
+            </div>
+        </div>`;
+
+    // Append new row to container
+    $("#paymentRowsContainer").append(newRow);
+});
+
+$(document).on("click", ".btn-remove-row", function () {
+    debugger
+    var FinalPaybalAmt = parseFloat($("#RemainingAmount").val());
+
+    $(this).closest(".dynamic-row").remove();
+    $("#txtAmount").val(FinalPaybalAmt);
+});
+
+
+
+// Submit Button Logic
+    @*$("#submitButton").click(function () {
+      debugger;
+      $("#idmismatchAmount").text("");
+      var paymentList = [];
+
+      var ISOutStandingAmt = "Yes";
+
+     // var totalPaid = parseFloat($("#TotalPaid").val()) || 0;
+      var totalEntered = 0;
+      var isValid = true;
+      var errorMessage = "";
+
+      // ✅ Payment Status check
+      var paymentStatus = $("input[name='PaymentStatus']:checked").val();
+      if (!paymentStatus) {
+          $("#idmismatchAmount").text("Please select Payment Status");
+          return false;
+      }
+
+      $(".payment-row").each(function () {
+
+          var paymentType = $(this).find(".paymentType").val();
+          var reference = $(this).find(".referenceNumber").val();
+          var amount = parseFloat($(this).find(".amount").val()) || 0;
+
+          // ✅ Payment Type required
+          if (!paymentType) {
+              errorMessage = "Select Payment Type";
+              isValid = false;
+              return false;
+          }
+
+          // ✅ Reference required if not Cash
+          if (paymentType !== "Cash" && !reference) {
+              errorMessage = "Enter Reference for non-cash payment";
+              isValid = false;
+              return false;
+          }
+
+          // ✅ Amount validation
+          if (amount <= 0) {
+              errorMessage = "Enter valid Amount";
+              isValid = false;
+              return false;
+          }
+
+          totalEntered += amount;
+
+          // ✅ Row validation error
+          if (!isValid) {
+              $("#idmismatchAmount").text(errorMessage);
+              return false;
+          }
+
+          // 👉 ADD HERE 👇
+          var payableAmount = parseFloat($("#RemainingAmount").val()) || 0;
+
+          if (totalEntered > payableAmount) {
+              $("#idmismatchAmount").text("Entered amount exceeds payable amount");
+              return false;
+          }
+
+        var finalbill1 = {
+            PaymentType: $(this).find(".paymentType").val(),
+            ReferenceNumber: $(this).find(".referenceNumber").val(),
+            Amount: $(this).find(".amount").val(),
+
+
+            AppointmentFid: $("#txtAppointmentFid").val(),
+            PatientFid: $("#txtPatientFid").val(),
+            EncounterFid: $("#txtEncounterFid").val(),
+            Id: $("#Id").val(),
+
+            Discount: $("#txtDiscount").val(),
+            FinalPaybalAmount: $("#txtFinalPaybalAmount").val(),
+            finalAmount: $("#txtFinalTotal").val(),
+
+            PaymentStatus: $("input[name='PaymentStatus']:checked").val()
+        };
+
+        paymentList.push(finalbill1);
+    });
+
+          // ✅ Stop if row validation failed
+    if (!isValid) {
+        $("#idmismatchAmount").text(errorMessage);
+        return false;
+    }
+      // ४. अमाऊंट जास्त भरली आहे का ते तपासा
+    if (paymentStatus === "Paid" && FinalTotal > (FinalPaybalAmt + 0.1)) {
+        $("#idmismatchAmount").html('<span class="text-danger">Error: Paid amount cannot be greater than Payable amount.</span>');
+        return false;
+    }
+          // ✅ Total amount validation
+
+    var postData = {
+        paymentList: paymentList,
+        ISOutStandingAmt: ISOutStandingAmt
+    };
+    $.ajax({
+        type: 'POST',
+        dataType: 'JSON',
+        contentType: "application/json; charset=utf-8",
+        url: '@Url.Action("SaveAndCloseEncounter", "AayurvedEHR")',
+        data: JSON.stringify(postData),
+        success: function (data) {
+            if (data.success) {
+                window.location.href = '@Url.Action("OutstandingBill", "BillingRecord")';
+            } else {
+                $("#idmismatchAmount").text(data.message);
+            }
+        }
+    });
+
+});
+    $(document).ready(function () {
+
+        $(document).on("input", ".amount", function () {
+            let value = $(this).val();
+
+            // ❌ remove everything except digits and dot
+            value = value.replace(/[^0-9.]/g, '');
+
+            // ❌ allow only one dot
+            let parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts[1];
+            }
+
+            // ❌ limit 2 decimal
+            if (parts[1]) {
+                parts[1] = parts[1].substring(0, 2);
+                value = parts[0] + '.' + parts[1];
+            }
+
+            $(this).val(value);
+        });
+
+    });*@
+
+    $("#submitButton").click(function () {
+        debugger;
+       
+        $("#idmismatchAmount").text(""); // clear error
+
+        var paymentList = [];
+        var ISOutStandingAmt = "Yes";
+
+        var totalPaid = 0;
+        var isValid = true;
+        var errorMsg = "";
+
+        // ✅ Payment Status check
+        var paymentStatus = $("input[name='PaymentStatus']:checked").val();
+        if (!paymentStatus) {
+            $("#idmismatchAmount").text("Please select Payment Status");
+            return false;
+        }
+
+        // ✅ Loop rows
+        $(".payment-row").each(function () {
+
+            var paymentType = $(this).find(".paymentType").val();
+            var reference = $(this).find(".referenceNumber").val();
+            var amount = parseFloat($(this).find(".amount").val()) || 0;
+
+            // 1. Payment Type required
+            if (!paymentType) {
+                errorMsg = "Select Payment Type";
+                isValid = false;
+                return false;
+            }
+
+            //// 2. Reference required if not Cash
+            //if (paymentType !== "Cash" && !reference) {
+            //    errorMsg = "Enter Reference for non-cash payment";
+            //    isValid = false;
+            //    return false;
+            //}
+
+            // 3. Amount required
+            if (amount <= 0) {
+                errorMsg = "Enter valid Amount";
+                isValid = false;
+                return false;
+            }
+
+            totalPaid += amount;
+
+            var finalbill1 = {
+                PaymentType: paymentType,
+                ReferenceNumber: reference,
+                Amount: amount,
+
+                AppointmentFid: $("#txtAppointmentFid").val(),
+                PatientFid: $("#txtPatientFid").val(),
+                EncounterFid: $("#txtEncounterFid").val(),
+                Id: $("#Id").val(),
+
+                Discount: $("#txtDiscount").val(),
+                FinalPaybalAmount: $("#txtFinalPaybalAmount").val(),
+                finalAmount: $("#txtFinalTotal").val(),
+
+                TotalPaid: totalPaid,
+                PaymentStatus: paymentStatus
+            };
+
+            paymentList.push(finalbill1);
+        });
+
+        // ❌ stop if validation failed
+        if (!isValid) {
+            $("#idmismatchAmount").text(errorMsg);
+            return false;
+        }
+        debugger
+        // ✅ Payable vs Paid check
+        var payable = parseFloat($("#RemainingAmount").val()) || 0;
+
+        if (totalPaid > payable) {
+            $("#idmismatchAmount").text("Paid amount cannot be greater than Payable amount");
+            return false;
+        }
+
+        // ✅ Update UI
+        $("#TotalPaid").val(totalPaid.toFixed(2));
+        $("#RemainingAmount").val((payable - totalPaid).toFixed(2));
+
+        var postData = {
+            paymentList: paymentList,
+            ISOutStandingAmt: ISOutStandingAmt
+        };
+        if (paymentStatus === "Paid" && totalPaid > payable) {
+            return false;
+        }
+        $.ajax({
+            type: 'POST',
+            dataType: 'JSON',
+            contentType: "application/json; charset=utf-8",
+          url: '@Url.Action("SaveAndCloseEncounter", "AayurvedEHR")',
+            data: JSON.stringify(postData),
+            success: function (data) {
+                if (data.success) {
+                     window.location.href = '@Url.Action("OutstandingBill", "BillingRecord")';
+                } else {
+                    $("#idmismatchAmount").text(data.message);
+                }
+            }
+        });
+
+    });
+</script>
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#Closemodel').click(function () {
+            window.location.href = '@Url.Action("OutstandingBill", "BillingRecord")';
+        });
+
+        $('#Cancel').click(function () {
+            window.location.href = '@Url.Action("OutstandingBill", "BillingRecord")';
+        });
+    });
+
+
+    function filterTable(inputId, tableId) {
+        debugger;
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+    filterTable('SearchInput', 'tblBillingRecords');
+    filterTable('FilterAmoutDue', 'tblBillingRecords');
+    filterTable('FilterByDiscount', 'tblBillingRecords');
+    filterTable('filterByTotal', 'tblBillingRecords');
+    filterTable('FilterByPatient', 'tblBillingRecords');
+    filterTable('FilterByClinic', 'tblBillingRecords');
+    filterTable('FilterByDoctor', 'tblBillingRecords');
+    filterTable('FilterDate', 'tblBillingRecords');
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        debugger;
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblBillingRecords');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            let totalPages = rowsPerPage === -1 ? 1 : Math.ceil(rows.length / rowsPerPage);
+
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= totalPages);
+            //prevButton.classList.toggle('disabled', currentPage <= 1);
+            //nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+        // 👉 Input page number change
+        currentPageInput.addEventListener('change', function () {
+            let enteredPage = parseInt(this.value);
+            let totalPages = Math.ceil(rows.length / rowsPerPage);
+
+            if (isNaN(enteredPage) || enteredPage < 1) {
+                alert("Please enter a valid page number");
+                currentPageInput.value = currentPage;
+                return;
+            }
+
+            if (enteredPage > totalPages) {
+                alert("Entered page exceeds total pages");
+                currentPageInput.value = currentPage;
+                return;
+            }
+
+            currentPage = enteredPage;
+            updateTable();
+        });
+
+        // 👉 Enter key support
+        currentPageInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.dispatchEvent(new Event('change'));
+            }
+        });
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("paidRadio").setAttribute("required", "required");
+    });
+
+
+</script>
+
+<script>
+    $("#TotalPaid").on("input", function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+
+    $(document).on("input", ".amount", function () {
+        debugger;
+        var payableAmount = parseFloat($("#RemainingAmount").val()) || 0;
+        var enteredAmount = parseFloat($(this).val()) || 0;
+
+        // Only numbers allow
+       // this.value = this.value.replace(/[^0-9]/g, '');
+
+        if (enteredAmount > payableAmount) {
+            $(this).addClass("is-invalid");
+        } else {
+            $(this).removeClass("is-invalid");
+        }
+    });
+
+    $(document).on("change", ".paymentType", function () {
+
+        var paymentType = $(this).val();
+        var referenceInput = $(this).closest(".payment-row").find(".referenceNumber");
+
+        if (paymentType === "Cash") {
+            referenceInput.val('');
+            referenceInput.prop("readonly", true);
+        } else {
+            referenceInput.prop("readonly", false);
+        }
+    });
+
+    $(document).on("input", ".referenceNumber", function () {
+        this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    });
+
+</script>
+<script>
+    $("#FilterDate").on("change", function () {
+
+        let selectedDate = $(this).val(); // yyyy-MM-dd
+
+        if (!selectedDate) {
+            $("#tblBillingRecords tbody tr").show();
+            return;
+        }
+
+        $("#tblBillingRecords tbody tr").each(function () {
+
+            // 👉 DATE COLUMN = LAST COLUMN (correct index = 8)
+            let rowText = $(this).find("td").eq(8).text().trim();
+
+            // remove time if exists
+            let clean = rowText.split(" ")[0];
+
+            // convert 27/03/2026 → 2026-03-27
+            let p = clean.split("/");
+
+            if (p.length !== 3) return;
+
+            let rowDate = p[2] + "-" + p[1] + "-" + p[0];
+
+            if (rowDate === selectedDate) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+
+        });
+
+    });
+</script>
+<script>
+    $(document).on("change", "#InputPage", function () {
+        var enteredPage = parseInt($(this).val());
+        var totalPages = parseInt($("#total-pages").text());
+
+        if (isNaN(enteredPage) || enteredPage < 1) {
+            alert("Please enter valid page number");
+            return;
+        }
+
+        if (enteredPage > totalPages) {
+            alert("Page exceeds total pages");
+            return;
+        }
+
+        // 👉 Call your pagination function here
+        goToPage(enteredPage);
+    });
+</script>

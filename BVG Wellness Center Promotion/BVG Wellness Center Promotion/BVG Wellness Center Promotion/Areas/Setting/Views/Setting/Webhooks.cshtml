@@ -1,0 +1,442 @@
+﻿
+@{
+    ViewBag.Title = "Webhooks";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        @Html.Partial("SettingSidebar")
+
+        <div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="card card-body">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                <i class="fa fa-cogs fa-4x text-warning mb-3"></i>
+                                <i class="fa fa-wrench fa-3x text-secondary"></i>
+                            </div>
+                            <h3 class="text-warning mb-3">
+                                <i class="fa fa-hourglass-half"></i> Under Development
+                            </h3>
+                            <h4 class="text-muted mb-3">
+                                This page is currently under active development.
+                            </h4>
+                            <div class="progress mb-3" style="height: 10px; max-width: 300px; margin: 0 auto;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                     style="width: 65%"></div>
+                            </div>
+                            <p class="text-muted small">
+                                We're working hard to bring you new features. <br>
+                                Estimated completion: Coming soon
+                            </p>
+                            <a href="javascript:history.back()" class="btn btn-outline-primary mt-3">
+                                <i class="fa fa-arrow-left"></i> Go Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @*<div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="b-overlay-wrap position-relative">
+                                <div class="card p-0 shadow">
+                                    <!---->
+                                    <header class="card-header">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                                <h3 class="mb-0">
+                                                    Webhooks list
+                                                </h3>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                                <div class="d-flex justify-content-end">
+                                                    <a href="@Url.Action("CreateWebhook","Setting",new { area="Setting"})" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-plus">
+                                                        </i>
+                                                        New Webhooks
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-body p-0">
+                                        <!---->
+                                        <!---->
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <div style="display: none;">
+                                                    <div class="text-center loader-2-container">
+                                                        <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                                            <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                                            </div>
+                                                            <div class="vld-icon">
+                                                                <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                                     height="64" stroke="var(--primary)">
+                                                                    <g fill="none" fill-rule="evenodd">
+                                                                        <g transform="translate(1 1)" stroke-width="2">
+                                                                            <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                                            </circle>
+                                                                            <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                                                <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                                                  to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                                                </animateTransform>
+                                                                            </path>
+                                                                        </g>
+                                                                    </g>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="webhooksPrint">
+                                                    <div class="vgt-wrap ">
+                                                        <!---->
+                                                        <div class="vgt-inner-wrap">
+                                                            <!---->
+                                                            <div class="vgt-global-search vgt-clearfix">
+                                                                <div class="vgt-global-search__input vgt-pull-left">
+                                                                    <form role="search">
+                                                                        <label for="vgt-search-643224731219">
+                                                                            <span aria-hidden="true" class="input__icon">
+                                                                                <div class="magnifying-glass">
+                                                                                </div>
+                                                                            </span>
+                                                                            <span class="sr-only">
+                                                                                Search
+                                                                            </span>
+                                                                        </label>
+                                                                        <input id="vgt-search-643224731219" type="text" placeholder="Search Table"
+                                                                               class="vgt-input vgt-pull-left">
+                                                                    </form>
+                                                                </div>
+                                                                <div class="vgt-global-search__actions vgt-pull-right">
+                                                                </div>
+                                                            </div>
+                                                            <!---->
+                                                            <div class="vgt-fixed-header">
+                                                                <!---->
+                                                            </div>
+                                                            <div class="vgt-responsive">
+                                                                <table id="vgt-table" class="vgt-table striped vgt-compact">
+                                                                    <colgroup>
+                                                                        <col id="col-0">
+                                                                        <col id="col-1">
+                                                                        <col id="col-2">
+                                                                        <col id="col-3">
+                                                                        <col id="col-4">
+                                                                        <col id="col-5">
+                                                                        <col id="col-6">
+                                                                        <col id="col-7">
+                                                                        <col id="col-8">
+                                                                    </colgroup>
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <!---->
+                                                                            <!---->
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                                <span>
+                                                                                    ID
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by ID in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Name
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Name in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Action type
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Action type in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Module
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Module in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-4" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Module event
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Module event in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Last log
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Updated at
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Updated at in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                                <span>
+                                                                                    Status
+                                                                                </span>
+                                                                                <button>
+                                                                                    <span class="sr-only">
+                                                                                        Sort table by Status in descending order
+                                                                                    </span>
+                                                                                </button>
+                                                                            </th>
+                                                                            <th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align"
+                                                                                style="min-width: auto; width: auto;">
+                                                                                <span>
+                                                                                    Actions
+                                                                                </span>
+                                                                                <!---->
+                                                                            </th>
+                                                                        </tr>
+                                                                        <tr data-v-6869bf1c="">
+                                                                            <!---->
+                                                                            <!---->
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <input data-v-6869bf1c="" name="vgt-id" type="text" placeholder="Filter by ID"
+                                                                                           class="vgt-input">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <input data-v-6869bf1c="" name="vgt-name" type="text" placeholder="Filter by name"
+                                                                                           class="vgt-input">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                    <select data-v-6869bf1c="" name="vgt-methods" class="vgt-select">
+                                                                                        <option data-v-6869bf1c="" value="">
+                                                                                            Filter by action type
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="POST">
+                                                                                            HTTPS POST
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="GET">
+                                                                                            HTTPS GET
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="PUT">
+                                                                                            HTTPS PUT
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="DELETE">
+                                                                                            HTTPS DELETE
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                    <select data-v-6869bf1c="" name="vgt-module_name" class="vgt-select">
+                                                                                        <option data-v-6869bf1c="" value="">
+                                                                                            Filter by module
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="appointment">
+                                                                                            Appointment
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="clinic">
+                                                                                            Clinic
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="doctor">
+                                                                                            Doctor
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="encounter">
+                                                                                            Encounter
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="patient">
+                                                                                            Patient
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="receptionist">
+                                                                                            Receptionist
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <select data-v-6869bf1c="" class="vgt-select">
+                                                                                        <option data-v-6869bf1c="" value="">
+                                                                                            select module
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <!---->
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <div data-v-6869bf1c="">
+                                                                                    <!---->
+                                                                                    <!---->
+                                                                                    <select data-v-6869bf1c="" name="vgt-status" class="vgt-select">
+                                                                                        <option data-v-6869bf1c="" value="">
+                                                                                            Filter by Status
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="1">
+                                                                                            Active
+                                                                                        </option>
+                                                                                        <option data-v-6869bf1c="" value="0">
+                                                                                            Inactive
+                                                                                        </option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </th>
+                                                                            <th data-v-6869bf1c="" class="filter-th">
+                                                                                <!---->
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <!---->
+                                                                        <!---->
+                                                                    </tbody>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td colspan="9">
+                                                                                <div class="text-center">
+                                                                                    No Data Found
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <!---->
+                                                            <div class="vgt-wrap__footer vgt-clearfix">
+                                                                <div class="footer__row-count vgt-pull-left">
+                                                                    <form>
+                                                                        <label for="vgt-select-rpp-1269791532930" class="footer__row-count__label">
+                                                                            Rows per page:
+                                                                        </label>
+                                                                        <select id="vgt-select-rpp-1269791532930" autocomplete="off" name="perPageSelect"
+                                                                                aria-controls="vgt-table" class="footer__row-count__select">
+                                                                            <option value="10">
+                                                                                10
+                                                                            </option>
+                                                                            <option value="20">
+                                                                                20
+                                                                            </option>
+                                                                            <option value="30">
+                                                                                30
+                                                                            </option>
+                                                                            <option value="40">
+                                                                                40
+                                                                            </option>
+                                                                            <option value="50">
+                                                                                50
+                                                                            </option>
+                                                                            <option value="-1">
+                                                                                ALL
+                                                                            </option>
+                                                                        </select>
+                                                                    </form>
+                                                                </div>
+                                                                <div class="footer__navigation vgt-pull-right">
+                                                                    <div data-v-347cbcfa="" class="footer__navigation__page-info">
+                                                                        <form data-v-347cbcfa="">
+                                                                            <label data-v-347cbcfa="" for="vgt-page-input-1388243769139" class="page-info__label">
+                                                                                <span data-v-347cbcfa="">
+                                                                                    Page
+                                                                                </span>
+                                                                                <input data-v-347cbcfa="" id="vgt-page-input-1388243769139" aria-describedby="change-page-hint"
+                                                                                       aria-controls="vgb-table" type="text" class="footer__navigation__page-info__current-entry">
+                                                                                <span data-v-347cbcfa="">
+                                                                                    of 0
+                                                                                </span>
+                                                                            </label>
+                                                                            <span data-v-347cbcfa="" id="change-page-hint" style="display: none;">
+                                                                                Type a page number and press Enter to change the page.
+                                                                            </span>
+                                                                        </form>
+                                                                    </div>
+                                                                    <!---->
+                                                                    <button type="button" aria-controls="vgt-table" class="footer__navigation__page-btn disabled">
+                                                                        <span aria-hidden="true" class="chevron left">
+                                                                        </span>
+                                                                        <span>
+                                                                            Prev
+                                                                        </span>
+                                                                    </button>
+                                                                    <button type="button" aria-controls="vgt-table" class="footer__navigation__page-btn disabled">
+                                                                        <span>
+                                                                            Next
+                                                                        </span>
+                                                                        <span aria-hidden="true" class="chevron right">
+                                                                        </span>
+                                                                    </button>
+                                                                    <!---->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!---->
+                                    <!---->
+                                </div>
+                                <!---->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>

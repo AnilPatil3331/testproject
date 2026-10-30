@@ -1,0 +1,381 @@
+@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.MobileEHRViewModel
+@{
+    Layout = null;
+    var patientRaw = ViewBag.GetPatientEncounterDetails;
+    var FinalBill = ViewBag.FinalBill;
+    var Outstanding = ViewBag.GetOutstandingDetails;
+    var generateBill = ViewBag.GenerateBill as IEnumerable<dynamic>
+    ;
+    var paymentDetails = ViewBag.GetFinalbillDetails as IEnumerable<dynamic>
+        ;
+
+        // Helper to get value from DapperRow safely
+        Func<dynamic, string, object>
+            GetVal = (obj, key) =>
+            {
+            if (obj == null) return "N/A";
+            var dict = (IDictionary<string, object>
+                )obj;
+                return dict.ContainsKey(key) && dict[key] != null ? dict[key] : "N/A";
+                };
+                }
+
+                @functions{
+                public static string NumberToWords(decimal number)
+                {
+                if (number == 0)
+                return "Zero Only";
+
+                if (number < 0)
+                return "Minus " + NumberToWords(Math.Abs(number));
+
+                string words = "";
+                int intPortion = (int)number;
+                int fraction = (int)((number - intPortion) * 100);
+
+                if ((intPortion / 1000000) > 0)
+                {
+                words += NumberToWords(intPortion / 1000000).Replace(" Only", "") + " Million ";
+                intPortion %= 1000000;
+                }
+
+                if ((intPortion / 1000) > 0)
+                {
+                words += NumberToWords(intPortion / 1000).Replace(" Only", "") + " Thousand ";
+                intPortion %= 1000;
+                }
+
+                if ((intPortion / 100) > 0)
+                {
+                words += NumberToWords(intPortion / 100).Replace(" Only", "") + " Hundred ";
+                intPortion %= 100;
+                }
+
+                if (intPortion > 0)
+                {
+                if (words != "")
+                words += "and ";
+
+                string[] unitsMap = { "Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten",
+                "Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen",
+                "Eighteen","Nineteen" };
+
+                string[] tensMap = { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+                if (intPortion < 20)
+                words += unitsMap[intPortion];
+                else
+                {
+                words += tensMap[intPortion / 10];
+                if ((intPortion % 10) > 0)
+                words += " " + unitsMap[intPortion % 10];
+                }
+                }
+
+                if (fraction > 0)
+                {
+                words += " and " + fraction + "/100";
+                }
+
+                return words.Trim() + " Only";
+                }
+                }
+
+                @{
+                decimal paidAmount = 0;
+                string paidInWords = "Zero Only";
+                bool isPaid = FinalBill != null && Outstanding != null && GetVal(FinalBill, "Status").ToString() != "Unpaid";
+
+                if (isPaid && Outstanding != null)
+                {
+                paidAmount = Convert.ToDecimal(GetVal(Outstanding, "TotalPaid").ToString() != "N/A" ? GetVal(Outstanding, "TotalPaid") : 0);
+                paidInWords = NumberToWords(paidAmount);
+                }
+                }
+
+                <!DOCTYPE html>
+                <html lang="mr">
+                <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta charset="utf-8">
+                    <title>Dispensing Invoice Details</title>
+                    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+                    <style>
+                        body {
+                            background: #e9ecef;
+                            font-family: 'Segoe UI', sans-serif;
+                            margin: 0;
+                            padding: 0;
+                        }
+
+                        #detailScreen {
+                            display: block;
+                            background: white;
+                            padding: 20px;
+                            min-height: 100vh;
+                        }
+
+                        #PrintArea {
+                            width: 800px;
+                            margin: 20px auto;
+                            padding: 45px;
+                            background: white;
+                            border: 1px solid #ccc;
+                            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                        }
+
+                        .header-info {
+                            border-bottom: 3px solid #1a6b4a;
+                            margin-bottom: 25px;
+                            padding-bottom: 15px;
+                        }
+
+                        .patient-box {
+                            background: #f8f9fa;
+                            border-left: 5px solid #1a6b4a;
+                            padding: 15px;
+                            margin-bottom: 25px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+
+                            .patient-box p {
+                                margin-bottom: 2px !important;
+                                font-size: 14px;
+                            }
+
+                        .badge-paid {
+                            background-color: #28a745;
+                            color: white;
+                            padding: 5px 10px;
+                            border-radius: 4px;
+                            font-size: 14px;
+                        }
+
+                        .badge-unpaid {
+                            background-color: #dc3545;
+                            color: white;
+                            padding: 5px 10px;
+                            border-radius: 4px;
+                            font-size: 14px;
+                        }
+
+                        @@media print {
+                            .no-print, #billPrint, .btn {
+                                display: none !important;
+                            }
+
+                            body {
+                                background: white !important;
+                            }
+
+                            #PrintArea {
+                                width: 100% !important;
+                                margin: 0 !important;
+                                padding: 10px !important;
+                                border: none !important;
+                                box-shadow: none !important;
+                            }
+
+                            .table-responsive {
+                                overflow: visible !important;
+                            }
+
+                            .table {
+                                width: 100% !important;
+                                border-collapse: collapse;
+                            }
+
+                                .table td, .table th {
+                                    border: 1px solid #dee2e6 !important;
+                                    padding: 8px !important;
+                                }
+                        }
+
+                        @@media (max-width: 767px) {
+                            #detailScreen {
+                                padding: 8px !important;
+                            }
+
+                            #PrintArea {
+                                width: 100% !important;
+                                padding: 15px !important;
+                                margin: 0 !important;
+                                border: none !important;
+                                box-shadow: none !important;
+                            }
+
+                            .patient-box {
+                                flex-direction: column;
+                            }
+
+                                .patient-box div {
+                                    margin-bottom: 10px;
+                                }
+
+                                .patient-box .text-right {
+                                    text-align: left !important;
+                                }
+                        }
+                    </style>
+                </head>
+                <body>
+
+                
+                  
+                    <div id="detailScreen">
+                        <div id="PrintArea">
+                            <div class="row header-info align-items-center">
+                                <div class="col-md-3 col-12 text-center text-md-left mb-3 mb-md-0">
+                                    <img src="~/images/JnanaYugAyog.png" style="max-height: 85px;" />
+                                </div>
+                                <div class="col-md-9 col-12 text-center text-md-right">
+                                    <h3 class="text-success font-weight-bold m-0">Ayurvijnana Chikitsalay</h3>
+                                    <p class="address-text m-0">80/635 Nandraj Sankul Society, Famous Chowk, New Sangavi-411027, INDIA</p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="text-uppercase font-weight-bold m-0 text-success">Dispensing Invoice / Bill Details</h4>
+                                <div>
+                                    @if (FinalBill != null && GetVal(FinalBill, "Status").ToString() == "Paid")
+                                    {
+                                    <span class="badge-paid">Paid</span>
+                                    }
+                                    else
+                                    {
+                                    <span class="badge-unpaid">Unpaid</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="patient-box">
+                                <div>
+                                    <p><b>Patient Name:</b> @GetVal(patientRaw, "PatientName")</p>
+                                    <p><b>Age / Gender:</b> @GetVal(patientRaw, "Age") / @GetVal(patientRaw, "Gender")</p>
+                                    <p><b>Contact:</b> @GetVal(patientRaw, "PatientContactNumber")</p>
+                                </div>
+                                <div class="text-right">
+                                    <p><b>Doctor Name:</b> Dr. @GetVal(patientRaw, "DoctorName")</p>
+                                    <p><b>Clinic:</b> @GetVal(patientRaw, "ClinicName")</p>
+                                    <p><b>Bill Date:</b> @(FinalBill != null && GetVal(FinalBill, "FDate").ToString() != "N/A" ? Convert.ToDateTime(GetVal(FinalBill, "FDate")).ToString("dd/MM/yyyy") : "N/A")</p>
+                                </div>
+                            </div>
+
+                            <h5 class="text-primary mt-4 font-weight-bold">Billed Items</h5>
+                            <hr>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" style="font-size: 14px;">
+                                    <thead style="background-color: #1a6b4a; color: white;">
+                                        <tr>
+                                            <th style="width: 8%;">Sr No</th>
+                                            <th>Item / Service Name</th>
+                                            <th style="width: 15%; text-align: right;">Price</th>
+                                            <th style="width: 15%; text-align: center;">Qty</th>
+                                            <th style="width: 20%; text-align: right;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (generateBill != null && generateBill.Any())
+                                        {
+                                        int srNo = 1;
+                                        foreach (var item in generateBill)
+                                        {
+                                        string name = !string.IsNullOrEmpty(Convert.ToString(GetVal(item, "ServiceName"))) && GetVal(item, "ServiceName").ToString() != "N/A"
+                                        ? GetVal(item, "ServiceName").ToString()
+                                        : GetVal(item, "MedicineName").ToString();
+                                        <tr>
+                                            <td class="text-center">@srNo</td>
+                                            <td>@name</td>
+                                            <td class="text-right">@Convert.ToDecimal(GetVal(item, "Price")).ToString("0.00")</td>
+                                            <td class="text-center">@item.Quantity</td>
+                                            <td class="text-right">@Convert.ToDecimal(GetVal(item, "Total")).ToString("0.00")</td>
+                                        </tr>
+                                        srNo++;
+                                        }
+                                        }
+                                        else
+                                        {
+                                        <tr>
+                                            <td colspan="5" class="text-center">No items found on this invoice.</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot style="font-weight: bold;">
+                                        <tr>
+                                            <td colspan="4" class="text-right">Subtotal:</td>
+                                            <td class="text-right">@(FinalBill != null ? Convert.ToDecimal(GetVal(FinalBill, "TotalAmount")).ToString("0.00") : "0.00")</td>
+                                        </tr>
+                                        @if (FinalBill != null && Convert.ToDecimal(GetVal(FinalBill, "DiscountAmt").ToString() != "N/A" ? GetVal(FinalBill, "DiscountAmt") : 0) > 0)
+                                        {
+                                        <tr>
+                                            <td colspan="4" class="text-right">Discount:</td>
+                                            <td class="text-right">@Convert.ToDecimal(GetVal(FinalBill, "DiscountAmt")).ToString("0.00")%</td>
+                                        </tr>
+                                        }
+                                        <tr class="table-success" style="font-size: 15px;">
+                                            <td colspan="4" class="text-right text-success">Total Payable Amount:</td>
+                                            <td class="text-right text-success">@(FinalBill != null ? Convert.ToDecimal(GetVal(FinalBill, "PayableAmount")).ToString("0.00") : "0.00")</td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4" class="text-right text-primary">Total Paid Amount:</td>
+                                            <td class="text-right text-primary">@(Outstanding != null ? Convert.ToDecimal(GetVal(Outstanding, "TotalPaid").ToString() != "N/A" ? GetVal(Outstanding, "TotalPaid") : 0).ToString("0.00") : "0.00")</td>
+                                        </tr>
+                                        <tr class="table-warning">
+                                            <td colspan="4" class="text-right text-danger">Balance Due:</td>
+                                            <td class="text-right text-danger">@(Outstanding != null ? Convert.ToDecimal(GetVal(Outstanding, "RemainingAmount").ToString() != "N/A" ? GetVal(Outstanding, "RemainingAmount") : 0).ToString("0.00") : "0.00")</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            @if (isPaid)
+                            {
+                            <div class="mt-3 p-3" style="background-color:#f1f8f5; border: 1px solid #c3e6cb; border-radius: 4px;">
+                                <p class="m-0" style="font-size:14px; color:#155724;"><b>Amount Paid in Words:</b> <i>@paidInWords</i></p>
+                            </div>
+                            }
+
+                            @if (paymentDetails != null && paymentDetails.Any())
+                            {
+                            <h5 class="text-primary mt-5 font-weight-bold">Payment Transaction History</h5>
+                            <hr>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" style="font-size: 13px;">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            <th>Transaction Date</th>
+                                            <th>Mode</th>
+                                            <th>Reference Details</th>
+                                            <th class="text-right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var pay in paymentDetails)
+                                        {
+                                        <tr>
+                                            <td>@(GetVal(pay, "FDate").ToString() != "N/A" ? Convert.ToDateTime(GetVal(pay, "FDate")).ToString("dd/MM/yyyy") : "N/A")</td>
+                                            <td>@GetVal(pay, "PaymentMode")</td>
+                                            <td>@GetVal(pay, "PaymentReferenceNumber")</td>
+                                            <td class="text-right">@Convert.ToDecimal(GetVal(pay, "Amount")).ToString("0.00")</td>
+                                        </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            }
+                        </div>
+
+                        <div class="text-center mt-4 no-print pb-5">
+                            <button id="billPrint" class="btn btn-success btn-lg px-5">Print Invoice</button>
+                        </div>
+                    </div>
+               
+
+                    <script>
+                        document.getElementById("billPrint").addEventListener("click", function () {
+                            window.print();
+                        });
+                    </script>
+                </body>
+            </html>

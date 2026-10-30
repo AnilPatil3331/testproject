@@ -1,0 +1,709 @@
+@model BVG_Wellness_Center_Promotion.Models.UserMaster
+@{
+    ViewBag.Title = "AddDoctor";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/Admin/AddDoctor/SaveDoctor" id="doctorDataForm" name="doctorDataForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    Add doctor
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary" id="btnBack">
+                                        <i class="fa fa-angle-double-left">
+                                        </i>
+                                        Back
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        @if (TempData["Message"] != null)
+                        {
+                            <script>
+                                window.onload = function () {
+                                    var message = '@TempData["Message"]';
+                                    var alertType = '@TempData["Icon"]';
+                                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                    showCustomAlert(message, alertType, imageUrl);
+                                };
+                            </script>
+
+                        }
+                        <div id="formError" class="alert alert-danger" style="display: none; position: fixed; top: 10%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; padding: 20px; background-color: white; border: 2px solid red; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <span id="formErrorMessage" style="color: black; font-size: 16px;">Please fill out all required fields.</span>
+                            <button type="button" class="close" id="dismissError" aria-label="Close" style="background: none; border: none; font-size: 20px; margin-left: 10px; cursor: pointer; color: black;">
+                                &times;
+                            </button>
+                        </div>
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="text-primary mb-4">
+                                    Basic details
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.HiddenFor(m => m.UserId_Encrypted)
+                            @Html.HiddenFor(m => m.UserId)
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="first_name" class="form-control-label">
+                                        First Name
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", id = "doctorName", placeholder = "Enter  name", required = "required", name = "name", type = "text", autocomplete = "off" })
+                                    @*<input  id="first_name" placeholder="Doctor name" required="required"
+                                        name="first_name" type="text" class="form-control">*@
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="last_name" class="form-control-label">
+                                        Last Name
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.LName, new { @class = "form-control", id = "doctorLastName", placeholder = "Enter Last name", required = "required", name = "name", type = "text", autocomplete = "off" })
+                                    @*<input  id="last_name" placeholder="Enter last name"
+                                        required="required" name="last_name" type="text" class="form-control">*@
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="email" class="form-control-label">
+                                        Email
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", id = "doctorEmail", placeholder = "Enter email", required = "required", name = "name", type = "email", autocomplete = "off" })
+                                    @*<input  id="email" placeholder="Enter email" required="required"
+                                        name="user_email" type="text" class="form-control">*@
+                                    <!---->
+                                </div>
+                            </div>
+                            <!-- 1. Login ID sathi navin column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Username (Login ID) <span class="text-danger">*</span></label>
+
+                                    @Html.TextBoxFor(m => m.LoginId, new { @class = "form-control", id = "loginId", placeholder = "Enter Username", required = "required", autocomplete = "off" })
+                                </div>
+                            </div>
+                            <!-- 2. Password sathi navin column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="form-control-label">Password <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        @Html.TextBoxFor(m => m.LoginPassword, new { @class = "form-control", id = "loginPass", placeholder = "Enter Password", required = "required", type = "password", autocomplete = "off" })
+                                        <div class="input-group-append">
+                                            <span class="input-group-text" onclick="togglePasswordVisibility()" style="cursor: pointer; height: 100%;">
+                                                <i class="fa fa-eye-slash" id="togglePasswordIcon"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="doctor_id" class="form-control-label">
+                                        Select Clinic 
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.ClinicFid, new SelectList(ViewBag.ClinicName, "Id", "Name"), "Select Clinic", new { @class = "form-control", id = "clicnicFid", required = "required", autocomplete = "off" })
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="mobile_number" class="form-control-label">
+                                        Contact no
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div data-v-19351537="" id="mobile_number" class="vue-phone-number-input flex"
+                                         clearable="">
+                                        @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", id = "contact", placeholder = "Enter Contact Number", required = "required", name = "Contact", type = "text", maxlength = "10" })
+                                    </div>
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="dob" class="form-control-label">
+                                        DOB.
+                                    </label>
+                                    @Html.TextBoxFor(m => m.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", id = "dateOfBirth", required = "required", name = "Contact", type = "date" })
+                                  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="specialization" class="form-control-label">
+                                                Specialization
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+
+                                            @Html.TextBoxFor(m => m.SpecializationFid, new { @class = "form-control", id = "specialization", placeholder = "Enter Specialization" })
+                                            @*<span  class="text-primary small font-weight-bold">
+                                                    Note: Type and press enter to add new specialization
+                                                </span>*@
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="no_of_experience" class="form-control-label">
+                                                Experience(In Year)
+                                            </label>
+                                            @Html.TextBoxFor(m => m.ExperienceInYear, new { @class = "form-control", id = "experience", required = "required", name = "Experience", type = "text" })
+                                          
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="gender" class="form-control-label">
+                                                Gender
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            <div class="col-md-12">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.Gender, "Male", new { @class = "custom-control-input", id = "male" })
+                                                    <label for="male" class="custom-control-label">Male</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.Gender, "Female", new { @class = "custom-control-input", id = "female" })
+                                                    <label for="female" class="custom-control-label">Female</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    @Html.RadioButtonFor(m => m.Gender, "Other", new { @class = "custom-control-input", id = "other" })
+                                                    <label for="other" class="custom-control-label">Other</label>
+                                                </div>
+                                            </div>
+                                            <!---->
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="status" class="form-control-label">
+                                                Status
+                                                <span class="text-danger">
+                                                    *
+                                                </span>
+                                            </label>
+                                            @Html.DropDownListFor(m => m.Status, new List<SelectListItem>
+                                                         {
+                                                          new SelectListItem { Text="Active",Value="Active" },
+                                                          new SelectListItem { Text="Inactive",Value="Inactive" },
+                                                      }.Select(x =>
+                                                      {
+                                                          // Set the selected value based on ViewBag
+                                                          x.Selected = x.Value == (ViewBag.Status?.ToString() ?? "");
+                                                          return x;
+                                                      }), "Select Status", new { @class = "form-control custom-select", id = "status", @required = "required" })
+                                          
+                                            <!---->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="kivicare-avatar-upload">
+                                                <div class="kivicare-avatar-edit">
+                                                    <input type="hidden" name="PreviousProfileImage" value="@ViewBag.PraviousProfileImageFil" />
+
+                                                    <input id="file" type="file" name="file" class="p-2" style="color: transparent;" onchange="showImage(event)">
+
+                                                    <label for="file" title="Edit profile image">
+                                                        <i class="fas fa-pencil-alt fa-2x"></i>
+                                                    </label>
+                                                </div>
+
+                                                <div class="kivicare-avatar-preview">
+                                                    <div id="imagePreview" style="background-image: url('@(ViewBag.ProfileImageFil ?? "https://demo.kivicare.io/g81t5x9qjwpcvmz/wp-content/plugins/kivicare-clinic-management-system/assets/images/kc-demo-img.png")');">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                    
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="doctor_id" class="form-control-label">
+                                        Doctor Registration No
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.DoctorRefrenceNo, new { @class = "form-control", id = "RefrenceNo", required = "required", autocomplete = "off" })
+                                    <!---->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="mobile_number" class="form-control-label">
+                                        Singnature
+                                        @*<span class="text-danger">
+                                            *
+                                        </span>*@
+                                    </label>
+                                    <div data-v-19351537="" id="mobile_number" class="vue-phone-number-input flex"
+                                         clearable="">                                        
+                                        <input type="file" id="Signature" name="Signature" class="form-control">
+                                    </div>
+                                    <!---->
+                                </div>
+                            </div>      
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="status" class="form-control-label">
+                                        Department
+                                        <span class="text-danger">*</span>
+                                    </label>
+
+                                    @Html.DropDownListFor(
+                                        m => m.DepartmentID,
+                                        new SelectList(ViewBag.Department, "Id", "Name"),
+                                        "Select Department",
+                                        new { @class = "form-control", id = "DepartmentID" }
+                                    )
+                                    @*@Html.DropDownListFor(m => m.DepartmentID, new SelectList(ViewBag.Department, "Id", "Name"), "Select Department", new { @class = "form-control", id = "DepartmentID" })*@
+
+
+                                </div>
+                            </div>
+                                
+                            <!-- ✅ FIXED CHECKBOX ALIGNMENT -->
+                            <div class="col-md-4 d-flex align-items-center">
+                                <div class="form-group mb-0">
+                                    <label class="form-control-label mr-2">
+                                        Is Payment Mandatory for Check-In?
+                                    </label>
+                                  
+                                    @Html.CheckBoxFor(m => m.IsPaymentMandatory, new { @class = "form-check-input ml-1" })
+                                </div>
+                            </div>
+                                                 
+                        </div>
+                    
+                        <hr><br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="text-primary mb-4">
+                                    Address details
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="address" class="form-control-label">
+                                        Address
+                                    </label>
+                                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control", id = "address", name = "address", placeholder = "Enter address" })
+                                    @*<textarea  name="address" id="address" placeholder="Enter address"
+                                        class="form-control"></textarea>*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="country" class="form-control-label">
+                                        Country
+                                    </label>
+                                    @*@Html.DropDownListFor(m => m.Country, new SelectList(""), new { @class = "form-control", id = "country", required = "required" })*@
+                                    @Html.TextBoxFor(m => m.Country, new { @class = "form-control", id = "country", name = "country", placeholder = "Enter country" })
+
+
+                                    @*<input  id="country" placeholder="Enter country" name="country"
+                                        type="text" class="form-control">*@
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="city" class="form-control-label">
+                                        City
+                                    </label>
+                                    @*@Html.DropDownListFor(m => m.CityFid, new SelectList(""), new { @class = "form-control", id = "cityFid", required = "required" })*@
+                                    @Html.TextBoxFor(m => m.CityName, new { @class = "form-control", id = "CityName", name = "CityName", placeholder = "Enter City", required = "required" })                                 
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postal_code" class="form-control-label">
+                                        Postal code
+                                    </label>
+                                    @Html.TextBoxFor(m => m.Postalcode, new { @class = "form-control", id = "postalCode", name = "cityFid", placeholder = "Enter Postal code ", required = "required" })                                  
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h4 class="text-primary mb-3">
+                                    Add Qualification
+                                </h4>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-sm btn-primary collapsed"
+                                            aria-expanded="false" aria-controls="qualification-add-tab" style="overflow-anchor: none;" id="addQuelification">
+                                        <i class="fa fa-plus">
+                                        </i>
+                                        Add Qualification
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="qualification-add-tab" class="mt-2 collapse"
+                             style="display: none;">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="degree" class="form-control-label">
+                                            Degree
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        @Html.TextBoxFor(m => m.Degree, new { @class = "form-control", id = "Degree", placeholder = "Enter degree", required = "required", type = "text", name = "Degree" })
+
+                                        @*<input  id="degree" placeholder="Enter degree" name="degree"
+                                            type="text" class="form-control">*@
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="university" class="form-control-label">
+                                            University
+                                            @*<span class="text-danger">
+                                                **@
+                                            </span>
+                                        </label>
+                                        @Html.TextBoxFor(m => m.University, new { @class = "form-control", id = "university", placeholder = "Enter university name", type = "text", name = "University" })
+                                        @*<input  id="university" placeholder="Enter university name"
+                                            name="university" type="text" class="form-control">*@
+                                        <!---->
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="year" class="form-control-label">
+                                            Year
+                                            <span class="text-danger">
+                                                *
+                                            </span>
+                                        </label>
+                                        @Html.DropDownListFor(m => m.Degree_Year,
+                                         new SelectList(Enumerable.Range(1940, DateTime.Now.Year - 1940 + 1).Reverse().Select(x => new { Value = x, Text = x }),
+                                         "Value", "Text"),
+                                         "-- Select year --",
+                                         new { @id = "year", @class = "form-control custom-select" })
+                                        <!---->
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="row">
+                                <div class="col-md-12">
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-sm btn-primary">
+                                            <i class="fa fa-save">
+                                            </i>
+                                            Save
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-primary collapsed"
+                                                aria-expanded="false" aria-controls="qualification-add-tab" style="overflow-anchor: none;">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>*@
+                        </div>
+                        @*<div class="row mb-4 mt-3">
+                            <div class="col-md-12">
+                                <div class="table-responsive mb-0">
+                                    <table class="table table-sm text-center table-bordered custom-table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>
+                                                    Sr no
+                                                </th>
+                                                <th>
+                                                    Degree
+                                                </th>
+                                                <th>
+                                                    College/University
+                                                </th>
+                                                <th>
+                                                    Year
+                                                </th>
+                                                <th>
+                                                    Action
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <h4 class="text-primary mb-0">
+                                                        No records found
+                                                    </h4>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>*@
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="my-4">
+                            </div>
+                        </div>
+                        <!---->
+                        <!---->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!---->
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 p-0">
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary rtl-ml-2" id="Save">
+                                        <i class="fa fa-save">
+                                        </i>
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!---->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#btnBack").click(function () {
+        debugger;
+        var Url = '@Url.Action("DoctorList", "AddDoctor")';
+        window.location.href = Url;
+
+    });
+
+    $("#btnCancel").click(function () {
+        debugger;
+        var Url = '@Url.Action("DoctorList", "AddDoctor")';
+        window.location.href = Url;
+
+    });
+
+
+    $("#addQuelification").click(function () {
+        $("#qualification-add-tab").slideToggle(); // Toggles the visibility with a sliding effect
+    });
+</script>
+<script>
+    // JavaScript for Signature Drawing
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', startDrawing, { passive: false });
+    canvas.addEventListener('touchend', stopDrawing, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+
+    function startDrawing(e) {
+        drawing = true;
+        ctx.beginPath();
+        ctx.moveTo(getX(e), getY(e));
+    }
+
+    function stopDrawing() {
+        drawing = false;
+        saveSignature();
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'black';
+        ctx.lineTo(getX(e), getY(e));
+        ctx.stroke();
+    }
+
+    function getX(e) {
+        return e.clientX || (e.touches && e.touches[0].clientX) - canvas.getBoundingClientRect().left;
+    }
+
+    function getY(e) {
+        return e.clientY || (e.touches && e.touches[0].clientY) - canvas.getBoundingClientRect().top;
+    }
+
+    function saveSignature() {
+        const signatureData = canvas.toDataURL('image/png');
+        document.getElementById('signatureData').value = signatureData;
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('signatureData').value = '';
+    }
+</script>
+<script>
+    function showImage(event) {
+        debugger;
+        const file = event.target.files[0]; // Get the selected file
+        if (file) {
+            const reader = new FileReader(); // Create a FileReader to read the file
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("imagePreview");
+                imagePreview.style.backgroundImage = `url(${e.target.result})`; // Set the background image
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+
+</script>
+
+
+
+
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('doctorDataForm').addEventListener('submit', function (event) {
+        var form = this;
+        var isValid = true;
+
+        var formError = document.getElementById('formError');
+        formError.style.display = 'none';
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+
+            var message = 'Please fill out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+
+            //setTimeout(() => {
+            //    formError.style.display = "none";
+            //}, 1000);
+        }
+
+        //if (!isValid) {
+        //    event.preventDefault(); // Prevent form submission if fields are invalid
+        //    formError.style.display = 'block'; // Show the error message div
+
+        //}
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+
+        //$("#dismissError").click(function () {
+        //    debugger;
+        //    formError.style.display = 'none';
+        //});
+
+    });
+</script>
+
+<script>
+    function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("loginPass");
+        var toggleIcon = document.getElementById("togglePasswordIcon");
+        
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            toggleIcon.classList.remove("fa-eye-slash");
+            toggleIcon.classList.add("fa-eye");
+        } else {
+            passwordInput.type = "password";
+            toggleIcon.classList.remove("fa-eye");
+            toggleIcon.classList.add("fa-eye-slash");
+        }
+    }
+</script>
+
+
+
+
+
+
+
+
+

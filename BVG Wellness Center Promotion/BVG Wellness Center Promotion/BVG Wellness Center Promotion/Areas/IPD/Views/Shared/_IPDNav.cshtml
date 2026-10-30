@@ -1,0 +1,148 @@
+﻿@{
+    // IPD Module Navigation
+}
+<style>
+    .ipd-nav { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 8px 16px;/* display: flex; flex-wrap: wrap;*/ gap: 6px; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 18px; position: relative;/* z-index: 9;*/ }
+    .ipd-nav-title { font-weight: 700; color: #1e40af; font-size: 0.8rem; letter-spacing: 0.5px; margin-right: 6px; white-space: nowrap;  align-items: center; gap: 5px; }
+    .nav-separator { width: 1px; background: #e2e8f0; height: 24px; margin: 0 4px; align-self: center; }
+    .ipd-nav-btn { padding: 4px 11px; border-radius: 5px; font-size: 0.76rem; font-weight: 600; border: 1px solid transparent; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; line-height: 1.4; }
+    .ipd-nav-btn:hover { text-decoration: none; transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+    .btn-dashboard { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+    .btn-dashboard:hover { background: #1d4ed8; color: #fff; }
+    .btn-admission { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .btn-admission:hover { background: #166534; color: #fff; }
+    .btn-bookings { background: #fff7ed; color: #9a3412; border-color: #fed7aa; }
+    .btn-bookings:hover { background: #9a3412; color: #fff; }
+    .btn-discharged { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
+    .btn-discharged:hover { background: #475569; color: #fff; }
+    .btn-master { background: #faf5ff; color: #6b21a8; border-color: #e9d5ff; }
+    .btn-master:hover { background: #6b21a8; color: #fff; }
+    .ipd-nav-btn.active-nav { 
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1d4ed8; 
+        transform: translateY(-1px);
+        font-weight: 700;
+    }
+
+    /* Professional & Compact Modal Styles */
+    .modal-dialog:not(.modal-lg):not(.modal-xl) { max-width: 400px !important; }
+    .modal-hdr { background: #f8fafc !important; color: #1e293b !important; border-radius: 6px 6px 0 0; border-bottom: 1px solid #e2e8f0; padding: 10px 16px; }
+    .modal-hdr h6 { font-weight: 600; font-size: 0.9rem; margin: 0; }
+    .modal-hdr .btn-close { font-size: 0.75rem; opacity: 0.6; }
+    .modal-hdr .btn-close:hover { opacity: 1; }
+    .modal-content { border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    .modal-body { padding: 16px !important; }
+    .modal-body .form-label { font-size: 0.75rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
+    .modal-body .form-control, .modal-body .form-select { font-size: 0.8rem; padding: 4px 10px; background-color: #fff !important; border: 1px solid #cbd5e1 !important; border-radius: 4px; color: #1e293b; height: 30px; }
+    .modal-body .form-control:focus, .modal-body .form-select:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 2px rgba(59,130,246,0.1) !important; outline: none; }
+    .modal-footer { border-top: 1px solid #e2e8f0; background: #f8fafc; border-radius: 0 0 6px 6px; padding: 10px 16px; }
+    .modal-footer .btn-primary, .modal-footer .btn-success { 
+        background: #2563eb !important; 
+        color: #fff !important; border: 1px solid #1d4ed8 !important; padding: 4px 16px; 
+        border-radius: 4px; font-size: 0.75rem; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important; 
+    }
+    .modal-footer .btn-primary:hover, .modal-footer .btn-success:hover { background: #1d4ed8 !important; }
+    .modal-footer .btn-secondary { border-radius: 4px; font-size: 0.75rem; font-weight: 500; padding: 4px 14px; background: #fff; border: 1px solid #cbd5e1; color: #475569; }
+    .modal-footer .btn-secondary:hover { background: #f1f5f9; color: #1e293b; }
+
+    /* Compact Layout Overrides (Simulates Zoom Out) */
+    .ipd-nav { padding: 4px 10px !important; margin-bottom: 8px !important; gap: 4px !important; }
+    .ipd-nav-btn { padding: 2px 8px !important; font-size: 0.7rem !important; }
+    
+    .tbl-ipd th, .tbl-ipd td { padding: 2px 6px !important; font-size: 0.68rem !important; line-height: 1.2; }
+    .act-btn { padding: 1px 5px !important; font-size: 0.65rem !important; margin: 0 !important; }
+    .form-control-sm, .form-select-sm { padding: 2px 6px !important; font-size: 0.7rem !important; height: 26px !important; }
+    .card-header { padding-top: 5px !important; padding-bottom: 5px !important; min-height: unset !important; }
+    .card-body { padding: 8px 12px !important; }
+    .page-title { font-size: 0.8rem !important; margin-bottom: 0 !important; }
+    .master-header { padding: 8px 12px !important; margin-bottom: 8px !important; }
+    
+    /* DataTables Compact Pagination & Search */
+    .dataTables_wrapper .row { margin-bottom: 4px !important; }
+    .dataTables_wrapper label { font-size: 0.7rem !important; margin-bottom: 0 !important; }
+    .dataTables_wrapper .form-control-sm, .dataTables_wrapper .custom-select-sm { height: 24px !important; padding: 2px 6px !important; font-size: 0.7rem !important; }
+    .dataTables_wrapper .pagination { margin: 2px 0 !important; gap: 2px; justify-content: flex-end; }
+    .dataTables_wrapper .page-item .page-link { padding: 3px 8px !important; font-size: 0.7rem !important; border-radius: 4px !important; margin: 0 !important; color: #1e40af; border: 1px solid #cbd5e1; }
+    .dataTables_wrapper .page-item.active .page-link { background-color: #2563eb !important; color: white !important; border-color: #2563eb !important; font-weight: 600; }
+    .dataTables_wrapper .page-item.disabled .page-link { color: #94a3b8 !important; background-color: #f8fafc !important; }
+    
+    /* Replace Previous/Next text with icons */
+    .dataTables_wrapper .page-item.previous .page-link, .dataTables_wrapper .page-item.next .page-link { font-size: 0 !important; padding: 3px 10px !important; }
+    .dataTables_wrapper .page-item.previous .page-link::after { content: "\2039"; font-size: 1rem; line-height: 0.5; }
+    .dataTables_wrapper .page-item.next .page-link::after { content: "\203A"; font-size: 1rem; line-height: 0.5; }
+    
+    .dataTables_info { font-size: 0.7rem !important; padding-top: 2px !important; color: #64748b; }
+    
+    /* Push pagination to absolute bottom of page */
+    .card { min-height: calc(100vh - 150px); display: flex; flex-direction: column; }
+    .card-body { flex-grow: 0 !important; } /* Form stays compact */
+    .table-responsive { flex-grow: 1 !important; display: flex !important; flex-direction: column !important; }
+    
+    .dataTables_wrapper { display: flex !important; flex-direction: column !important; flex-grow: 1 !important; height: 100%; }
+    .dataTables_wrapper > .row:nth-child(1) { flex: 0 0 auto !important; }
+    .dataTables_wrapper > .row:nth-child(2) { flex: 1 1 auto !important; display: block !important; overflow-y: auto !important; }
+    .dataTables_wrapper > .row:last-child { flex: 0 0 auto !important; margin-top: auto !important; }
+    
+    h6, .h6 { font-size: 0.8rem !important; margin-bottom: 2px !important; }
+</style>
+
+<div class="container-fluid" style="padding-top: 0; padding-bottom: 0;">
+    <div class="ipd-nav">
+        <span class="ipd-nav-title"><i class="fas fa-hospital-alt"></i> IPD</span>
+
+        <a class="ipd-nav-btn btn-dashboard" href="/IPD/IPD_Booking/BedDashboard">
+            <i class="fas fa-th-large"></i> Bed Dashboard
+        </a>
+        <a class="ipd-nav-btn btn-admission" href="/IPD/IPD_Booking/NewAdmission">
+            <i class="fas fa-user-plus"></i> New Admission
+        </a>
+        <a class="ipd-nav-btn btn-bookings" href="/IPD/IPD_Booking/ActiveBookings">
+            <i class="fas fa-procedures"></i> Admited
+        </a>
+        <a class="ipd-nav-btn btn-discharged" href="/IPD/IPD_Booking/DischargedBookings">
+            <i class="fas fa-history"></i> Discharged
+        </a>
+        <br />
+
+        <br />
+        @*<div class="nav-separator"></div>*@
+
+        <a class="ipd-nav-btn btn-master"  href="/IPD/IPD_Masters/HospitalSetting">
+            <i class="fas fa-cog"></i> Settings
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Masters/FloorMaster">
+            <i class="fas fa-layer-group"></i> Floors
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Masters/WardMaster">
+            <i class="fas fa-hospital"></i> Wards
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Masters/CategoryMaster">
+            <i class="fas fa-tags"></i> Categories
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Masters/RoomChargesMaster">
+            <i class="fas fa-receipt"></i> Charges
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Masters/FoodPlanMaster">
+            <i class="fas fa-utensils"></i> Food Plans
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Room/RoomMaster">
+            <i class="fas fa-door-open"></i> Rooms
+        </a>
+        <a class="ipd-nav-btn btn-master" href="/IPD/IPD_Room/BedMaster">
+            <i class="fas fa-bed"></i> Beds
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var currentUrl = window.location.pathname.toLowerCase();
+        var navLinks = document.querySelectorAll(".ipd-nav-btn");
+        
+        navLinks.forEach(function (link) {
+            var href = link.getAttribute("href").toLowerCase();
+            if (currentUrl.includes(href) && href !== "/") {
+                link.classList.add("active-nav");
+            }
+        });
+    });
+</script>

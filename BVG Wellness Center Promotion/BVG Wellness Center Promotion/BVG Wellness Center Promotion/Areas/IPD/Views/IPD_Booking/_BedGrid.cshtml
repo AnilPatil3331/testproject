@@ -1,0 +1,66 @@
+﻿@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model List<IPD_BedDashboardModel>
+@{
+    var useWard = ViewContext.ViewBag.Settings != null && ((IPD_HospitalSettingModel)ViewContext.ViewBag.Settings).UseWard;
+    var wards = Model.GroupBy(b => new { b.WardId, b.WardName, b.WardType }).OrderBy(g => g.Key.WardName).ToList();
+}
+
+@if (useWard && wards.Any(g => g.Key.WardId.HasValue))
+{
+    foreach (var ward in wards)
+    {
+        <div class="ward-section">
+            <div class="ward-title">
+                <i class="fas fa-door-open text-primary"></i>
+                @(ward.Key.WardName ?? "General") <small class="text-muted fw-normal">(@ward.Key.WardType)</small>
+            </div>
+            @{ RenderRooms(ward.ToList()); }
+        </div>
+    }
+}
+else
+{
+    RenderRooms(Model);
+}
+
+@helper RenderRooms(List<IPD_BedDashboardModel> beds)
+{
+    var rooms = beds.GroupBy(b => new { b.RoomId, b.RoomNumber, b.RoomChargePerDay });
+    foreach (var room in rooms)
+    {
+        <div class="room-group">
+            <div class="room-label">
+                <i class="fas fa-door-closed me-1"></i> Room @room.Key.RoomNumber
+                <span class="text-muted ms-2">?@room.Key.RoomChargePerDay.ToString("N0")/day</span>
+            </div>
+            <div class="bed-grid">
+                @foreach (var bed in room.OrderBy(b => b.BedNumber))
+                {
+                    string cssClass = bed.BedStatus == "Available" ? "bed-available" :
+                                      bed.BedStatus == "Occupied" ? "bed-occupied" :
+                                      bed.BedStatus == "Cleaning" ? "bed-cleaning" :
+                                      bed.BedStatus == "Maintenance" ? "bed-maintenance" :
+                                      bed.BedStatus == "Reserved" ? "bed-reserved" : "bed-available";
+                    string icon = bed.BedStatus == "Available" ? "🟢" :
+                                  bed.BedStatus == "Occupied" ? "🔴" :
+                                  bed.BedStatus == "Cleaning" ? "🟡" :
+                                  bed.BedStatus == "Maintenance" ? "⚫" :
+                                  bed.BedStatus == "Reserved" ? "🔵" : "🟢";
+                    <div class="bed-card @cssClass"
+                         onclick="bedClick(@bed.BedId, '@bed.BedNumber', '@room.Key.RoomNumber', @room.Key.RoomChargePerDay, '@bed.BedStatus')"
+                         title="Bed @bed.BedNumber — @bed.BedStatus">
+                        <div class="bed-icon">🛏</div>
+                        <div class="bed-no">@bed.BedNumber</div>
+                        <div style="font-size:0.65rem">@icon @bed.BedStatus</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+
+
+
+

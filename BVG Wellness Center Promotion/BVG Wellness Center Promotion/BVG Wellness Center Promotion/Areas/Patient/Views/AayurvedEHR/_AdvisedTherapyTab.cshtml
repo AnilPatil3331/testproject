@@ -1,0 +1,368 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.EHR
+@{
+    var userInfo = ViewBag.UserInfo as List<dynamic> ?? new List<dynamic>();
+    var answersDetail = ViewBag.AnswersDetail as List<dynamic> ?? new List<dynamic>();
+    var levelCounts = ViewBag.LevelCounts as List<dynamic> ?? new List<dynamic>();
+    var sectionCounts = ViewBag.SectionCounts as dynamic;
+    int totalScore = ViewBag.TotalScore ?? 0;
+    int patientFid = ViewBag.PatientFid ?? 0;
+    int count = 1;
+    double TotalAmount = 0;
+    double TotalDiscount = 0;
+    var PatientDetails = ViewBag.PatientDetails;
+    var FinalBill = ViewBag.GetFinalBillDeatils;
+    
+    bool has8PulseExamResults = Model != null && (
+        !string.IsNullOrEmpty(Model.Condition) ||
+        Model.PulseRate > 0 ||
+        Model.BloodPressureDia > 0 ||
+        Model.BloodPressureSys > 0 ||
+        Model.Vat || Model.Vataf || Model.Vatpit || Model.VarKafPit || Model.VatPitKaf ||
+        Model.Leech || Model.Snake || Model.Pitta || Model.PittaKaf || Model.PittaVat ||
+        Model.PottaKafVat || Model.PittaVatKaf || Model.Sparrow || Model.Crow || Model.Monkey ||
+        Model.Frog || Model.kaf || Model.KaffPitta || Model.Kaffvtta || Model.KafPittaVat ||
+        Model.KVP || Model.Swan || Model.Pigeon || Model.Peacock || Model.SaniPat ||
+        Model.BustardQuail || Model.GreyBird || Model.ButtonQuai ||
+        !string.IsNullOrEmpty(Model.SamataUndigested) || !string.IsNullOrEmpty(Model.GatiMovement1) ||
+        !string.IsNullOrEmpty(Model.GatiMovement2) || !string.IsNullOrEmpty(Model.GatiMovement3) ||
+        !string.IsNullOrEmpty(Model.Speed) || !string.IsNullOrEmpty(Model.Rhythm) ||
+        !string.IsNullOrEmpty(Model.Strength) || !string.IsNullOrEmpty(Model.Volume) ||
+        !string.IsNullOrEmpty(Model.Temperature) ||
+        !string.IsNullOrEmpty(Model.UrinePrakritasama) || !string.IsNullOrEmpty(Model.UrineVata) ||
+        !string.IsNullOrEmpty(Model.UrinePitta) || !string.IsNullOrEmpty(Model.UrineRakta) ||
+        !string.IsNullOrEmpty(Model.UrineKapha) || !string.IsNullOrEmpty(Model.UrineTridosha) ||
+        !string.IsNullOrEmpty(Model.StoolNaturalState) || Model.StoolVataKrishna || Model.StoolVataDrudha ||
+        Model.StoolVataShushka || Model.StoolVataTrutita || Model.StoolVataPhena || Model.StoolVataRuksha ||
+        Model.StoolVataDhumra || Model.StoolVataPravahana || Model.StoolVataAdhmana ||
+        !string.IsNullOrEmpty(Model.StoolKapha) || !string.IsNullOrEmpty(Model.StoolPitta) ||
+        !string.IsNullOrEmpty(Model.StoolVataKapha) || !string.IsNullOrEmpty(Model.StoolVataPitta) ||
+        !string.IsNullOrEmpty(Model.StoolKaphaPitta) || !string.IsNullOrEmpty(Model.StoolTridosha) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTongue) || !string.IsNullOrEmpty(Model.RukshaSnigdha) ||
+        !string.IsNullOrEmpty(Model.SamaNiramaAlpasama) || !string.IsNullOrEmpty(Model.VataCharacteristics) ||
+        !string.IsNullOrEmpty(Model.PittaCharacteristics) || !string.IsNullOrEmpty(Model.KaphaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.TridoshaCharacteristics) ||
+        !string.IsNullOrEmpty(Model.NaturalStateVoiceExam) || !string.IsNullOrEmpty(Model.KaphaVoiceExam) ||
+        !string.IsNullOrEmpty(Model.PittaVoiceExam) || !string.IsNullOrEmpty(Model.VataVoiceExam) ||
+        !string.IsNullOrEmpty(Model.NaturalStateTouch) || !string.IsNullOrEmpty(Model.PittaTouch) ||
+        !string.IsNullOrEmpty(Model.VataTouch) || !string.IsNullOrEmpty(Model.KaphaTouch) ||
+        !string.IsNullOrEmpty(Model.EyeNaturalState) || !string.IsNullOrEmpty(Model.EyeVata) ||
+        !string.IsNullOrEmpty(Model.EyePitta) || !string.IsNullOrEmpty(Model.EyeKapha) ||
+        !string.IsNullOrEmpty(Model.AppearanceNaturalState) || !string.IsNullOrEmpty(Model.AppearanceVata) ||
+        !string.IsNullOrEmpty(Model.AppearancePitta) || !string.IsNullOrEmpty(Model.AppearanceKapha)
+    );
+}
+                            <div class="tab-pane  p-20" id="AdvisedTherapy" role="tabpanel">
+
+                                <div class="section">
+                                    <div class="section-heading">
+                                        <h4 class="card-title">Advised Therapy</h4>
+
+                                        <button type="button"
+                                                class="btn btn-md toggle-btn"
+                                                onclick="toggleSection(this)">
+                                            -
+                                        </button>
+
+                                    </div>
+
+
+                                    <form id="AdvisedTherapyForm" action="/Patient/AayurvedEHR/AdvisedTherapy" method="post" enctype="" novalidate>
+
+                                        <div class="p-1 mt-2">
+                                            <div class="section">
+
+
+                                                <input type="hidden" name="AppointmentFid" value="@(ViewBag.TodayPatients?.AppointmentFid ?? "")" />
+                                                <input type="hidden" name="PatientFid" value="@(ViewBag.TodayPatients?.PatientFid ?? "")" />
+                                                <input type="hidden" id="AdvisedTherapyJson" name="AdvisedTherapyJson" />
+
+                                                @*<input type="hidden" id="PrescriptionID" name="PrescriptionID" />*@
+                                                @*<div class="col-md-12 form-group">
+                                                                                                                            <label>Service Categories *</label>
+                                                                                                                            <div class="row">
+                                                                                                                                <div class="col-md-4 mb-3">
+                                                                                                                                    <label class="fw-bold">SERVICE CATEGORIES</label>
+                                                                                                                                    @Html.DropDownListFor(
+                                                        m => m.ServiceGroupID,
+                                                        new SelectList(ViewBag.ServiveGroup, "Id", "Name"),
+                                                        "-Select Categories-",
+                                                        new { @class = "form-control custom-select", id = "ddlServicegroup", required = "required" }
+                                                    )
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+
+                                                                                                                        @*<div class="col-md-12 form-group">
+                                                                                                                            <label>Service Categories *</label>
+                                                                                                                            <span id="addError" style="color:red; display:none;">
+                                                                                                                                Please click Add button
+                                                                                                                            </span>
+                                                                                                                            <div class="row">
+
+                                                                                                                                @{
+                                                                                                                                    string[] categories = {
+                                                        "Detox Therapy",
+                                                        "Eye Care",
+                                                        "Yoga Therapy",
+                                                        "Beauty Therapy",
+                                                        "Anti-Aging Rejuvenation",
+                                                        "Nature Therapy",
+                                                        "Bio Therapy"
+                                                    };
+                                                                                                                                }
+
+                                                                                                                                @for (int i = 0; i < categories.Length; i++)
+                                                                                                                                {
+                                                                                                                                    <div class="col-md-3">
+                                                                                                                                        <label>
+                                                                                                                                            <input type="checkbox"
+                                                                                                                                                   name="ServiceCategories"
+                                                                                                                                                   value="@categories[i]" />
+                                                                                                                                            @categories[i]
+                                                                                                                                        </label>
+                                                                                                                                    </div>
+                                                                                                                                }
+                                                                                                                            </div>*@
+
+
+
+
+                                                @*<div id="dropdownContainerAdvisedTherapy">
+                                                    <div class="row dropdownRow">
+
+
+                                                        <div class="col-md-4 form-group">
+                                                            <label for="visit_type" class="form-control-label">
+                                                                Service **@
+                                                @*<span class="cursor-pointer text5-primary small float-right">
+                                                        <a href="@Url.Action("ServicesList","Services",new { area="Admin" })" class="">
+                                                            <i class="fa fa-plus">
+                                                            </i>
+                                                            Add Service
+                                                        </a>
+                                                    </span>*@
+                                                @*</label>
+
+                                                        @Html.DropDownListFor(m => m.ServiceFid, new SelectList(ViewBag.AdviseServices, "Id", "Name"), "Select Service", new { @class = "form-control", id = "ATserviceFid", data_live_search = "true", @style = "width: 100%;" })
+
+
+                                                    </div>*@
+
+
+                                                <div class="col-md-12 form-group">
+
+                                                    <div class="row">
+                                                        <div class="col-md-4 mb-3">
+                                                            <label class="fw-bold">SERVICE CATEGORIES</label>
+                                                            <select class="form-control custom-select"
+                                                                    id="ddlServicegroup"
+                                                                    name="ServiceGroupID"
+                                                                    required="required">
+                                                                <option value="">-Select Categories-</option>
+                                                                @foreach (var grp in ViewBag.ServiveGroup)
+                                                                {
+                                                                    <option value="@grp.Id">@grp.Name</option>
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4 form-group">
+                                                            <label class="fw-bold">SERVICE</label>
+                                                            <select class="form-control"
+                                                                    id="ATserviceFid"
+                                                                    name="ServiceFid"
+                                                                    style="width:100%;">
+                                                                <option value="">-Select Service-</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4 form-group">
+                                                            <label class="form-control-label">Consuming Days *</label>
+                                                            @Html.DropDownListFor(m => m.DaysNumber,
+new SelectList(ViewBag.DaysNumber, "Id", "NumberValue"),
+"Select Days Number",
+new { @class = "form-control doseNumber", id = "ATDaysNumber" })
+                                                            <span id="daysError" class="text-danger small" style="display:none;">
+                                                                Please select Consuming Days
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 form-group">
+                                                    <label>Frequency</label>
+                                                    <div class="row">
+
+                                                        <div class="col-md-2">
+                                                            <label><input type="checkbox" name="Frequency" value="Daily"> Daily</label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <label><input type="checkbox" name="Frequency" value="Alternate Day"> Alternate Day</label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <label><input type="checkbox" name="Frequency" value="Weekly"> Weekly</label>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <label><input type="checkbox" name="Frequency" value="Monthly"> Monthly</label>
+                                                        </div>
+
+                                                        <div class="col-md-4">
+                                                            <input type="text"
+                                                                   name="FrequencyOther"
+                                                                   class="form-control"
+                                                                   placeholder="Other (please specify)" />
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+
+
+                                                <div class="col-md-12 form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">Instructions for Patient</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-9 form-group pl-3 row">
+                                                        @Html.TextAreaFor(model => model.InstructionPatinet, new
+                           {
+                               @class = "form-control",
+                               @placeholder = " ",
+                               @maxlength = "100",
+                               @id = "InstructionPatinet",
+                               oninput = "validateTextOnly(this)"
+
+                           })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="col-md-12 form-row">
+                                                    <div class="col-md-2 form-group">
+                                                        <div class="form-title">Instructions for Therapist</div>
+                                                    </div>
+
+
+                                                    <div class="col-md-9 form-group pl-3 row">
+                                                        @Html.TextAreaFor(model => model.InstructionTherapist, new
+                           {
+                               @class = "form-control",
+                               @placeholder = " ",
+                               @maxlength = "100",
+                               @id = "InstructionTherapist",
+                               oninput = "validateTextOnly(this)"
+
+                           })
+                                                        <label class="floating-label" for="Description">Description</label>
+
+                                                    </div>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                @*<div class="col-md-12 form-group">
+                                                        <label>Consent</label>
+
+                                                        <div>
+                                                            <label>
+                                                                <input type="checkbox"
+                                                                       name="Consent"
+                                                                       value="Service explained to patient" />
+                                                                Service explained to patient
+                                                            </label>
+                                                        </div>
+
+                                                        <div>
+                                                            <label>
+                                                                <input type="checkbox"
+                                                                       name="Consent"
+                                                                       value="Patient consent obtained" />
+                                                                Patient consent obtained
+                                                            </label>
+                                                        </div>
+                                                    </div>*@
+
+
+
+
+                                                <!-- Buttons -->
+                                                <div class="col-md-2 ">
+                                                    <button type="button" class="btn btn-success ATCounter">Add</button>
+                                                </div>
+                                                @*</div>*@
+                                                @*</div>*@
+
+
+
+
+
+                                                <hr />
+
+                                                <div style="width:100%; overflow:auto;">
+                                                    <table class="table table-bordered" id="AdvisedTherapyTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Therapy Name</th>
+                                                                <th>Therapy Name & Action</th>
+
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @*@if (ViewBag.AdvisedTherapyResult != null)
+                                                                {
+                                                                    //int i = 0;
+                                                                    foreach (var item in ViewBag.AdvisedTherapyResult)
+                                                                    {
+                                                                        <tr>
+                                                                            <td>@item.ServiceName</td>
+                                                                            <td>
+
+                                                                                <b>Category:</b> @item.ServiceCategories <br />
+                                                                                <b>Days:</b> @item.DaysNumber <br />
+                                                                                <b>Frequency:</b> @item.Frequency <br />
+                                                                                <b>Patient:</b> @item.InstructionPatinet <br />
+                                                                                <b>Therapist:</b> @item.InstructionTherapist <br />
+                                                                                @*<b>Consent:</b> @item.Consent*@
+                                                            @*</td>
+                                                                            <td>
+
+                                                                                <button type="button"
+                                                                                        class="btn btn-danger btn-sm"
+                                                                                        onclick="deleteDbRow(@item.ATId, this)">
+                                                                                    Remove
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                        //i++;
+                                                                    }
+                                                                }**@
+
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <span id="therapyError" class="text-danger" style="display:none;">
+                                            Please add at least 1 advised therapy
+                                        </span>
+                                        <div class="btnBx">
+                                            <button type="submit" class="btnSubmit btn btn-md btn-success mr-1">Submit</button>
+
+
+                                        </div>
+                                    </form>
+
+                                </div>
+
+
+                            </div>

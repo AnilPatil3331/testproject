@@ -1,0 +1,157 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.IPD.Models.RoomBillingModel
+
+@{
+    ViewBag.Title = "Room Billing";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box"> 
+                <div class="float-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Wellness Center</a></li>
+                        <li class="breadcrumb-item"><a href="#">IPD</a></li>
+                        <li class="breadcrumb-item active">Room Billing</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Room Billing</h4>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            window.onload = function () {
+                Swal.fire({
+                    icon: '@TempData["Icon"]',
+                    title: '@TempData["Message"]',
+                    showConfirmButton: true,
+                });
+            }
+        </script>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-4">Complete Payment for Room Booking</h4>
+
+                    @using (Html.BeginForm("RoomBilling", "IPD", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.BookingId)
+                        @Html.HiddenFor(m => m.PatientId)
+                        @Html.HiddenFor(m => m.TotalAmount)
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Patient Name</label>
+                                    @Html.TextBoxFor(m => m.GuestFullName, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Mobile Number</label>
+                                    @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @readonly = "readonly" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Total Bill Amount (₹)</label>
+                                    <input type="text" id="TotalAmount" class="form-control font-weight-bold text-danger" value="@Model.TotalAmount" readonly="readonly" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Amount Paying (₹) *</label>
+                                    @Html.TextBoxFor(m => m.AmountPaying, new { @class = "form-control", type = "number", step = "0.01", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.AmountPaying, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment Mode *</label>
+                                    @Html.DropDownListFor(m => m.PaymentMode, new SelectList(new[] { "Cash", "Card", "UPI", "Bank Transfer" }), "-- Select --", new { @class = "form-control", id="PaymentMode", required = "required" })
+                                    @Html.ValidationMessageFor(m => m.PaymentMode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-md-4 bank-details" style="display:none;">
+                                <div class="form-group">
+                                    <label>Bank Name</label>
+                                    @Html.TextBoxFor(m => m.BankName, new { @class = "form-control", placeholder="Enter Bank Name" })
+                                </div>
+                            </div>
+                            <div class="col-md-4 bank-details" style="display:none;">
+                                <div class="form-group">
+                                    <label>Transaction ID</label>
+                                    @Html.TextBoxFor(m => m.BankTxnId, new { @class = "form-control", placeholder="Enter Txn ID" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Payment Status</label>
+                                    @Html.DropDownListFor(m => m.PaymentStatus, new SelectList(new[] { "Success", "Failed", "Pending" }), new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Save Payment</button>
+                                <a href="@Url.Action("RoomBookingList")" class="btn btn-secondary">Cancel</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            $('#PaymentMode').change(function () {
+                var mode = $(this).val();
+                if (mode !== 'Cash' && mode !== '') {
+                    $('.bank-details').show();
+                } else {
+                    $('.bank-details').hide();
+                }
+            });
+
+            // Restrict input in realtime
+            $("#AmountPaying").on("input", function() {
+                var totalAmount = parseFloat($("#TotalAmount").val()) || 0;
+                var amountPaying = parseFloat($(this).val()) || 0;
+                if (amountPaying > totalAmount) {
+                    $(this).val(totalAmount);
+                }
+            });
+
+            // Prevent form submit if somehow bypassed
+            $("form").submit(function(e) {
+                var totalAmount = parseFloat($("#TotalAmount").val()) || 0;
+                var amountPaying = parseFloat($("#AmountPaying").val()) || 0;
+                
+                if (amountPaying > totalAmount) {
+                    alert("Amount Paying cannot be greater than Total Bill Amount (₹" + totalAmount + ").");
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    </script>

@@ -1,0 +1,1438 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Patient.Models.ClsPatient
+@{
+    ViewBag.Title = "AddPatient";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<link rel="stylesheet"
+      href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#dateOfBirth").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2026",
+            dateFormat: "yy-mm-dd"
+        });
+    });
+</script>
+<style>
+    .date-container {
+        position: relative;
+    }
+
+        .date-container .form-control {
+            padding-right: 40px;
+        }
+
+    .calendar-icon {
+        position: absolute;
+        right: 12px;
+        top: 42px; /* Label खाली textbox मध्ये */
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    /* Custom SweetAlert styles for existing patient duplicates */
+    .custom-swal-popup {
+        width: 320px !important; /* compact width */
+        border-radius: 8px !important;
+        padding: 15px !important;
+        font-family: inherit !important;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+    }
+    .custom-swal-title {
+        font-size: 15px !important;
+        font-weight: 700 !important;
+        color: #d69e2e !important; /* Soft orange/yellow warning theme */
+        margin-bottom: 4px !important;
+    }
+    .custom-patient-container {
+        max-height: 90px; /* even smaller list */
+        overflow-y: auto;
+        margin: 8px 0;
+        padding: 4px 6px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background-color: #f7fafc;
+        text-align: left;
+    }
+    .custom-patient-container::-webkit-scrollbar {
+        width: 4px;
+    }
+    .custom-patient-container::-webkit-scrollbar-track {
+        background: #edf2f7;
+        border-radius: 4px;
+    }
+    .custom-patient-container::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 4px;
+    }
+    .custom-patient-container::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
+    }
+    .custom-patient-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 6px;
+        margin-bottom: 4px;
+        background: #ffffff;
+        border: 1px solid #edf2f7;
+        border-radius: 4px;
+        color: #2d3748;
+        font-size: 11.5px;
+        font-weight: 600;
+        box-shadow: 0 1px 1px rgba(0,0,0,0.01);
+        transition: all 0.2s ease;
+    }
+    .custom-patient-item:last-child {
+        margin-bottom: 0;
+    }
+    .custom-patient-item:hover {
+        border-color: #cbd5e0;
+        background: #f8fafc;
+    }
+    .custom-patient-icon {
+        color: #3182ce;
+        font-size: 11px;
+    }
+    .custom-swal-text {
+        font-size: 12px;
+        color: #4a5568;
+        line-height: 1.4;
+    }
+    .custom-swal-button {
+        padding: 6px 12px !important;
+        font-size: 11.5px !important;
+        border-radius: 4px !important;
+        margin: 4px !important;
+    }
+</style>
+<style>
+    #ddlPatientReference + .select2-container .select2-selection--single {
+        height: 50px !important; /* Adjust as needed */
+        line-height: 50px !important;
+    }
+
+    /* Increase the height of the selected text inside select2 */
+    #ddlPatientReference + .select2-container .select2-selection__rendered {
+        line-height: 50px !important;
+        padding-top: 5px !important;
+    }
+
+    /* Increase the height of the dropdown options */
+    #ddlPatientReference + .select2-container .select2-results__option {
+        padding: 10px !important;
+    }
+</style>
+@*<style>
+        #PatientType + .select2-container .select2-selection--single {
+            height: 50px !important; /* Adjust as needed */
+            line-height: 50px !important;
+        }
+
+        /* Increase the height of the selected text inside select2 */
+        #PatientType + .select2-container .select2-selection__rendered {
+            line-height: 50px !important;
+            padding-top: 5px !important;
+        }
+
+        /* Increase the height of the dropdown options */
+        #PatientType + .select2-container .select2-results__option {
+            padding: 10px !important;
+        }
+
+        #BloodGroup + .select2-container .select2-selection--single {
+            height: 50px !important; /* Adjust as needed */
+            line-height: 50px !important;
+        }
+
+        /* Increase the height of the selected text inside select2 */
+        #BloodGroup + .select2-container .select2-selection__rendered {
+            line-height: 50px !important;
+            padding-top: 5px !important;
+        }
+
+        /* Increase the height of the dropdown options */
+        #BloodGroup + .select2-container .select2-results__option {
+            padding: 10px !important;
+        }
+    </style>*@
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    @*<div id="loader" class="loader hidden">
+            <img src="~/assets/images/favicon-1.ico" />
+        </div>*@
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="/Patient/AddPatient/SavePatient" id="patientDataForm" name="patientDataForm" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                <div class="card p-0 shadow">
+                    <!---->
+                    <header class="card-header">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-8 col-lg-8">
+                                <h3 class="mb-0">
+                                    @ViewBag.Update
+                                </h3>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <div class="d-flex justify-content-end">
+                                    @*<button type="button" class="btn btn-sm btn-primary" id="btnBack">
+                                            <i class="fa fa-angle-double-left">
+                                            </i>
+                                            Back
+                                        </button>*@
+
+                                    <a href="@Url.Action("PatientList", "AddPatient")"
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fa fa-angle-double-left"></i> Back
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="card-body">
+                        @if (TempData["Message"] != null)
+                        {
+                            <script>
+                                window.onload = function () {
+                                    var message = '@TempData["Message"]';
+                                    var alertType = '@TempData["Icon"]';
+                                    var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                    showCustomAlert(message, alertType, imageUrl);
+                                };
+                            </script>
+
+                        }
+                        <div id="formError" class="alert alert-danger" style="display: none; position: fixed; top: 10%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; padding: 20px; background-color: white; border: 2px solid red; border-radius: 5px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                            <span id="formErrorMessage" style="color: black; font-size: 16px;">Please fill out all required fields.</span>
+                            <button type="button" class="close" id="dismissError" aria-label="Close" style="background: none; border: none; font-size: 20px; margin-left: 10px; cursor: pointer; color: black;">
+                                &times;
+                            </button>
+                        </div>
+                        <!---->
+                        @Html.HiddenFor(m => m.PatientFid)
+                        @Html.HiddenFor(m => m.PatientFid_Encrypted)
+                        @if (ViewBag.FromPatientContact != null)
+                        {
+                            <input hidden id="frompatientContact" name="FromPatientContact" value="true" />
+                        }
+
+                        <!-- Row 1: Contact, Patient Source, Referred By -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="mobile_number" class="form-control-label">
+                                        Contact no.
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div data-v-19351537="" id="phone_number" class="vue-phone-number-input flex"
+                                         clearable="">
+                                        @Html.TextBoxFor(m => m.ContactNumber, new { @class = "form-control", id = "contact", placeholder = "Enter Contact Number", required = "required", autocomplete = "off", minlength = "10", maxlength = "10", inputmode = "numeric", pattern = "[0-9]{10}", oninput = "validateMobile(this)" })
+                                        <span id="mobileError" style="color:red; display:none;">Mobile number must be exactly 10 digits.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="blood_group" class="form-control-label">
+                                        Patient Source
+                                    </label>
+                                    @Html.DropDownListFor(m => m.PatientType, new SelectList(
+                                                             new[] {
+                                                                    new { Value = "", Text = "Select" },
+                                                               new { Value="WalkIn", Text = "WalkIn" },
+                                                               new { Value = "IVR-Outbound", Text = "IVR-Outbound" },
+                                                                 new { Value = "IVR-Inbound", Text = "IVR-Inbound" },
+                                                                 new { Value = "IVR-Doctor-Consulting", Text = "IVR-Doctor Consulting" },
+                                                               new { Value = "Reference", Text = "Reference" },
+                                                                new { Value = "CallCenter", Text = "Call Center" },
+                                                                 new { Value = "Others", Text = "Others" },
+                                                                 new { Value = "WhatsApp", Text = "WhatsApp" },
+                                                             }, "Value", "Text"),
+                                                                 new { @id = "PatientType", @class = "form-control custom-select", @required = "required" })
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="blood_group" class="form-control-label">
+                                        Referred  By
+                                    </label>
+                                    @Html.TextBoxFor(m => m.PatientReference, new { @class = "form-control", id = "PatientReference", maxlength = "20" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: First Name, Last Name, Clinic -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="first_name" class="form-control-label">
+                                        First Name
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", id = "FirstName", placeholder = "Enter First Name", required = "required", maxlength = "50", autocomplete = "off", oninput = "validateName(this)" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="last_name" class="form-control-label">
+                                        Last Name
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.LName, new { @class = "form-control", id = "patientLastName", placeholder = "Enter Last name", required = "required", maxlength = "50", autocomplete = "off", oninput = "validateName(this)" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="doctor_id" class="form-control-label">
+                                        Select Clinic
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    @Html.DropDownListFor(m => m.ClinicFid, new SelectList(ViewBag.ClinicName, "Id", "Name"), new { @class = "form-control", id = "clicnicFid", required = "required" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Email, DOB, Age -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="email" class="form-control-label">
+                                        Email-ID
+                                        <span id="emailError" class="text-danger"></span>
+                                    </label>
+                                    @Html.TextBoxFor(m => m.Email, new
+                                    {
+                                        @class = "form-control",
+                                        id = "patientEmail",
+                                        placeholder = "Enter Email Address",
+                                        name = "email",
+                                        type = "email",
+                                        autocomplete = "off",
+                                        maxlength = "50",
+                                        pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+                                    })
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group date-container">
+                                    <label for="dob" class="form-control-label">
+                                        <span>DOB.</span>
+                                    </label>
+
+                                    @if (ViewBag.DateOfBirth != null)
+                                    {
+                                        @Html.TextBoxFor(m => m.DateOfBirth, new
+                                        {
+                                            @class = "form-control",
+                                            id = "dateOfBirth",
+                                            name = "Contact",
+                                            placeholder = "Select Date",
+                                            required = "required"
+                                        })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(m => m.DateOfBirth, new
+                                        {
+                                            @class = "form-control",
+                                            id = "dateOfBirth",
+                                            name = "Contact",
+                                            placeholder = "Select Date"
+                                        })
+                                    }
+
+                                    <i class="fa fa-calendar calendar-icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="Age" class="form-control-label">
+                                        Age <span class="text-danger">*</span>
+                                    </label>
+
+                                    @Html.TextBoxFor(m => m.Age, new
+                                    {
+                                        @class = "form-control",
+                                        id = "Age",
+                                        required = "required",
+                                        maxlength = "10",
+                                        placeholder = "Eg. 25 or 3M or 10D",
+                                        autocomplete = "off"
+                                    })
+
+                                    <!-- Textbox chya agdi khali nit disnyasathi hi line -->
+                                    <small class="text-muted d-block mt-1" style="font-size: 11px; font-weight: 500; color: #6c757d;">
+                                        (Type: 25 for Years, 3M for Months, 10D for Days)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Blood Group, Gender -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="blood_group" class="form-control-label">
+                                        Blood group
+                                    </label>
+                                    @Html.DropDownListFor(m => m.BloodGroup, new SelectList(
+                                                             new[] {
+                                                                   new { Value = "", Text = "Select Blood Group" },
+                                                              new { Value="A+", Text = "A+" },
+                                                              new { Value = "B+", Text = "B+" },
+                                                              new { Value = "AB+", Text = "AB+" },
+                                                               new { Value = "O+", Text = "O+" },
+                                                                 new { Value = "A-", Text = "A-" },
+                                                                  new { Value = "B-", Text = "B-" },
+                                                                  new { Value = "AB-", Text = "AB-" },
+                                                                   new { Value = "O-", Text = "O-" },
+                                                                    new { Value = "Unknown", Text = "Unknown" }
+                                                             }, "Value", "Text"),
+                                                                 new { @id = "BloodGroup", @class = "form-control custom-select" })
+                                </div>
+                            </div>
+
+                            <div id="patient_gender_div" class="col-md-4">
+                                <div class="form-group">
+                                    <label for="gender" class="form-control-label">
+                                        Gender
+                                        <span class="text-danger">
+                                            *
+                                        </span>
+                                    </label>
+                                    <div class="col-md-12 p-0">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            @Html.RadioButtonFor(m => m.Gender, "Male", new { @class = "custom-control-input", id = "male", required = "required" })
+                                            <label for="male" class="custom-control-label">Male</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            @Html.RadioButtonFor(m => m.Gender, "Female", new { @class = "custom-control-input", id = "female" })
+                                            <label for="female" class="custom-control-label">Female</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            @Html.RadioButtonFor(m => m.Gender, "Other", new { @class = "custom-control-input", id = "other" })
+                                            <label for="other" class="custom-control-label">Other</label>
+                                        </div>
+                                    </div>
+                                    <span id="genderError" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="text-primary mb-4">
+                                    Other details
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="address" class="form-control-label">
+                                        Address
+                                    </label>
+                                    @Html.TextAreaFor(m => m.Address, new { @class = "form-control", id = "address", placeholder = "Enter address", type = "text", name = "Address", maxlength = "200", onkeyup = "validateAddress(this);" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- 1. Postal Code (पहिला कॉलम) -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="postal_code" class="form-control-label">
+                                        Postal code
+                                    </label>
+                                    @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control", id = "postalCode", name = "PostalCode", maxlength = "6", onkeypress = "return OnlyNumber(event)", placeholder = "Enter Postal Code" })
+                                    <a href="javascript:void(0)" id="btnToggleMode" style="font-size: 12px; display: block; margin-top: 4px; font-weight: 500;" onclick="toggleAddressFieldsMode()">Enter City/Country manually</a>
+
+                                </div>
+                            </div>
+
+                            <!-- 2. City (दूसरा कॉलम) -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="country" class="form-control-label">
+                                        City <span class="text-danger">*</span>
+                                    </label>
+                                    <div id="cityTextInputWrapper" style="display: none;">
+                                        @Html.TextBoxFor(m => m.CityName, new { @class = "form-control", id = "cityFid", required = "required", name = "cityFid", maxlength = "20", onkeyup = "onlyAlphabets(this);", placeholder = "Enter City" })
+                                    </div>
+                                    <div id="citySelectInputWrapper">
+
+                                        <select id="citySelect" class="form-control custom-select">
+                                            <option value="">Select City</option>
+                                            <option value="Agra">Agra</option>
+                                            <option value="Ahmedabad">Ahmedabad</option>
+                                            <option value="Ahmednagar">Ahmednagar</option>
+                                            <option value="Ajmer">Ajmer</option>
+                                            <option value="Akola">Akola</option>
+                                            <option value="Alibag">Alibag</option>
+                                            <option value="Aligarh">Aligarh</option>
+                                            <option value="Allahabad">Allahabad</option>
+                                            <option value="Amravati">Amravati</option>
+                                            <option value="Amritsar">Amritsar</option>
+                                            <option value="Aurangabad">Aurangabad</option>
+                                            <option value="Bangalore">Bangalore</option>
+                                            <option value="Beed">Beed</option>
+                                            <option value="Bhandara">Bhandara</option>
+                                            <option value="Bhopal">Bhopal</option>
+                                            <option value="Bhubaneswar">Bhubaneswar</option>
+                                            <option value="Bikaner">Bikaner</option>
+                                            <option value="Chandigarh">Chandigarh</option>
+                                            <option value="Chandrapur">Chandrapur</option>
+                                            <option value="Chennai">Chennai</option>
+                                            <option value="Coimbatore">Coimbatore</option>
+                                            <option value="Cuttack">Cuttack</option>
+                                            <option value="Dehradun">Dehradun</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Dhanbad">Dhanbad</option>
+                                            <option value="Dhule">Dhule</option>
+                                            <option value="Faridabad">Faridabad</option>
+                                            <option value="Gadchiroli">Gadchiroli</option>
+                                            <option value="Ghaziabad">Ghaziabad</option>
+                                            <option value="Gondia">Gondia</option>
+                                            <option value="Gorakhpur">Gorakhpur</option>
+                                            <option value="Gurgaon">Gurgaon</option>
+                                            <option value="Guwahati">Guwahati</option>
+                                            <option value="Gwalior">Gwalior</option>
+                                            <option value="Howrah">Howrah</option>
+                                            <option value="Hyderabad">Hyderabad</option>
+                                            <option value="Indore">Indore</option>
+                                            <option value="Jabalpur">Jabalpur</option>
+                                            <option value="Jaipur">Jaipur</option>
+                                            <option value="Jalandhar">Jalandhar</option>
+                                            <option value="Jalgaon">Jalgaon</option>
+                                            <option value="Jalna">Jalna</option>
+                                            <option value="Jammu">Jammu</option>
+                                            <option value="Jamnagar">Jamnagar</option>
+                                            <option value="Jamshedpur">Jamshedpur</option>
+                                            <option value="Jhansi">Jhansi</option>
+                                            <option value="Jodhpur">Jodhpur</option>
+                                            <option value="Kalyan-Dombivli">Kalyan-Dombivli</option>
+                                            <option value="Karad">Karad</option>
+                                            <option value="Kochi">Kochi</option>
+                                            <option value="Kolhapur">Kolhapur</option>
+                                            <option value="Kolkata">Kolkata</option>
+                                            <option value="Kota">Kota</option>
+                                            <option value="Latur">Latur</option>
+                                            <option value="Lucknow">Lucknow</option>
+                                            <option value="Ludhiana">Ludhiana</option>
+                                            <option value="Madurai">Madurai</option>
+                                            <option value="Mangalore">Mangalore</option>
+                                            <option value="Meerut">Meerut</option>
+                                            <option value="Mumbai">Mumbai</option>
+                                            <option value="Mysore">Mysore</option>
+                                            <option value="Nagpur">Nagpur</option>
+                                            <option value="Nanded">Nanded</option>
+                                            <option value="Nashik">Nashik</option>
+                                            <option value="Navi Mumbai">Navi Mumbai</option>
+                                            <option value="Noida">Noida</option>
+                                            <option value="Osmanabad">Osmanabad</option>
+                                            <option value="Patna">Patna</option>
+                                            <option value="Pimpri-Chinchwad">Pimpri-Chinchwad</option>
+                                            <option value="Pune">Pune</option>
+                                            <option value="Raigad">Raigad</option>
+                                            <option value="Raipur">Raipur</option>
+                                            <option value="Rajkot">Rajkot</option>
+                                            <option value="Ranchi">Ranchi</option>
+                                            <option value="Ratnagiri">Ratnagiri</option>
+                                            <option value="Salem">Salem</option>
+                                            <option value="Sangli">Sangli</option>
+                                            <option value="Satara">Satara</option>
+                                            <option value="Siliguri">Siliguri</option>
+                                            <option value="Sindhudurg">Sindhudurg</option>
+                                            <option value="Solapur">Solapur</option>
+                                            <option value="Srinagar">Srinagar</option>
+                                            <option value="Surat">Surat</option>
+                                            <option value="Thane">Thane</option>
+                                            <option value="Vadodara">Vadodara</option>
+                                            <option value="Varanasi">Varanasi</option>
+                                            <option value="Vasai-Virar">Vasai-Virar</option>
+                                            <option value="Vijayawada">Vijayawada</option>
+                                            <option value="Visakhapatnam">Visakhapatnam</option>
+                                            <option value="Wardha">Wardha</option>
+                                            <option value="Yavatmal">Yavatmal</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Country (तिसरा कॉलम) -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="city" class="form-control-label">
+                                        Country
+                                    </label>
+                                    <div id="countryTextInputWrapper" style="display: none;">
+                                        @Html.TextBoxFor(m => m.Country, new { @class = "form-control", id = "country", name = "country", maxlength = "20", onkeyup = "onlyAlphabets(this);", placeholder = "Enter Country" })
+                                    </div>
+                                    <div id="countrySelectInputWrapper">
+                                        <select id="countrySelect" class="form-control custom-select">
+                                            <!-- १. सर्वात वर Default Selection -->
+                                            <option value="India">India (Default)</option>
+                                            <option value="Afghanistan">Afghanistan</option>
+                                            <option value="Albania">Albania</option>
+                                            <option value="Algeria">Algeria</option>
+                                            <option value="Andorra">Andorra</option>
+                                            <option value="Angola">Angola</option>
+                                            <option value="Argentina">Argentina</option>
+                                            <option value="Armenia">Armenia</option>
+                                            <option value="Australia">Australia</option>
+                                            <option value="Austria">Austria</option>
+                                            <option value="Azerbaijan">Azerbaijan</option>
+                                            <option value="Bahamas">Bahamas</option>
+                                            <option value="Bahrain">Bahrain</option>
+                                            <option value="Bangladesh">Bangladesh</option>
+                                            <option value="Belgium">Belgium</option>
+                                            <option value="Bhutan">Bhutan</option>
+                                            <option value="Bolivia">Bolivia</option>
+                                            <option value="Brazil">Brazil</option>
+                                            <option value="Canada">Canada</option>
+                                            <option value="Chile">Chile</option>
+                                            <option value="China">China</option>
+                                            <option value="Colombia">Colombia</option>
+                                            <option value="Denmark">Denmark</option>
+                                            <option value="Egypt">Egypt</option>
+                                            <option value="Finland">Finland</option>
+                                            <option value="France">France</option>
+                                            <option value="Germany">Germany</option>
+                                            <option value="Greece">Greece</option>
+                                            <option value="Indonesia">Indonesia</option>
+                                            <!-- २. A to Z च्या क्रमाने I अक्षरात -->
+                                            <option value="India">India</option>
+                                            <option value="Iran">Iran</option>
+                                            <option value="Iraq">Iraq</option>
+                                            <option value="Ireland">Ireland</option>
+                                            <option value="Israel">Israel</option>
+                                            <option value="Italy">Italy</option>
+                                            <option value="Japan">Japan</option>
+                                            <option value="Kuwait">Kuwait</option>
+                                            <option value="Malaysia">Malaysia</option>
+                                            <option value="Maldives">Maldives</option>
+                                            <option value="Mexico">Mexico</option>
+                                            <option value="Nepal">Nepal</option>
+                                            <option value="Netherlands">Netherlands</option>
+                                            <option value="New Zealand">New Zealand</option>
+                                            <option value="Norway">Norway</option>
+                                            <option value="Oman">Oman</option>
+                                            <option value="Pakistan">Pakistan</option>
+                                            <option value="Philippines">Philippines</option>
+                                            <option value="Portugal">Portugal</option>
+                                            <option value="Qatar">Qatar</option>
+                                            <option value="Russia">Russia</option>
+                                            <option value="Saudi Arabia">Saudi Arabia</option>
+                                            <option value="Singapore">Singapore</option>
+                                            <option value="South Africa">South Africa</option>
+                                            <option value="South Korea">South Korea</option>
+                                            <option value="Spain">Spain</option>
+                                            <option value="Sri Lanka">Sri Lanka</option>
+                                            <option value="Sweden">Sweden</option>
+                                            <option value="Switzerland">Switzerland</option>
+                                            <option value="Thailand">Thailand</option>
+                                            <option value="Turkey">Turkey</option>
+                                            <option value="Ukraine">Ukraine</option>
+                                            <option value="United Arab Emirates">United Arab Emirates</option>
+                                            <option value="United Kingdom">United Kingdom</option>
+                                            <option value="United States">United States</option>
+                                            <option value="Vietnam">Vietnam</option>
+                                            <option value="Yemen">Yemen</option>
+                                            <option value="Zimbabwe">Zimbabwe</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <!---->
+                            </div>
+                        </div>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="row">
+                            <div class="col-md-12 p-0">
+                                <div class="d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary" id="btnSavePatinet">
+                                        <i class="fa fa-save">
+                                        </i>
+                                        Save
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <!---->
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        const loader = document.getElementById('loader');
+        if (loader) {
+            loader.classList.add('hidden');
+        }
+
+
+        var message = @Html.Raw(Json.Encode(ViewBag.Message));
+        var alertType = @Html.Raw(Json.Encode(ViewBag.Icon));
+        var PatientNumber = @Html.Raw(Json.Encode(ViewBag.PatientNumber));
+        if(message!=null)
+        {
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+        }
+        if(PatientNumber!=null)
+        {
+            $("#contact").val(PatientNumber);
+        }
+
+
+        //$("#PatientType").select2();
+        //$("#BloodGroup").select2();
+        var changeSubmitButton=@Html.Raw(Json.Encode(ViewBag.FromContactChangeButtonName));
+        if(changeSubmitButton!=null)
+        {
+            $("#btnSavePatinet").html('<i class="fa fa-plus"></i> Update & Add Appointment');
+        }
+        $("#btnBack").click(function () {
+            debugger;
+            var Url = '@Url.Action("PatientList", "AddPatient")';
+            window.location.href = Url;
+
+        });
+
+
+        $(".country-selector__toggle").click(function () {
+            // Toggle the visibility of the country selector list
+            $("#CountryList").slideToggle(); // Toggle the visibility with a sliding effect
+        });
+
+        $("#showClinic").click(function () {
+            // Toggle the visibility of the country selector list
+            $(".multiselect__content-wrapper").slideToggle(); // Toggle the visibility with a sliding effect
+        });
+    });
+
+    function InputToUpper(obj)
+    {
+        if (obj.value!="")
+        {
+            var start = obj.selectionStart;
+            var end = obj.selectionEnd;
+            obj.value = obj.value.toUpperCase();
+            obj.setSelectionRange(start, end);
+        }
+    }
+
+
+    $("#contact").keydown(function (event)
+    {
+        if (event.keyCode === 13)
+        {
+            event.preventDefault();
+            var PatientContact = document.getElementById("contact").value;
+
+            var Url = '@Url.Action("AddPatient", "AddPatient")' + '?PatientContact=' + PatientContact;
+            window.location.href = Url;
+        }
+    })
+
+</script>
+
+@*------Show Image-------*@
+<script>
+    function showImage(event) {
+        debugger;
+        const file = event.target.files[0]; // Get the selected file
+        if (file) {
+            const reader = new FileReader(); // Create a FileReader to read the file
+            reader.onload = function (e) {
+                const imagePreview = document.getElementById("imagePreview");
+                imagePreview.style.backgroundImage = `url(${e.target.result})`; // Set the background image
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        }
+    }
+
+</script>
+
+
+@*------Form Validation Check Before Submit-------*@
+<script>
+    // Add basic form validation for required fields
+    document.getElementById('patientDataForm').addEventListener('submit', function (event) {
+        debugger
+        var form = this;
+        var isValid = true;
+
+        // ✅ Email घे
+        var emailInput = document.getElementById("patientEmail");
+        var email = emailInput.value.trim();
+
+
+        var formError = document.getElementById('formError');
+        formError.style.display = 'none';
+        // Loop through each required field and check if it is empty
+        form.querySelectorAll('[required]').forEach(function (input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid'); // Optional: add a class to highlight the empty field
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+     var atSymbol = String.fromCharCode(64);
+
+        // ---------------- GENDER FIX (IMPORTANT) ----------------
+     var gender = document.querySelector('input[name="Gender"]:checked');
+
+     if (!gender) {
+         isValid = false;
+         document.getElementById("genderError").innerText = "Please select Gender";
+     } else {
+         document.getElementById("genderError").innerText = "";
+     }
+     if (email !== "") {
+
+         if (!email.includes(atSymbol) || !email.includes(".")) {
+             isValid = false;
+             emailInput.classList.add("is-invalid");
+
+             showCustomAlert("Please enter valid Email ID", "error", "");
+
+             event.preventDefault();
+             return false;
+         }
+     }
+
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if fields are invalid
+
+            // Show the custom alert
+            var message = 'Please fill out all required field';
+            var alertType = 'error';
+            var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+            showCustomAlert(message, alertType, imageUrl);
+
+            //setTimeout(() => {
+            //    formError.style.display = "none";
+            //}, 1000);
+        } else {
+            const loader = document.getElementById('loader');
+
+            // Show the loader
+            loader.classList.remove('hidden');
+        }
+
+        //if (!isValid) {
+        //    event.preventDefault(); // Prevent form submission if fields are invalid
+        //    formError.style.display = 'block'; // Show the error message div
+
+        //}
+
+
+        $("#dismissError").click(function () {
+            debugger;
+            formError.style.display = 'none';
+        });
+
+        //$("#dismissError").click(function () {
+        //    debugger;
+        //    formError.style.display = 'none';
+        //});
+
+    });
+</script>
+
+
+@*<script>
+        $(document).ready(function () {
+
+            // DOB -> Auto Age
+            $("#dateOfBirth").on("change", function () {
+                let dob = $(this).val();
+                if (dob) {
+                    let birthDate = new Date(dob);
+                    let today = new Date();
+
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    let month = today.getMonth() - birthDate.getMonth();
+
+                    // Adjust if birthday not reached yet this year
+                    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+                        age--;
+                    }
+
+                    $("#Age").val(age);
+                }
+            });
+
+            // Age -> Auto DOB
+            $("#Age").on("input", function () {
+                let age = parseInt($(this).val());
+                if (!isNaN(age) && age > 0) {
+                    let today = new Date();
+                    let dobYear = today.getFullYear() - age;
+
+                    // Keep month + date same as today
+                    let dob = new Date(dobYear, today.getMonth(), today.getDate());
+
+                    let formatted =
+                        dob.getFullYear() + "-" +
+                        String(dob.getMonth() + 1).padStart(2, '0') + "-" +
+                        String(dob.getDate()).padStart(2, '0');
+
+                    $("#dateOfBirth").val(formatted);
+                }
+            });
+
+        });
+    </script>*@
+
+
+<script>
+    $(document).ready(function () {
+
+        // DOB -> Auto Age
+        $("#dateOfBirth").on("change", function () {
+            let dob = $(this).val();
+            if (dob) {
+                let birthDate = new Date(dob);
+                let today = new Date();
+
+                let age = today.getFullYear() - birthDate.getFullYear();
+                let month = today.getMonth() - birthDate.getMonth();
+
+                // Adjust if birthday not reached yet this year
+                if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+                    age--;
+                }
+
+                // ---- DB INT ASLYAMULE HA DOCK DISPLAY LOGIC ----
+                if (age <= 0) {
+                    let days = today.getDate() - birthDate.getDate();
+                    let totalMonths = month + (12 * (today.getFullYear() - birthDate.getFullYear()));
+
+                    if (days < 0) { totalMonths--; }
+
+                    if (totalMonths > 0) {
+                        // Display sathi textbox madhye text dakva, pan submit hताना user change karel
+                        $("#Age").val(totalMonths + " Months");
+                    } else {
+                        let timeDiff = today.getTime() - birthDate.getTime();
+                        let diffDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+                        $("#Age").val(diffDays + " Days");
+                    }
+                } else {
+                    $("#Age").val(age); // Jar 1 varsha peksha jast asel tar direct number direct basel
+                }
+            }
+        });
+
+        // Age -> Auto DOB
+        $("#Age").on("input", function () {
+            let rawInput = $(this).val().toLowerCase();
+            let age = parseInt($(this).val());
+
+            if (!isNaN(age) && age > 0) {
+                let today = new Date();
+                let dob = new Date();
+
+                if (rawInput.includes("m")) {
+                    dob.setMonth(today.getMonth() - age);
+                }
+                else if (rawInput.includes("d")) {
+                    dob.setDate(today.getDate() - age);
+                }
+                else {
+                    let dobYear = today.getFullYear() - age;
+                    dob = new Date(dobYear, today.getMonth(), today.getDate());
+                }
+
+                let formatted =
+                    dob.getFullYear() + "-" +
+                    String(dob.getMonth() + 1).padStart(2, '0') + "-" +
+                    String(dob.getDate()).padStart(2, '0');
+
+                $("#dateOfBirth").val(formatted);
+
+                // Form submit hताना SQL la error yeu naye mhanun fakt pure number text box madhye theva
+                if (!rawInput.includes("m") && !rawInput.includes("d")) {
+                    $(this).val(age);
+                }
+            }
+        });
+
+        // 🔥 IMPORTANT: Form submit hovaychya aadhi "Months/Days" text kadun 0 kara, nahi tar SQL crash hoil
+        $("#patientDataForm").submit(function () {
+            let ageField = $("#Age");
+            let ageVal = ageField.val().toLowerCase();
+
+            // Jar vayat 'months' kiva 'days' asel (mhanje mulga 1 varsha peksha lahan ahe), tar DB madhye 0 pathva
+            if (ageVal.includes("m") || ageVal.includes("d")) {
+                ageField.val(0);
+            }
+        });
+
+    });
+</script>
+<script>
+ $("#btnCancel").click(function (e) {
+    e.preventDefault(); // 🔥 stop immediate redirect
+
+    var Url = '@Url.Action("PatientList", "AddPatient")';
+
+    Swal.fire({
+        title: "Cancel?",
+        text: "All entered data will be lost!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, Cancel",
+        cancelButtonText: "No"
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+            window.location.href = Url; // ✔ only on confirm
+        }
+
+    });
+});
+</script>
+
+
+
+
+@*new validation script add*@
+
+<script>
+    function validateName(input) {
+
+        // Remove non-letters
+        input.value = input.value.replace(/[^a-zA-Z]/g, '');
+
+        // Convert to Uppercase
+        input.value = input.value.toUpperCase();
+
+        // Limit to 50 characters
+        if (input.value.length > 50) {
+            input.value = input.value.substring(0, 50);
+        }
+    }
+</script>
+
+
+@*<script>
+        //function validateMobile(input) {
+
+        //    // Remove non-numeric characters
+        //    input.value = input.value.replace(/\D/g, '');
+
+        //    // Limit to 10 digits
+        //    if (input.value.length >= 10) {
+        //        input.value = input.value.substring(0, 10);
+        //    }
+        //}
+
+        function validateMobile(input) {
+            // Keep only digits & limit to 10 in one line
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+        }
+    </script>*@
+
+<script>
+    var isDropdownMode = true;
+
+    $(document).ready(function () {
+        // 1. Postal Code → Only numbers allow
+        $("#postalCode").on("input", function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // 2. Set default mode to dropdown on load (Edit मोडचे डिटेल्स पण इथेच फेच होतील)
+        setManualMode(false);
+
+        // 3. Pincode fetch auto-fill logic
+        $("#postalCode").on("input keyup", function () {
+            var pincode = $(this).val().trim();
+            if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+                $.ajax({
+                    url: 'https://api.postalpincode.in/pincode/' + pincode,
+                    method: 'GET',
+                    success: function (response) {
+                        if (response && response[0] && response[0].Status === 'Success') {
+                            var postOffice = response[0].PostOffice[0];
+                            var city = postOffice.District || postOffice.Block || postOffice.Division || postOffice.Name;
+                            var country = 'India';
+
+                            // Populate hidden/original text inputs
+                            $('#cityFid').val(city);
+                            $('#country').val(country);
+
+                            // Populate/select values in the dropdowns
+                            updateSelectDropdowns(city, country);
+                        }
+                    }
+                });
+            }
+        });
+
+        // 4. Dropdown sync logic (Dropdown बदलल्यावर मूळ मॉडेलच्या टेक्स्टबॉक्सची व्हॅल्यू अपडेट होईल)
+        $('#citySelect').on('change', function () {
+            $('#cityFid').val($(this).val());
+        });
+
+        $('#countrySelect').on('change', function () {
+            $('#country').val($(this).val());
+        });
+    });
+
+    function toggleAddressFieldsMode() {
+        isDropdownMode = !isDropdownMode;
+        setManualMode(!isDropdownMode);
+    }
+
+    function setManualMode(isManual) {
+        if (isManual) {
+            $('#cityTextInputWrapper').show();
+            $('#countryTextInputWrapper').show();
+            $('#citySelectInputWrapper').hide();
+            $('#countrySelectInputWrapper').hide();
+            $('#btnToggleMode').text('Choose City/Country from list');
+            isDropdownMode = false;
+        } else {
+            $('#cityTextInputWrapper').hide();
+            $('#countryTextInputWrapper').hide();
+            $('#citySelectInputWrapper').show();
+            $('#countrySelectInputWrapper').show();
+
+            // Edit मोड असेल तर आधीच भरलेले डिटेल्स फेच करण्यासाठी
+            var currentCity = $('#cityFid').val();
+            var currentCountry = $('#country').val();
+
+            if (currentCity) {
+                updateSelectDropdowns(currentCity, currentCountry);
+            } else {
+                $('#citySelect').val('');
+            }
+            if (currentCountry) {
+                updateSelectDropdowns(currentCity, currentCountry);
+            } else {
+                $('#countrySelect').val('India');
+                $('#country').val('India');
+            }
+
+            $('#btnToggleMode').text('Enter City/Country manually');
+            isDropdownMode = true;
+        }
+    }
+
+    function updateSelectDropdowns(city, country) {
+        if (country) {
+            // जर कंट्री लिस्ट मध्ये नसेल तर ती ऍड करून सिलेक्ट करा
+            if ($("#countrySelect option[value='" + country + "']").length === 0) {
+                $('#countrySelect').append(new Option(country, country));
+            }
+            $('#countrySelect').val(country);
+        }
+        if (city) {
+            // जर सिटी लिस्ट मध्ये नसेल तर ती ऍड करून सिलेक्ट करा
+            if ($("#citySelect option[value='" + city + "']").length === 0) {
+                $('#citySelect').append(new Option(city, city));
+            }
+            $('#citySelect').val(city);
+        }
+    }
+
+    function OnlyNumber(evt) {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode >= 48 && charCode <= 57) {
+            return true;
+        }
+        return false;
+    }
+</script>
+
+
+<script>
+    function validateAddress(input) {
+
+        var value = input.value;
+
+        // allow A-Z a-z 0-9 space - / . ,
+        value = value.replace(/[^a-zA-Z0-9\s\-\/\.,]/g, '');
+
+        input.value = value.toUpperCase();
+    }
+
+
+
+    function onlyAlphabets(input) {
+
+        var value = input.value;
+
+        // allow only alphabets
+        value = value.replace(/[^a-zA-Z\s]/g, '');
+
+        input.value = value.toUpperCase();
+    }
+
+    function validateMobile(input) {
+        // Keep only digits
+        input.value = input.value.replace(/\D/g, '');
+
+        // Show error if length not exactly 10
+        const errorSpan = document.getElementById('mobileError');
+        if (input.value.length === 10) {
+            errorSpan.style.display = 'none';
+        } else {
+            errorSpan.style.display = 'inline';
+        }
+    }
+
+    // Optional: final check on form submit
+    document.querySelector('form').addEventListener('submit', function (e) {
+        const input = document.getElementById('contact');
+        if (input.value.length !== 10) {
+            e.preventDefault();
+            alert('Mobile number must be exactly 10 digits.');
+            input.focus();
+        }
+    });
+
+
+    $("form").submit(function (e) {
+        var mobile = $("#contact").val();
+        if (mobile.length !== 10) {
+            alert("Please enter a valid 10-digit mobile number.");
+            $("#contact").focus();
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    $("form").submit(function (e) {
+        var pType = $("#PatientType").val();
+        if (pType === "") {
+            alert("Please select a Patient Type.");
+            $("#PatientType").focus();
+            e.preventDefault();
+            return false;
+        }
+    });
+
+</script>
+<script>
+    $("#patientEmail").on("input", function () {
+
+        var email = $(this).val().trim();
+        var emailPattern = new RegExp("^[^@@\\s]+@@[^@@\\s]+\\.[^@@\\s]+$");
+
+        if (email === "") {
+            $("#emailError").text("");
+            $(this).removeClass("is-invalid");
+            return;
+        }
+
+        if (!email.includes("@@")) {
+            $("#emailError").text("Email must contain @@");
+            $(this).addClass("is-invalid");
+            return;
+        }
+
+        if (!emailPattern.test(email)) {
+            $("#emailError").text("Invalid Email format");
+            $(this).addClass("is-invalid");
+        } else {
+            $("#emailError").text("");
+            $(this).removeClass("is-invalid");
+        }
+
+    });
+
+
+</script>
+
+<script>
+    document.getElementById("btnSavePatinet").addEventListener("click", function (e) {
+
+        var form = document.getElementById("patientDataForm");
+
+        // HTML validation
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        // 🔥 CUSTOM VALIDATION START
+
+        var isValid = true;
+
+        // Gender check
+        var gender = document.querySelector('input[name="Gender"]:checked');
+        if (!gender) {
+            isValid = false;
+            document.getElementById("genderError").innerText = "Please select Gender";
+        } else {
+            document.getElementById("genderError").innerText = "";
+        }
+
+        // Age check
+        var ageInput = document.getElementById("Age");
+        var ageValue = ageInput.value.trim();
+
+        if (!ageValue || ageValue === "" || ageValue === "0") {
+            isValid = false;
+            ageInput.classList.add("is-invalid");
+        } else {
+            ageInput.classList.remove("is-invalid");
+        }
+
+        if (!isValid) {
+            showCustomAlert("Please fill all required fields properly", "error", "");
+            return; // ❌ STOP here
+        }
+
+        // 🔥 CUSTOM VALIDATION END
+
+        Swal.fire({
+            title: "Save Patient?",
+            text: "Do you want to save this patient details?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Save",
+            cancelButtonText: "Cancel"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit(); // ✅ safe now
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        debugger
+        // Ek number double check hou naye mhanun hi variable thevli ahe
+        var lastCheckedNumber = "";
+
+        function checkExistingPatient() {
+            var contactNo = $("#contact").val();
+
+            // Fakt 10 digits aslyavar ani jar aadhi check kela nasel tarach AJAX call jail
+            if (contactNo.length === 10 && contactNo !== lastCheckedNumber) {
+                // Immediately set lastCheckedNumber to prevent duplicate calls from blur and input events
+                lastCheckedNumber = contactNo;
+
+                $.ajax({
+                    url: '@Url.Action("CheckPatientExists", "AddPatient", new { area = "Patient" })',
+                    type: 'POST',
+                    data: { ContactNumber: contactNo },
+                    success: function (response) {
+                        if (response.exists) {
+                            var namesHtml = '<div class="custom-patient-container">';
+                            response.patientNames.forEach(function(name) {
+                                namesHtml += '<div class="custom-patient-item">' +
+                                             '<i class="fa fa-user-circle custom-patient-icon"></i>' +
+                                             '<span>' + name + '</span>' +
+                                             '</div>';
+                            });
+                            namesHtml += '</div>';
+
+                            Swal.fire({
+                                title: "Patient Already Registered!",
+                                html: '<div class="custom-swal-text">' +
+                                      '<b>' + response.count + '</b> patient(s) found with this number:' +
+                                      namesHtml +
+                                      'Do you still want to add a new patient with this number?' +
+                                      '</div>',
+                                icon: "warning",
+                                customClass: {
+                                    popup: 'custom-swal-popup',
+                                    title: 'custom-swal-title',
+                                    confirmButton: 'custom-swal-button',
+                                    cancelButton: 'custom-swal-button'
+                                },
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: '<i class="fa fa-check"></i> Yes, Continue',
+                                cancelButtonText: '<i class="fa fa-times"></i> No, Clear Field'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // 'Yes, Continue' click kela, tar mobile number values fillch rahil
+                                    $("#contact").val(contactNo);
+                                } else {
+                                    // 'No' / 'Clear Field' click kela ki sagl clear kraycha
+                                    var form = document.getElementById("patientDataForm");
+                                    if (form) {
+                                        form.reset();
+                                    }
+                                    
+                                    // Reset manual address mode back to dropdown mode (default)
+                                    if (typeof setManualMode === "function") {
+                                        setManualMode(false);
+                                    }
+                                    
+                                    // Clear any validation/error states
+                                    $("#contact").val("");
+                                    $("#mobileError").hide();
+                                    $("#genderError").text("");
+                                    $("#emailError").text("");
+                                    $(".is-invalid").removeClass("is-invalid");
+                                    
+                                    $("#contact").focus();
+                                    lastCheckedNumber = ""; // Reset check state
+                                }
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log("AJAX Error: ", error);
+                        lastCheckedNumber = ""; // Reset on error to allow retrying
+                    }
+                });
+            }
+            else if (contactNo.length < 10) {
+                // User ne backspace dabun number kami kela tar reset kara
+                lastCheckedNumber = "";
+            }
+        }
+
+        // 'input' event support inputs (typing/paste/delete) directly
+        $("#contact").on("input blur", function () {
+            checkExistingPatient();
+        });
+    });
+</script>

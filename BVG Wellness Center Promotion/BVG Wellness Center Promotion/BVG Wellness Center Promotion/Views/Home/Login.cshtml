@@ -1,0 +1,867 @@
+﻿@{
+    Layout = null;
+}
+
+<script src="~/assets/dist/js/bootstrap.bundle.min.js"></script>
+<link href="~/assets/css/font-awesome-all.min.css" rel="stylesheet" />
+<link href="~/assets/css/poppins-google-fonts.css" rel="stylesheet" />
+<link href="~/assets/css/app.min.css" rel="stylesheet" />
+<link href="~/assets/css/font-awesome-all.min.css" rel="stylesheet" />
+<link href="~/assets/js/mediaelement/mediaelementplayer-legacy.min.css" rel="stylesheet" />
+<link href="~/assets/js/mediaelement/wp-mediaelement.min.css" rel="stylesheet" />
+<link href="~/assets/js/imgareaselect/imgareaselect.css" rel="stylesheet" />
+
+<script src="~/assets/js/select2.min.js"></script>
+<script src="~/assets/js/kc-register-login-block.js"></script>
+<script src="~/assets/js/calendar.min.js"></script>
+<script src="~/assets/js/magnific-popup.min.js"></script>
+<script src="~/assets/js/kc-patient-dashboard-block.js"></script>
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/plupload.min.js"></script>
+<script src="~/assets/js/redux-banner-admin.js"></script>
+<script src="~/assets/js/jquery-print.min.js"></script>
+<script src="~/assets/js/app.min.js"></script>
+<script src="~/scripts/ai.0.22.9-build00167.js"></script>
+<script src="~/scripts/ai.0.22.9-build00167.min.js"></script>
+
+<link href="~/assets/css/redux-banner.css" rel="stylesheet" />
+<link href="~/assets/css/magnific-popup.min.css" rel="stylesheet" />
+<link href="~/assets/js/mediaelement/wp-mediaelement.min.css" rel="stylesheet" />
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+<link href="~/assets/css/calendar.min.css" rel="stylesheet" />
+<link href="~/assets/css/flatpicker.min.css" rel="stylesheet" />
+<link href="~/assets/css/thickbox.css" rel="stylesheet" />
+<link href="~/assets/css/select2.min.css" rel="stylesheet" />
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script id="jquery-core-js-after">
+    var wp = window.wp;
+</script>
+<script src="~/assets/js/jquery/jquery-migrate.min.js"></script>
+<script id="utils-js-extra">
+    var userSettings = { "url": "\/", "uid": "101861", "time": "1733808897", "secure": "1" };
+</script>
+<script src="~/assets/js/utils.min.js"></script>
+<script src="~/assets/js/moxie.min.js"></script>
+<script src="~/assets/js/plupload.min.js"></script>
+<script src="~/assets/js/json2.min.js"></script>
+
+<style>
+    /* ===== BASE ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html {
+        height: 100%;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f0f8ff;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /* ===== LOGIN BACKGROUND ===== */
+    .login-bg {
+        background-color: #f0f8ff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000' preserveAspectRatio='none'%3E%3Cpath fill='%23b1dff7' d='M0,1000 L0,600 C300,600 450,850 600,1000 Z' /%3E%3Cpath fill='%23b1dff7' d='M1000,1000 L1000,500 C700,500 550,850 400,1000 Z' /%3E%3C/svg%3E");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: clamp(12px, 3vh, 30px);
+    }
+
+
+    .login-wrapper {
+        width: 92%;
+        max-width: 1180px;
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        background-color: #ffffff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000' preserveAspectRatio='none'%3E%3Cpath fill='%23e1f5fe' d='M0,0 L580,0 C750,333 350,666 580,1000 L0,1000 Z' /%3E%3Cpath fill='rgba(129, 212, 250, 0.3)' d='M0,0 L550,0 C720,400 320,600 560,1000 L0,1000 Z' /%3E%3Cpath fill='rgba(3, 155, 229, 0.1)' d='M0,0 L520,0 C680,250 380,750 530,1000 L0,1000 Z' /%3E%3C/svg%3E");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        border-radius: 24px;
+        padding: clamp(16px, 3vh, 30px) clamp(20px, 3.5vw, 45px);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        overflow: hidden;
+        zoom: 0.8; /* Makes the wrapper render at 80% scale natively */
+    }
+
+
+    .left-side {
+        flex: 0 0 55%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        padding: clamp(10px, 2vh, 20px);
+        min-height: 440px;
+    }
+
+        /* Decorative circles */
+        .left-side::before, .left-side::after {
+            display: none;
+        }
+
+    .illustration-box {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Content boxes on left side */
+    .left-content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: left;
+    }
+
+    .feature-box {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(8px);
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: 1px solid rgba(2, 119, 189, 0.08);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+        .feature-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(2, 119, 189, 0.08);
+            border-color: rgba(2, 119, 189, 0.15);
+        }
+
+        .feature-box .icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(2, 119, 189, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #01579b;
+            flex-shrink: 0;
+        }
+
+        .feature-box .text h6 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #003c6b;
+            margin: 0;
+        }
+
+        .feature-box .text p {
+            font-size: 11px;
+            color: #37474f;
+            margin: 0;
+        }
+
+    /* Tags row - TreatmentPlan, PatientProfile, Prescription, Rx */
+    .tags-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px 0 10px 0;
+    }
+
+    .tag-item {
+        background: rgba(2, 119, 189, 0.08);
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #003c6b;
+        border: 1px solid rgba(2, 119, 189, 0.06);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s ease;
+    }
+
+        .tag-item:hover {
+            background: rgba(2, 119, 189, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .tag-item.rx-tag {
+            background: rgba(2, 119, 189, 0.12);
+            font-weight: 700;
+            font-size: 14px;
+            padding: 6px 18px;
+            border-color: rgba(2, 119, 189, 0.15);
+        }
+
+    /* Welcome text on left */
+    .welcome-text-left {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+        .welcome-text-left h1 {
+            font-size: clamp(24px, 2.6vw, 34px);
+            font-weight: 700;
+            color: #003c6b;
+            letter-spacing: -0.5px;
+        }
+
+            .welcome-text-left h1 span {
+                color: #01579b;
+                font-weight: 300;
+            }
+
+        .welcome-text-left p {
+            color: #37474f;
+            font-size: clamp(13px, 1vw, 15px);
+            margin-top: 6px;
+        }
+
+    /* Bottom features on left */
+    .bottom-features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(2, 119, 189, 0.06);
+    }
+
+        .bottom-features span {
+            font-size: 12px;
+            color: #263238;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .bottom-features span i {
+                color: #01579b;
+                font-size: 14px;
+            }
+
+    /* Footer text */
+    .footer-text {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 11px;
+        color: #546e7a;
+    }
+
+    /* ===== RIGHT SIDE - Login Card ===== */
+    .right-side {
+        flex: 0 0 40%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end; /* Shifts card to the right */
+        position: relative;
+        padding: clamp(10px, 2vh, 20px);
+        min-height: 440px;
+    }
+
+
+
+
+
+
+    .login-card {
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+        z-index: 10;
+        background: white;
+        border-radius: 30px;
+        padding: clamp(22px, 3vh, 30px) clamp(18px, 2.5vw, 25px);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+        .login-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.10);
+        }
+
+    /* Logo inside card */
+    .login-logo {
+        width: 70px;
+        height: 70px;
+        background: rgba(2, 119, 189, 0.06);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px auto;
+        font-size: 32px;
+        color: #01579b;
+        border: 2px solid rgba(2, 119, 189, 0.06);
+    }
+
+    .login-card .welcome-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #003c6b;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+
+    .login-card .welcome-sub {
+        font-size: 14px;
+        color: #37474f;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+        .login-card .welcome-sub strong {
+            color: #01579b;
+            font-weight: 600;
+        }
+
+    /* ===== FORM STYLES ===== */
+    .form-label {
+        color: #01579b;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .form-label i {
+            color: #039be5;
+            font-size: 14px;
+        }
+
+    .form-control {
+        border-radius: 16px;
+        border: 1px solid #b3e5fc;
+        background: #f1f9ff;
+        font-size: 14px;
+        padding-left: 18px;
+        transition: all 0.3s ease;
+        font-family: 'Poppins', sans-serif;
+    }
+
+        .form-control:hover {
+            border-color: #03a9f4;
+        }
+
+        .form-control:focus {
+            border-color: #039be5;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(3, 169, 244, 0.10);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #78909c;
+            font-weight: 300;
+            font-size: 13px;
+        }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    /* ===== BUTTON ===== */
+    .btn-primary {
+        width: 100%;
+        border: none;
+        border-radius: 50px;
+        background: linear-gradient(135deg, #039be5, #01579b);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(2, 119, 189, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #01579b, #003c6b);
+            box-shadow: 0 14px 30px rgba(2, 119, 189, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+    /* ===== FORGOT PASSWORD ===== */
+    .forgot-link {
+        color: #01579b;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .forgot-link:hover {
+            color: #003c6b;
+            text-decoration: underline;
+        }
+
+    /* ===== PASSWORD TOGGLE ===== */
+    .password-wrapper {
+        position: relative;
+    }
+
+        .password-wrapper .form-control {
+            padding-right: 48px;
+        }
+
+    .eye-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #039be5;
+        cursor: pointer;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        z-index: 5;
+    }
+
+        .eye-icon:hover {
+            color: #01579b;
+        }
+
+    /* ===== REMEMBER ME ===== */
+    .remember-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .custom-check {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #263238;
+        cursor: pointer;
+    }
+
+        .custom-check input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #01579b;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+    /* ===== DIVIDER ===== */
+    .divider-text {
+        text-align: center;
+        font-size: 13px;
+        color: #546e7a;
+        margin: 16px 0;
+        position: relative;
+    }
+
+        .divider-text::before,
+        .divider-text::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #b3e5fc;
+        }
+
+        .divider-text::before {
+            left: 0;
+        }
+
+        .divider-text::after {
+            right: 0;
+        }
+
+
+
+    /* ===== SECURITY TEXT ===== */
+    .security-text {
+        text-align: center;
+        font-size: 11px;
+        color: #546e7a;
+        margin-top: 14px;
+    }
+
+        .security-text i {
+            color: #01579b;
+            margin-right: 6px;
+        }
+
+    /* ===== ERROR ===== */
+    #error {
+        color: #d32f2f;
+        font-size: 13px;
+        font-weight: 500;
+        display: block;
+    }
+    /* Doctor Image */
+    .doctor-image-box {
+        text-align: center;
+        margin: clamp(14px, 2.5vh, 30px) 0;
+    }
+
+    .doctor-img {
+        width: 100%;
+        max-width: 380px;
+        height: auto;
+        object-fit: contain;
+    }
+
+
+
+    /* ===== RESPONSIVE ===== */
+    @@media (max-width: 1024px) {
+        .login-wrapper {
+            flex-direction: column;
+            min-height: auto;
+            gap: 20px;
+        }
+
+        .left-side {
+            flex: 1;
+            width: 100%;
+            min-height: auto;
+            padding: 30px 20px;
+        }
+
+            .left-side::before,
+            .left-side::after {
+                display: none;
+            }
+
+        .right-side {
+            flex: 1;
+            width: 100%;
+            min-height: auto;
+            padding: 20px;
+        }
+
+
+
+        .login-card {
+            max-width: 100%;
+            padding: 35px 30px;
+        }
+
+        .left-content-grid {
+            grid-template-columns: 1fr 1fr;
+            max-width: 100%;
+        }
+
+        .welcome-text-left h1 {
+            font-size: 28px;
+        }
+
+        .login-wrapper {
+            padding: 0 20px;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .left-content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-text-left h1 {
+            font-size: 24px;
+        }
+
+        .login-card {
+            padding: 28px 20px;
+        }
+
+            .login-card .welcome-title {
+                font-size: 22px;
+            }
+
+        .tags-row {
+            gap: 6px;
+        }
+
+        .tag-item {
+            font-size: 10px;
+            padding: 4px 12px;
+        }
+
+        .bottom-features {
+            gap: 12px;
+        }
+
+            .bottom-features span {
+                font-size: 10px;
+            }
+
+
+
+        .remember-row {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .login-bg {
+            padding: 10px;
+        }
+
+        .right-side {
+            padding: 10px;
+        }
+    }
+
+    @@media (max-width: 400px) {
+        .login-card {
+            padding: 20px 14px;
+        }
+
+        .form-control {
+            height: 44px;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            height: 46px;
+            font-size: 14px;
+        }
+
+        .welcome-text-left h1 {
+            font-size: 20px;
+        }
+
+        .login-logo {
+            width: 55px;
+            height: 55px;
+            font-size: 26px;
+        }
+    }
+</style>
+
+<div class="container-fluid login-bg">
+    <div class="login-wrapper">
+
+        <!-- ===== LEFT SIDE - Content ===== -->
+        <div class="left-side">
+            <div class="illustration-box">
+
+                <!-- Welcome Text -->
+                <div class="welcome-text-left">
+                    <h1>Welcome Back!</h1>
+                    <p>Sign in to continue to <strong>JñānaYogāyu</strong></p>
+                    <p style="font-size: 14px; color: #4a7fa8; margin-top: 4px;">
+                        Manage your clinic, patients, appointments and treatments with ease.
+                    </p>
+                </div>
+
+                <div class="doctor-image-box">
+                    <img src="~/images/Logo.png"
+                         class="doctor-img"
+                         alt="Doctor">
+                </div>
+
+
+
+
+                <!-- Bottom Features -->
+                <div class="bottom-features">
+                    <span><i class="fas fa-check-circle"></i> 100% Ayurvedic</span>
+                    <span><i class="fas fa-heart"></i> Authentic Care</span>
+                    <span><i class="fas fa-spa"></i> Holistic Wellness</span>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer-text">
+                    © 2025 JñānaYogāyu. All rights reserved.
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== RIGHT SIDE - Login Form ===== -->
+        <div class="right-side">
+            <div class="login-card">
+
+                <!-- Logo -->
+                <div class="login-logo">
+                    <i class="fas fa-leaf"></i>
+                </div>
+
+                <div class="welcome-title">Welcome Back!</div>
+                <div class="welcome-sub">
+                    Sign in to continue to <strong>JñānaYogāyu</strong>
+                </div>
+
+                <!-- ===== YOUR CURRENT FORM ===== -->
+                <form class="FormCard" method="post" action="/Home/Login">
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-clinic-medical"></i> Clinic Code
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="CliniCode"
+                               name="CliniCode"
+                               placeholder="Enter Clinic Code">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i> User ID
+                        </label>
+                        <input type="text"
+                               class="form-control"
+                               id="Userid"
+                               name="UserID"
+                               placeholder="Enter User ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <div class="password-wrapper">
+                            <input type="password"
+                                   class="form-control"
+                                   id="pwd"
+                                   name="Password"
+                                   placeholder="Enter Password">
+                            <span class="eye-icon" id="togglePassword">
+                                <i class="fa fa-eye" id="eyeIcon"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="remember-row">
+                        <label class="custom-check">
+                            <input type="checkbox" id="rememberMe">
+                            Remember me
+                        </label>
+                        <a href="@Url.Action("ForgotPassword", "Home")" class="forgot-link">
+                            <i class="fa fa-key"></i> Forgot Password?
+                        </a>
+                    </div>
+
+                    <div class="form-group">
+                        <span id="error" style="color:red"></span>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-primary" id="btnLogin">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+
+                    <!-- OR Divider -->
+                    <div class="divider-text">or continue with</div>
+
+
+
+                    <!-- Security Text -->
+                    <div class="security-text">
+                        <i class="fas fa-shield-alt"></i>
+                        Your data is safe with us.<br>
+                        <span style="font-size: 10px; color: #8fbfe0;">
+                            We follow best security practices to protect your information.
+                        </span>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // ===== PASSWORD TOGGLE =====
+        const toggleBtn = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('pwd');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        if (toggleBtn && passwordField && eyeIcon) {
+            toggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+
+                if (type === 'password') {
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                } else {
+                    eyeIcon.classList.remove('fa-eye');
+                    eyeIcon.classList.add('fa-eye-slash');
+                }
+            });
+
+            toggleBtn.addEventListener('mouseenter', function () {
+                passwordField.setAttribute('type', 'text');
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            });
+
+            toggleBtn.addEventListener('mouseleave', function () {
+                if (!toggleBtn.classList.contains('clicked')) {
+                    passwordField.setAttribute('type', 'password');
+                    eyeIcon.classList.remove('fa-eye-slash');
+                    eyeIcon.classList.add('fa-eye');
+                }
+            });
+
+            toggleBtn.addEventListener('click', function () {
+                this.classList.toggle('clicked');
+            });
+        }
+
+        // ===== TEMP DATA MESSAGES =====
+        var message = @Html.Raw(Json.Encode(TempData["Message"]));
+        if (message) {
+            alert(message);
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var message = @Html.Raw(Json.Encode(TempData["Message"]));
+        var icon = @Html.Raw(Json.Encode(TempData["Icon"]));
+        if (message) {
+            showCustomAlert(message, icon, "");
+        }
+    });
+</script>

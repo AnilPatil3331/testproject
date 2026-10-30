@@ -1,0 +1,270 @@
+﻿@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model IPD_HospitalSettingModel
+@{
+    ViewBag.Title = "Hospital Settings";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<style>
+    .settings-header { background: linear-gradient(135deg, #37474f, #546e7a); color: white; padding: 18px 25px; border-radius: 12px; margin-bottom: 24px; position: relative; z-index: 10; }
+    .settings-card { background: white; border-radius: 12px; padding: 22px 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 18px; position: relative; z-index: 10; }
+    .settings-card h6 { font-weight: 700; color: #37474f; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0; display: flex; align-items: center; gap: 10px; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f5f5f5; }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-weight: 600; font-size: 0.92rem; color: #333; }
+    .toggle-desc { font-size: 0.78rem; color: #888; margin-top: 2px; }
+    .form-check-input { width: 2.5em; height: 1.3em; cursor: pointer; }
+    .form-check-input:checked { background-color: #2980b9; border-color: #2980b9; }
+    .save-btn { background: linear-gradient(135deg, #1a3c5e, #2980b9); color: white; border: none; padding: 12px 40px; border-radius: 8px; font-weight: 700; font-size: 1rem; transition: all 0.2s; cursor: pointer; }
+    .save-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41, 128, 185, 0.4); }
+    .gst-section { display: flex; align-items: center; gap: 15px; margin-top: 10px; }
+
+    /* Light blue input fields */
+    .form-control, .form-select, input[type=text], input[type=number], input[type=datetime-local], textarea, select {
+        background-color: #eef5fb !important;
+        border-color: #c8dff0 !important;
+        color: #1e3a5f;
+    }
+    .form-control:focus, .form-select:focus, input:focus, select:focus, textarea:focus {
+        background-color: #ddeefa !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.15) !important;
+        color: #1e3a5f;
+    }
+    /* Standard IPD table & page styles */
+    .page-title { font-size:1rem; font-weight:700; color:#1e3a5f; }
+    .tbl-ipd th { font-size:0.74rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.3px; border-top:none; background:#f8fafc; padding:7px 10px; white-space:nowrap; }
+    .tbl-ipd td { font-size:0.82rem; padding:7px 10px; vertical-align:middle; border-color:#f1f5f9; }
+    .tbl-ipd tbody tr:hover { background:#f0f9ff; }
+    .badge-on  { background:#dcfce7; color:#15803d; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .badge-off { background:#fee2e2; color:#991b1b; padding:2px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+    .act-btn { font-size:0.72rem; padding:3px 9px; border-radius:4px; font-weight:600; border:1px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:3px; margin:1px; transition:all 0.15s; text-decoration:none; }
+    .act-edit { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+    .act-edit:hover { background:#92400e; color:#fff; }
+    .act-del  { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
+    .act-del:hover  { background:#991b1b; color:#fff; }
+    .act-blue { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; }
+    .act-blue:hover { background:#1d4ed8; color:#fff; }
+    .act-green { background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+    .act-green:hover { background:#166534; color:#fff; }
+    .modal-hdr { background:linear-gradient(135deg,#1e3a5f,#2563eb); color:#fff; border-radius:8px 8px 0 0; }    
+</style>
+
+@Html.Partial("~/Areas/IPD/Views/Shared/_IPDNav.cshtml")
+
+<div class="container-fluid">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="page-title d-flex align-items-center gap-2">
+            <i class="fas fa-cog text-primary"></i> Hospital Settings
+        </div>
+        
+    </div>
+<div class="settings-header">
+    <h4 class="mb-1"><i class="fas fa-cog me-2"></i>Hospital Settings</h4>
+    <small class="opacity-75">These toggles control what shows/hides throughout the IPD module</small>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <!-- Location Settings -->
+        <div class="settings-card">
+            <h6><i class="fas fa-map-marker-alt text-primary"></i> Location Settings</h6>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Use Floor Module</div>
+                    <div class="toggle-desc">Show Floor dropdown in Room setup & Admission form</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="UseFloor" @(Model.UseFloor ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Use Ward Module</div>
+                    <div class="toggle-desc">Show Ward dropdown in Room setup & Admission form</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="UseWard" @(Model.UseWard ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Use Category Module</div>
+                    <div class="toggle-desc">Show Category dropdown in Room setup & Admission form</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="UseCategory" @(Model.UseCategory ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Enable Hierarchical Mapping</div>
+                    <div class="toggle-desc">Enable cascading for Floor &rarr; Ward &rarr; Category</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="EnableHierarchicalMapping" @(Model.EnableHierarchicalMapping ? "checked" : "")>
+                </div>
+            </div>
+        </div>
+
+        <!-- Food Settings -->
+        <div class="settings-card">
+            <h6><i class="fas fa-utensils text-success"></i> Food Settings</h6>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Food Module Enabled</div>
+                    <div class="toggle-desc">Show Food Plan section in Admission form</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="FoodModuleEnabled" @(Model.FoodModuleEnabled ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Food Mandatory</div>
+                    <div class="toggle-desc">Food plan required for every admission</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="FoodMandatory" @(Model.FoodMandatory ? "checked" : "")>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- Billing Settings -->
+        <div class="settings-card">
+            <h6><i class="fas fa-rupee-sign text-warning"></i> Billing Settings</h6>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Advance Required</div>
+                    <div class="toggle-desc">Show Advance payment as mandatory in Admission form</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="AdvanceRequired" @(Model.AdvanceRequired ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">GST Enabled</div>
+                    <div class="toggle-desc">Apply GST on final bill</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="GSTEnabled" @(Model.GSTEnabled ? "checked" : "") onchange="toggleGST()">
+                </div>
+            </div>
+
+            <div class="toggle-row" id="gstRateRow" style="@(Model.GSTEnabled ? "" : "display:none")">
+                <div>
+                    <div class="toggle-label">GST Rate (%)</div>
+                    <div class="toggle-desc">Percentage applied on subtotal</div>
+                </div>
+                <div style="width:120px">
+                    <div class="input-group input-group-sm">
+                        <input type="number" id="GSTRate" class="form-control" value="@Model.GSTRate" min="0" max="28" step="0.5">
+                        <span class="input-group-text">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Package Billing Enabled</div>
+                    <div class="toggle-desc">Allow package-based billing</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="PackageBillingEnabled" @(Model.PackageBillingEnabled ? "checked" : "")>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operational Settings -->
+        <div class="settings-card">
+            <h6><i class="fas fa-cogs text-secondary"></i> Operational Settings</h6>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Bed Transfer Allowed</div>
+                    <div class="toggle-desc">Allow transferring patient to different bed</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="BedTransferAllowed" @(Model.BedTransferAllowed ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Attendant Allowed</div>
+                    <div class="toggle-desc">Allow attendant registration with patient</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="AttendantAllowed" @(Model.AttendantAllowed ? "checked" : "")>
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div>
+                    <div class="toggle-label">Auto Release Bed on Discharge</div>
+                    <div class="toggle-desc">Bed status â†’ Available automatically on discharge</div>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="AutoReleaseBedOnDischarge" @(Model.AutoReleaseBedOnDischarge ? "checked" : "")>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center pb-4">
+    <button class="save-btn" onclick="saveSettings()">
+        <i class="fas fa-save me-2"></i>Save Settings
+    </button>
+</div>
+
+<script>
+    function toggleGST() {
+        var enabled = document.getElementById('GSTEnabled').checked;
+        document.getElementById('gstRateRow').style.display = enabled ? 'flex' : 'none';
+    }
+
+    function saveSettings() {
+        var data = {
+            UseFloor: document.getElementById('UseFloor').checked,
+            UseWard: document.getElementById('UseWard').checked,
+            UseCategory: document.getElementById('UseCategory').checked,
+            FoodModuleEnabled: document.getElementById('FoodModuleEnabled').checked,
+            FoodMandatory: document.getElementById('FoodMandatory').checked,
+            AdvanceRequired: document.getElementById('AdvanceRequired').checked,
+            BedTransferAllowed: document.getElementById('BedTransferAllowed').checked,
+            PackageBillingEnabled: document.getElementById('PackageBillingEnabled').checked,
+            AttendantAllowed: document.getElementById('AttendantAllowed').checked,
+            AutoReleaseBedOnDischarge: document.getElementById('AutoReleaseBedOnDischarge').checked,
+            GSTEnabled: document.getElementById('GSTEnabled').checked,
+            GSTRate: document.getElementById('GSTRate').value,
+            EnableHierarchicalMapping: document.getElementById('EnableHierarchicalMapping').checked
+        };
+        fetch('/IPD/IPD_Masters/HospitalSetting_Save', {
+            method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(data)
+        }).then(r => r.json()).then(res => {
+            if (res.success) alert('? ' + res.message);
+            else alert('âŒ ' + res.message);
+        });
+    }
+</script>
+
+
+
+
+
+
+
+</div>

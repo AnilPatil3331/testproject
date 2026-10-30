@@ -1,0 +1,357 @@
+﻿
+@{
+    ViewBag.Title = "CustomNotification";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        @Html.Partial("SettingSidebar")
+
+        <div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="card card-body">
+                        <div class="card-body text-center py-5">
+                            <div class="mb-4">
+                                <i class="fa fa-cogs fa-4x text-warning mb-3"></i>
+                                <i class="fa fa-wrench fa-3x text-secondary"></i>
+                            </div>
+                            <h3 class="text-warning mb-3">
+                                <i class="fa fa-hourglass-half"></i> Under Development
+                            </h3>
+                            <h4 class="text-muted mb-3">
+                                This page is currently under active development.
+                            </h4>
+                            <div class="progress mb-3" style="height: 10px; max-width: 300px; margin: 0 auto;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning"
+                                     style="width: 65%"></div>
+                            </div>
+                            <p class="text-muted small">
+                                We're working hard to bring you new features. <br>
+                                Estimated completion: Coming soon
+                            </p>
+                            <a href="javascript:history.back()" class="btn btn-outline-primary mt-3">
+                                <i class="fa fa-arrow-left"></i> Go Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*<div class="col-12 col-md-9">
+            <div>
+                <div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="b-overlay-wrap position-relative">
+                                <div class="card p-0 shadow">
+                                    <!---->
+                                    <header class="card-header">
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <h2 class="mb-0">
+                                                    Custom notification
+                                                    <a href="https://apps.iqonic.design/docs/product/kivicare/pro-version/custom-notification/"
+                                                       target="_blank">
+                                                        <i class="fa fa-question-circle">
+                                                        </i>
+                                                    </a>
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </header>
+                                    <div class="card-body">
+                                        <!---->
+                                        <!---->
+                                        <div id="api-builder" class="row">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <div class="tabs" id="__BVID__149">
+                                                    <!---->
+                                                    <div class="">
+                                                        <ul role="tablist" class="nav nav-tabs" id="__BVID__149__BV_tab_controls_">
+                                                            <!---->
+                                                            <li role="presentation" class="nav-item">
+                                                                <a role="tab" aria-selected="true" aria-setsize="4" aria-posinset="1"
+                                                                   href="#" target="_self" class="nav-link active" id="__BVID__150___BV_tab_button__"
+                                                                   aria-controls="__BVID__150">
+                                                                    Form
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation" class="nav-item">
+                                                                <a role="tab" aria-selected="false" aria-setsize="4" aria-posinset="2"
+                                                                   href="#" target="_self" class="nav-link" id="__BVID__152___BV_tab_button__"
+                                                                   aria-controls="__BVID__152" tabindex="-1">
+                                                                    Response
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation" class="nav-item">
+                                                                <a role="tab" aria-selected="false" aria-setsize="4" aria-posinset="3"
+                                                                   href="#" target="_self" class="nav-link" id="__BVID__154___BV_tab_button__"
+                                                                   aria-controls="__BVID__154" tabindex="-1">
+                                                                    Dynamic keys
+                                                                </a>
+                                                            </li>
+                                                            <li role="presentation" class="nav-item">
+                                                                <a role="tab" aria-selected="false" aria-setsize="4" aria-posinset="4"
+                                                                   href="#" target="_self" class="nav-link" id="__BVID__156___BV_tab_button__"
+                                                                   aria-controls="__BVID__156" tabindex="-1">
+                                                                    Collections
+                                                                </a>
+                                                            </li>
+                                                            <!---->
+                                                        </ul>
+                                                    </div>
+                                                    <div class="tab-content" id="__BVID__149__BV_tab_container_">
+                                                        <div role="tabpanel" aria-hidden="false" class="tab-pane active" id="__BVID__150"
+                                                             aria-labelledby="__BVID__150___BV_tab_button__" style="">
+                                                            <form class="mt-2">
+                                                                <div class="form-group">
+                                                                    <label for="url">
+                                                                        URL
+                                                                        <span class="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </label>
+                                                                    <div role="group" class="input-group">
+                                                                        <div class="input-group-prepend">
+                                                                            <select class="form-control">
+                                                                                <option value="GET">
+                                                                                    GET
+                                                                                </option>
+                                                                                <option value="POST">
+                                                                                    POST
+                                                                                </option>
+                                                                            </select>
+                                                                        </div>
+                                                                        <input type="url" autocomplete="on" class="form-control">
+                                                                        <!---->
+                                                                        <!---->
+                                                                        <!---->
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="header-data">
+                                                                        Headers&nbsp;&nbsp;
+                                                                        <!---->
+                                                                    </label>
+                                                                    <div class="d-flex mb-2 align-items-center">
+                                                                        <input type="text" placeholder="Enter key" class="form-control mr-2">
+                                                                        <input list="header-list-suggestion" type="text" placeholder="Enter value"
+                                                                               class="form-control mr-2">
+                                                                        <datalist id="header-list-suggestion">
+                                                                            <option value="[api_key]">
+                                                                                [api_key]
+                                                                            </option>
+                                                                            <option value="[sender_number]">
+                                                                                [sender_number]
+                                                                            </option>
+                                                                            <option value="[receiver_number]">
+                                                                                [receiver_number]
+                                                                            </option>
+                                                                            <option value="[sms_body]">
+                                                                                [sms_body]
+                                                                            </option>
+                                                                        </datalist>
+                                                                        <button type="button" class="btn btn-outline-danger btn-sm">
+                                                                            Remove
+                                                                        </button>
+                                                                    </div>
+                                                                    <button type="button" class="btn btn-primary btn-sm">
+                                                                        Add header
+                                                                    </button>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="query-params">
+                                                                        Query Parameters&nbsp;&nbsp;
+                                                                        <!---->
+                                                                    </label>
+                                                                    <button type="button" class="btn btn-primary btn-sm">
+                                                                        Add query parameter
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-flex justify-content-end">
+                                                                    <button type="button" class="btn btn-outline-danger">
+                                                                        Clear
+                                                                    </button>
+                                                                    <button type="submit" class="btn btn-outline-primary">
+                                                                        Send Request
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-primary">
+                                                                        Save
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                            <!---->
+                                                        </div>
+                                                        <div role="tabpanel" aria-hidden="true" class="tab-pane" id="__BVID__152"
+                                                             aria-labelledby="__BVID__152___BV_tab_button__" style="display: none;">
+                                                            <!---->
+                                                            <div class="mt-4" style="max-height: 600px; overflow-y: auto;">
+                                                                <pre>
+                                                               </pre>
+                                                            </div>
+                                                        </div>
+                                                        <div role="tabpanel" aria-hidden="true" class="tab-pane" id="__BVID__154"
+                                                             aria-labelledby="__BVID__154___BV_tab_button__" style="display: none;">
+                                                            <form>
+                                                                <div class="form-group">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-5">
+                                                                            <label>
+                                                                                Key
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <label>
+                                                                                Value
+                                                                            </label>
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            <label>
+                                                                                Action
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr class="mt-2 mb-2 m-0">
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-5">
+                                                                            <input type="text" placeholder="Enter key" class="form-control mr-2">
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <input list="dynamic-key-list-suggestion" type="text" placeholder="Enter value"
+                                                                                   class="form-control mr-2">
+                                                                            <datalist id="dynamic-key-list-suggestion">
+                                                                                <option value="[dynamic_reciever_number]">
+                                                                                    [dynamic_reciever_number]
+                                                                                </option>
+                                                                                <option value="[dynamic_sms_body]">
+                                                                                    [dynamic_sms_body]
+                                                                                </option>
+                                                                            </datalist>
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm">
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-5">
+                                                                            <input type="text" placeholder="Enter key" class="form-control mr-2">
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <input list="dynamic-key-list-suggestion" type="text" placeholder="Enter value"
+                                                                                   class="form-control mr-2">
+                                                                            <datalist id="dynamic-key-list-suggestion">
+                                                                                <option value="[dynamic_reciever_number]">
+                                                                                    [dynamic_reciever_number]
+                                                                                </option>
+                                                                                <option value="[dynamic_sms_body]">
+                                                                                    [dynamic_sms_body]
+                                                                                </option>
+                                                                            </datalist>
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm">
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-5">
+                                                                            <input type="text" placeholder="Enter key" class="form-control mr-2">
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <input list="dynamic-key-list-suggestion" type="text" placeholder="Enter value"
+                                                                                   class="form-control mr-2">
+                                                                            <datalist id="dynamic-key-list-suggestion">
+                                                                                <option value="[dynamic_reciever_number]">
+                                                                                    [dynamic_reciever_number]
+                                                                                </option>
+                                                                                <option value="[dynamic_sms_body]">
+                                                                                    [dynamic_sms_body]
+                                                                                </option>
+                                                                            </datalist>
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm">
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-2">
+                                                                        <div class="col-5">
+                                                                            <input type="text" placeholder="Enter key" class="form-control mr-2">
+                                                                        </div>
+                                                                        <div class="col-5">
+                                                                            <input list="dynamic-key-list-suggestion" type="text" placeholder="Enter value"
+                                                                                   class="form-control mr-2">
+                                                                            <datalist id="dynamic-key-list-suggestion">
+                                                                                <option value="[dynamic_reciever_number]">
+                                                                                    [dynamic_reciever_number]
+                                                                                </option>
+                                                                                <option value="[dynamic_sms_body]">
+                                                                                    [dynamic_sms_body]
+                                                                                </option>
+                                                                            </datalist>
+                                                                        </div>
+                                                                        <div class="col-2">
+                                                                            <button type="button" class="btn btn-outline-danger btn-sm">
+                                                                                Remove
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="d-flex justify-content-start align-items-center">
+                                                                        <button type="button" class="btn btn-primary btn-sm">
+                                                                            Add dynamic key
+                                                                        </button>
+                                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                                            Save dynamic keys
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div role="tabpanel" aria-hidden="true" class="tab-pane" id="__BVID__156"
+                                                             aria-labelledby="__BVID__156___BV_tab_button__" style="display: none;">
+                                                            <table class="w-100">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>
+                                                                            ID
+                                                                        </th>
+                                                                        <th>
+                                                                            Name
+                                                                        </th>
+                                                                        <th>
+                                                                            Type
+                                                                        </th>
+                                                                        <th>
+                                                                            Action
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody></tbody>
+                                                            </table>
+                                                        </div>
+                                                        <!---->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!---->
+                                    <!---->
+                                </div>
+                                <!---->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+

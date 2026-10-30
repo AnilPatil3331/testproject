@@ -1,0 +1,648 @@
+﻿
+@{
+    ViewBag.Title = "Prescription";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+
+<style>
+    .body {
+        background-color: white !important;
+    }
+
+    .card {
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    hr {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        background: transparent;
+        width: 100%;
+        color: #000;
+        border-radius: 0;
+        min-height: 38px;
+    }
+
+        .form-control::placeholder {
+            color: transparent;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #007bff;
+            background: transparent;
+        }
+
+    .form-row .form-title {
+        font-weight: 600;
+        color: #000;
+        margin: 10px;
+    }
+
+    .form-check {
+        margin: 0 10px;
+    }
+
+    .form-check-input {
+        margin-left: -1rem;
+    }
+
+    .floating-label {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.75rem;
+        transition: all 0.2s ease;
+        pointer-events: none;
+        color: #3f5368;
+        font-size: 14px;
+        z-index: 2;
+        padding: 0 5px;
+        background-color: white;
+    }
+
+    .form-control:focus ~ .floating-label,
+    .form-control:not(:placeholder-shown) ~ .floating-label {
+        top: -0.6rem;
+        left: 0.65rem;
+        font-size: 12px;
+        color: #007bff;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #333;
+    }
+
+    input::placeholder {
+        color: gray !important;
+        opacity: 1;
+        /* Ensure it's not faded */
+    }
+
+    .input-group-supportx {
+        height: max-content;
+        padding: .375rem .75rem;
+        font-size: .875rem;
+        line-height: 1.5;
+        color: #4F5467;
+        text-align: center;
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        min-height: 38px;
+    }
+
+    .data-box {
+        border: 1px solid black;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    .data-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .data-field {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid black;
+        padding-bottom: 3px;
+        margin-right: 25px;
+        font-size: 14px;
+        color: #000;
+        min-width: 290px;
+        margin-bottom: 10px;
+    }
+
+    .data-label {
+        font-weight: 600;
+        margin-right: 5px;
+    }
+
+    .small-field {
+        min-width: 80px;
+    }
+
+    /* Reduce table cell padding */
+    #config-table td,
+    #config-table th {
+        padding: 6px 10px !important;
+        vertical-align: middle;
+    }
+
+    /* Action icons */
+    .action-icons i {
+        cursor: pointer;
+        margin: 0 5px;
+        color: #007bff;
+        font-size: 14px;
+    }
+
+        .action-icons i.fa-trash {
+            color: red;
+        }
+
+    .btnBx {
+        margin: 10px;
+        display: flex;
+        justify-content: end;
+    }
+
+    .customtab2 li a.nav-link {
+        border: 1px solid lightgray;
+    }
+
+    .tab-content > .active {
+        border: 1px solid lightgrey;
+    }
+
+    .customtab2 li a.nav-link.active {
+        background-color: #1497dee5;
+    }
+
+    .customtab2 li a.nav-link:hover {
+        background-color: #1497dee5;
+    }
+
+    .section {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+        .section .section-heading {
+            background: #1497dee5;
+            padding: 5px;
+            margin-bottom: 10px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    .section-heading .card-title {
+        color: #fff;
+        margin: 0;
+        margin-left: 10px;
+        /*font-size: 16px;*/
+    }
+
+    .section-heading button {
+        color: #fff;
+        font-size: 20px;
+    }
+
+        .section-heading button:hover {
+            color: #f5f5f5;
+        }
+
+    .autosize-textarea {
+        height: 70px !important;
+        overflow: hidden !important;
+    }
+
+
+    /* Diagnosis Results Styles */
+    .diagnosis-results {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+    }
+
+    .result-item {
+        margin-bottom: 10px;
+        padding: 8px;
+        background-color: white;
+        border-left: 4px solid #BE9076;
+        border-radius: 3px;
+    }
+
+        .result-item h5 {
+            color: #BE9076;
+            margin-bottom: 15px;
+        }
+
+    .result-section {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+
+    .quick-date {
+        border-radius: 0px;
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+        .quick-date.btn-primary {
+            color: #fff !important;
+        }
+
+
+    /*.fixed-card {
+        position: fixed;
+        top: 100px;
+        left: 0;
+        right: 0;
+        z-index: 999;
+
+        background-color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+    }*/
+
+    /*.tab-pane.active{
+            height:280px;
+            overflow:auto;
+        }*/
+</style>
+
+
+
+<div class="page-wrapper">
+    <div style="padding: 9px 20px 6px 20px; color:black; margin-top:-80px; display: flex; justify-content: space-between; align-items: center;">
+        <h4 style="margin: 0;"></h4>
+
+        <div style="position: relative; width: 315px; margin-right: 40%;">
+            <i class="fa fa-search" style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); color: #aaa;"></i>
+            <input type="text" class="form-control" id="searchInput" placeholder="Patient Name / Mobile Number / UHID Number"
+                   style="padding:10px;   padding-left: 47px; background-color: white; width: 125%; height: 36px; font-size: 14px; border-radius: 20px;" />
+
+            <div id="searchResult"
+                 style="position: absolute; top: 40px; background: white; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); z-index: 1000; width: 125%; display: none;">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- Container fluid  -->
+    <!-- ============================================================== -->
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+
+
+                        <div class="d-flex justify-content-end">
+                            @*<button id="status_update_1476"
+                                        data-trigger="hover"
+                                        title="Check out"
+                                        type="button"
+                                        class="btn btn-outline-danger"
+                                        onclick="CloseAppointmentStatus('@ViewBag.TodayPatients.AppointmentFid_Encrypted')">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                    Check Out
+                                </button>*@
+
+                            <button class="btn btn-sm btn-outline-danger mb-1 mr-0" id="CloseEncounter">
+                                <i class="fa fa-check">
+                                </i>
+                                Check Out & Bill
+                            </button>
+
+
+                        </div>
+
+
+                        @if (ViewBag.TodayPatients == null)
+                        {
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>
+                                    </div>
+
+                                    @*<div class="data-field">
+                                            <span class="data-label">Email ID:</span>
+                                        </div>*@
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">UHID No:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Department:</span>
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Doctor:</span>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        }
+                        else
+                        {
+
+                            <div class="data-box">
+                                <div class="data-row">
+                                    <div class="data-field">
+                                        <span class="data-label">Name:</span>@ViewBag.TodayPatients.PatientName
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Mobile No:</span>@ViewBag.TodayPatients.ContactNumber
+                                        @*@if (ViewBag.OPDDetails.VIP_Masking)
+                                            {
+                                                var mobile = ViewBag.OPDDetails.MobileNumber != null ? ViewBag.OPDDetails.MobileNumber.ToString() : "";
+                                                if (mobile.Length > 5)
+                                                {
+                                                    var visiblePart = mobile.Substring(0, mobile.Length - 5);
+                                                                            <span class="masked-data">@visiblePart*****</span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="masked-data">*****</span>
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        @ViewBag.OPDDetails.MobileNumber
+                                                                    }*@
+                                    </div>
+
+                                    @*<div class="data-field">
+                                            <span class="data-label">Email ID:</span> @ViewBag.OPDDetails.EmailID
+                                        </div>*@
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Age:</span>@ViewBag.TodayPatients.Age
+                                    </div>
+
+                                    <div class="data-field small-field">
+                                        <span class="data-label">Gender:</span>@ViewBag.TodayPatients.Gender
+                                    </div>
+                                </div>
+
+
+
+
+                                <div class="data-row">
+                                    @*<div class="data-field">
+                                            <span class="data-label">UHID No:</span> @ViewBag.OPDDetails.UHID
+                                        </div>*@
+
+                                    @*<div class="data-field">
+                                            <span class="data-label">Department:</span> @ViewBag.OPDDetails.Department
+                                        </div>*@
+
+                                    <div class="data-field">
+                                        <span class="data-label">Doctor:</span>@ViewBag.TodayPatients.DoctorName
+                                    </div>
+
+                                    <div class="data-field">
+                                        <span class="data-label">Clinic Name:</span>@ViewBag.TodayPatients.ClinicName
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-0">
+                    <div class="card-body p-b-0">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs customtab2" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#medicine"
+                                   role="tab">
+                                    <span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">Medicine</span>
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab"
+                                   href="#Dispensing" role="tab">
+                                    <span class="hidden-sm-up">
+                                        <i class="ti-email"></i>
+                                    </span> <span class="hidden-xs-down">Dispensing Medicine</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="tab-pane  p-20 active show " id="medicine" role="tabpanel">
+
+                                <form id="prescriptionForm" method="post" action="@Url.Action("SaveSelectedPrescriptions", "Reception", new { area = "Receptionist" , OPDNO = "@ViewBag.OPDDetails?.OPDNO"})">
+                                    @*<input type="hidden" name="OPDNO" value="@(ViewBag.OPDDetails?.OPDNO ?? "")" />*@
+
+
+
+                                    <table class="table table-bordered" id="prescriptionTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Instruction</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.PrescriptionList != null)
+                                            {
+                                                foreach (var item in ViewBag.PrescriptionList)
+                                                {
+                                                    <tr>
+
+                                                        <td>
+                                                            @("{item.FormName} {item.PackageName} {item.NumberLeft} = {item.MixingDetails} = {item.DoseNumber} {item.Dose} {item.TimeName} {item.FluidVehicle}")
+                                                        </td>
+
+                                                        <td class="text-center">
+                                                            <input type="checkbox" name="selectedIds" value="@item.PrescriptionID" class="form-check-input" style="transform: scale(1.3);" />
+                                                        </td>
+
+                                                    </tr>
+                                                }
+                                            }
+
+
+
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="button-row">
+                                        <button type="submit" class="custom-btn custom-btn-submit">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+
+
+                            <div class="tab-pane p-20" id="Dispensing" role="tabpanel">
+                            
+                                <hr />
+
+                                @if (ViewBag.ResultView != null)
+
+                                {
+                                    foreach (var item in ViewBag.ResultView)
+                                    {
+                                        <div class="row mb-3">
+                                            <div class="col-md-3 font-weight-bold">
+                                                औषध
+                                            </div>
+                                            <div class="col-md-9">
+
+                                                <textarea class="form-control autosize-textarea" rows="4" id="txtMedicine" name="MedicineInstructionsDescription"> @item.MedicineDescription </textarea>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row mt-3 mb-4">
+                                            <div class="col-md-3">
+                                                <label for="txtSuchana">सूचना तपशील:</label>
+                                            </div>
+                                            <div class="col-md-9">
+
+
+                                                <textarea id="txtSuchana"
+                                                          class="form-control"
+                                                          rows="6"
+                                                          placeholder="सूचना इथे दिसेल..."
+                                                          name="MedicineInstruction">
+                                                    @item.MorningSuchana
+                                                </textarea>
+
+
+
+                                            </div>
+                                        </div>
+
+                                        <hr />
+                                    }
+
+                                }
+
+
+
+
+                            </div>  @*panel div end*@
+
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Container fluid  -->
+    <!-- ============================================================== -->
+</div>
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $('#searchInput').on('input', function () {
+            var query = $(this).val();
+            debugger;
+            if (query.length >= 2) {
+                $.ajax({
+                    url: '@Url.Action("SearchOPD", "AayurvedEHR")',
+                    type: 'GET',
+                    data: { searchTerm: query },
+                    success: function (data) {
+                        debugger;
+                        let html = "";
+                        if (data.length > 0) {
+                            html += "<ul class='list-group mb-0'>";
+
+                            $.each(data, function (i, item) {
+                                html += "<li class='list-group-item list-group-item-action' "  + "style='cursor:pointer;' onclick='selectPatient(" + item.AppointmentFid + ")'>";
+
+                                html += "<span>" + item.FullName + " | " + item.AppoinmentDate + " | " + item.ContactNumber + "</span>";
+
+                                html += "</li>";
+
+                            });
+
+                            html += "</ul>";
+                        } else {
+                            html = "<div class='p-2 text-muted'>No matches found</div>";
+                        }
+
+                        $('#searchResult').html(html).show();
+                    },
+                    error: function () {
+                        $('#searchResult').html('<div class="p-2 text-danger">Error fetching data</div>').show();
+                    }
+                });
+            } else {
+                $('#searchResult').hide();
+            }
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('#searchInput, #searchResult').length) {
+                $('#searchResult').hide();
+            }
+        });
+    });
+
+    function selectPatient(appointmentId) {
+        window.location.href = '/patient/AayurvedEHR/MedicinePrescription?AppoinmentID=' + appointmentId;
+    }
+</script>

@@ -1,0 +1,119 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewBag.Title = "Room Billing List";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<script src="~/assets/js/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <div class="float-end">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Wellness Center</a></li>
+                        <li class="breadcrumb-item"><a href="#">IPD</a></li>
+                        <li class="breadcrumb-item active">Room Billing List</li>
+                    </ol>
+                </div>
+                <h4 class="page-title">Room Billing Records</h4>
+            </div>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <script>
+            window.onload = function () {
+                Swal.fire({
+                    icon: '@TempData["Icon"]',
+                    title: '@TempData["Message"]',
+                    showConfirmButton: true,
+                });
+            }
+        </script>
+    }
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Booking ID</th>
+                                    <th>Patient Name</th>
+                                    <th>Mobile</th>
+                                    <th>Amount Paid (₹)</th>
+                                    <th>Mode</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@(item.Fdate != null ? Convert.ToDateTime(item.Fdate).ToString("dd-MM-yyyy") : "")</td>
+                                            <td>@item.BookingId</td>
+                                            <td>@item.GuestFullName</td>
+                                            <td>@item.Mobile</td>
+                                            <td>@item.amount</td>
+                                            <td>@item.PaymentMode</td>
+                                            <td>
+                                                @if (item.PaymentStatus == "Success")
+                                                {
+                                                    <span class="badge bg-success">@item.PaymentStatus</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">@item.PaymentStatus</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.PaymentStatus == "Success")
+                                                {
+                                                    <a href="@Url.Action("PrintRoomBill", "IPD", new { paymentId = item.Id })" target="_blank" class="btn btn-sm btn-info" title="Print Bill">
+                                                        <i class="fa fa-print"></i> Print
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a href="/IPD/IPD/RoomBilling?bookingId=@item.BookingId" class="btn btn-sm btn-outline-success" title="Pay Bill">
+                                                        <i class="fa fa-money-bill-wave"></i> Pay
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                "pageLength": 10,
+                "ordering": true,
+                "info": true,
+                "lengthChange": true,
+                "language": {
+                    "search": "Filter Bills: "
+                }
+            });
+        });
+    </script>

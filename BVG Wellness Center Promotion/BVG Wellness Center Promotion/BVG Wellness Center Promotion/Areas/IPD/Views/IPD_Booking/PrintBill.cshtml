@@ -1,0 +1,163 @@
+@using BVG_Wellness_Center_Promotion.Areas.IPD.Models
+@model IPD_StayBookingModel
+@{
+    ViewBag.Title = "Print Bill";
+    Layout = null;
+    var summary = ViewBag.Summary as IPD_BillSummaryModel;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bill &ndash; @Model.BookingNo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; padding: 20px; font-size: 13px; color: #1e293b; }
+        .print-btn-bar { max-width: 820px; margin: 0 auto 12px; display: flex; gap: 8px; }
+        .btn-print { background: #2563eb; color: #fff; border: none; padding: 7px 20px; border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .btn-close { background: #e2e8f0; color: #475569; border: none; padding: 7px 16px; border-radius: 5px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .invoice { max-width: 820px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 16px rgba(0,0,0,0.1); overflow: hidden; }
+        .inv-header { background: linear-gradient(135deg, #1e3a5f, #2563eb); color: #fff; padding: 22px 28px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .hosp-name { font-size: 1.25rem; font-weight: 800; }
+        .hosp-sub { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; }
+        .inv-no-box { text-align: right; }
+        .inv-no-box .label { font-size: 0.7rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; }
+        .inv-no-box .value { font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; }
+        .inv-no-box .date { font-size: 0.75rem; opacity: 0.8; margin-top: 2px; }
+        .inv-body { padding: 22px 28px; }
+        .patient-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; background: #f8fafc; border-radius: 6px; padding: 14px; margin-bottom: 18px; border: 1px solid #e2e8f0; }
+        .info-lbl { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+        .info-val { font-size: 0.83rem; font-weight: 700; color: #1e293b; margin-top: 1px; }
+        .section-title { font-size: 0.78rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; }
+        table.bill-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table.bill-table th { background: #f8fafc; color: #64748b; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; padding: 7px 10px; border-bottom: 2px solid #e2e8f0; letter-spacing: 0.3px; }
+        table.bill-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; font-size: 0.82rem; }
+        table.bill-table tbody tr:last-child td { border-bottom: none; }
+        table.bill-table .text-right { text-align: right; }
+        table.bill-table .text-center { text-align: center; }
+        .totals-panel { float: right; width: 300px; background: #f8fafc; border-radius: 7px; border: 1px solid #e2e8f0; padding: 14px; }
+        .tot-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.82rem; }
+        .tot-row.divider { border-top: 1px solid #e2e8f0; margin-top: 4px; padding-top: 8px; }
+        .tot-row.net { border-top: 2px solid #1e3a5f; margin-top: 6px; padding-top: 8px; font-size: 1rem; font-weight: 800; color: #1e3a5f; }
+        .tot-row.advance { color: #dc2626; }
+        .clearfix::after { content: ''; display: table; clear: both; }
+        .inv-footer { text-align: center; padding: 16px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 0.72rem; }
+        .rupee { font-family: 'Inter', sans-serif; }
+        @@media print {
+            body { background: #fff; padding: 0; }
+            .print-btn-bar { display: none; }
+            .invoice { box-shadow: none; border-radius: 0; }
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="print-btn-bar">
+        <button class="btn-print" onclick="window.print()">&#128438; Print / Save PDF</button>
+        <button class="btn-close" onclick="window.close()">Close</button>
+    </div>
+
+    <div class="invoice">
+        <div class="inv-header">
+            <div>
+                <div class="hosp-name">Wellness Center</div>
+                <div class="hosp-sub">Multi-Specialty Hospital &bull; IPD Department</div>
+            </div>
+            <div class="inv-no-box">
+                <div class="label">Invoice No</div>
+                <div class="value">@Model.BookingNo</div>
+                <div class="date">@DateTime.Now.ToString("dd-MMM-yyyy")</div>
+            </div>
+        </div>
+
+        <div class="inv-body">
+            <div class="patient-row">
+                <div>
+                    <div class="info-lbl">Patient ID</div>
+                    <div class="info-val">@Model.PatientFid</div>
+                </div>
+                <div>
+                    <div class="info-lbl">Admission Type</div>
+                    <div class="info-val">@Model.AdmissionType</div>
+                </div>
+                <div>
+                    <div class="info-lbl">Room / Bed</div>
+                    <div class="info-val">@Model.RoomNumber &frasl; Bed @Model.BedNumber</div>
+                </div>
+                <div>
+                    <div class="info-lbl">Admitted</div>
+                    <div class="info-val">@Model.AdmissionDate.ToString("dd-MMM-yyyy HH:mm")</div>
+                </div>
+                <div>
+                    <div class="info-lbl">Discharged</div>
+                    <div class="info-val">@(Model.ActualDischarge?.ToString("dd-MMM-yyyy HH:mm") ?? "-")</div>
+                </div>
+                <div>
+                    <div class="info-lbl">Status</div>
+                    <div class="info-val">@Model.Status</div>
+                </div>
+            </div>
+
+            <div class="section-title">Bill Breakdown</div>
+            <table class="bill-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th class="text-center">Days/Qty</th>
+                        <th class="text-right">Rate (&#8377;)</th>
+                        <th class="text-right">Amount (&#8377;)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (summary != null && summary.Lines != null)
+                    {
+                        foreach (var l in summary.Lines)
+                        {
+                            <tr>
+                                <td>@l.Description</td>
+                                <td class="text-center">@l.Days</td>
+                                <td class="text-right">@l.RatePerDay.ToString("N2")</td>
+                                <td class="text-right"><strong>@l.Amount.ToString("N2")</strong></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <div class="clearfix">
+                @if (summary != null)
+                {
+                    <div class="totals-panel">
+                        <div class="tot-row"><span>Room Rent</span><span>&#8377;@summary.RoomRentTotal.ToString("N2")</span></div>
+                        <div class="tot-row"><span>Compulsory Charges</span><span>&#8377;@summary.CompulsoryTotal.ToString("N2")</span></div>
+                        <div class="tot-row"><span>Optional Charges</span><span>&#8377;@summary.OptionalTotal.ToString("N2")</span></div>
+                        <div class="tot-row"><span>Food Charges</span><span>&#8377;@summary.FoodTotal.ToString("N2")</span></div>
+                        <div class="tot-row divider fw-semibold"><span>Subtotal</span><span>&#8377;@summary.Subtotal.ToString("N2")</span></div>
+                        @if (summary.DiscountAmount > 0)
+                        {
+                            <div class="tot-row" style="color:#d97706;">
+                                <span>Discount</span>
+                                <span>-&#8377;@summary.DiscountAmount.ToString("N2")</span>
+                            </div>
+                        }
+                        @if (summary.GSTEnabled)
+                        {
+                            <div class="tot-row"><span>GST (@summary.GSTRate%)</span><span>&#8377;@summary.GSTAmount.ToString("N2")</span></div>
+                        }
+                        <div class="tot-row divider fw-bold"><span>Gross Total</span><span>&#8377;@summary.GrossTotal.ToString("N2")</span></div>
+                        <div class="tot-row advance"><span>(-) Advance Paid</span><span>&#8377;@summary.AdvancePaid.ToString("N2")</span></div>
+                        <div class="tot-row net"><span>NET PAYABLE</span><span>&#8377;@summary.NetPayable.ToString("N2")</span></div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="inv-footer">
+            Thank you for choosing Wellness Center. Wishing you a speedy recovery!<br>
+            <strong>This is a computer-generated invoice and does not require a signature.</strong>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+﻿
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<style>
+    .nav-link.active {
+      background: var(--primary-color, #4874dc);
+      color: white;
+      border-radius: .375rem !important;
+    }
+    .nav-link.active i{
+       color: #fff !important;
+    }
+</style>
+<div class="col-12 col-md-3">
+    <div class="card">
+        <div class="card-header">
+            <div id="dashboard-setting-panel" class="row">
+                <div class="col-md-12">
+                    <ul class="navbar-nav iq-navbar-ul flex-md-column flex-row flex-md-nowrap flex-wrap">
+                        <li class="nav-item mt-2" style="position: relative;">
+                            <a href="@Url.Action("Setting","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="General Settings" class="fa fa-cogs text-primary m-2">
+                                </i>
+                                <span>
+                                    General Settings
+                                </span>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a href="@Url.Action("Location","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="General Settings" class="fa fa-cogs text-primary m-2">
+                                </i>
+                                <span>
+                                    Location
+                                </span>
+                            </a>
+                        </li>
+
+
+    @*<li class="nav-item mt-2">
+                            <a href="@Url.Action("Holidays","Setting",new { area="Setting"})" class="nav-link"
+                               target="_self" aria-current="page">
+                                <i title="Holidays" class="fa fa-home text-primary m-2">
+                                </i>
+                                <span>
+                                    Holidays
+                                </span>
+                            </a>
+                        </li>*@
+                        <!---->
+                        @*<li class="nav-item mt-2">
+                            <a href="@Url.Action("Configuration","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="Configurations" class="fa fa-toggle-on text-primary m-2">
+                                </i>
+                                <span>
+                                    Configurations
+                                </span>
+                            </a>
+                        </li>*@
+                        @*<li title="" class="nav-item mt-2">
+                            <a href="@Url.Action("AppConfigurations","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="App Configurations" class="fas fa-mobile-alt text-primary m-2">
+                                </i>
+                                <span>
+                                    App Configurations
+                                </span>
+                               
+                            </a>
+                        </li>*@
+                        @*<li class="nav-item mt-2">
+                            <a href="@Url.Action("EmailTemplate","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="Email Template" class="fa fa-envelope text-primary m-2">
+                                </i>
+                                <span>
+                                    Email Template
+                                </span>
+                            </a>
+                        </li>*@
+                        @*<li title="" class="nav-item mt-2">
+                            <a href="@Url.Action("SMSWatsUpTemplate","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="SMS/WhatsApp Template" class="fas fa-sms text-primary m-2">
+                                </i>
+                                <span>
+                                    SMS/WhatsApp Template
+                                </span>
+                                
+                            </a>
+                        </li>*@
+                        @*<li title="" class="nav-item mt-2">
+                            <a href="@Url.Action("Webhooks","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="Webhooks" class="fab fa-usb text-primary m-2">
+                                </i>
+                                <span>
+                                    Webhooks
+                                </span>
+                               
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="@Url.Action("CustomNotification","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="Custom notification" class="fas fa-bell text-primary m-2">
+                                </i>
+                                <span>
+                                    Custom notification
+                                </span>
+                                
+                            </a>
+                        </li>*@
+                        <li class="nav-item mt-2">
+                            <a href="@Url.Action("CustomForm","Setting",new { area="Setting"})" class="nav-link" target="_self">
+                                <i title="Custom Form" class="fab fa-wpforms text-primary m-2">
+                                </i>
+                                <span>
+                                    Custom Form
+                                </span>
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/body-chart-setting" class="nav-link" target="_self">
+                                <i title="Encounter body chart" class="fas fa-x-ray text-primary m-2">
+                                </i>
+                                <span>
+                                    Encounter body chart
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a href="#/setting/patient-setting" class="nav-link" target="_self">
+                                <i title="Patient Setting" class="fas fa-user-injured text-primary m-2">
+                                </i>
+                                <span>
+                                    Patient Setting
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a href="#/setting/widget-setting" class="nav-link" target="_self">
+                                <i title="Widget Setting" class="fa fa-calendar text-primary m-2">
+                                </i>
+                                <span>
+                                    Widget Setting
+                                </span>
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/google/event/template" class="nav-link" target="_self">
+                                <i title="Google Event Template" class="fa fa-calendar-day text-primary m-2">
+                                </i>
+                                <span>
+                                    Google Event Template
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/googlemeet" class="nav-link" target="_self">
+                                <i title="Google Meet" class="fa fa-video text-primary m-2">
+                                </i>
+                                <span>
+                                    Google Meet
+                                </span>
+                              
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/setting/ZoomOAuthConfig" class="nav-link" target="_self">
+                                <i title="Zoom Telemed" class="fa fa-video text-primary m-2">
+                                </i>
+                                <span>
+                                    Zoom Telemed
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a href="#/static-data/list" class="nav-link" target="_self">
+                                <i title="Listings" class="fa fa-list-alt text-primary m-2">
+                                </i>
+                                <span>
+                                    Listings
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a href="#/custom-fields" class="nav-link" target="_self">
+                                <i title="Custom Field" class="fa fa-magic text-primary m-2">
+                                </i>
+                                <span>
+                                    Custom Field
+                                </span>
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="@Url.Action("ProSetting","Setting",new { area="Setting"})"  class="nav-link" target="_self">
+                                <i title=" Pro Settings " class="fa fa-wrench text-primary m-2">
+                                </i>
+                                <span>
+                                    Pro Settings
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                        <li class="nav-item mt-2">
+                            <a href="#/payment" class="nav-link" target="_self">
+                                <i title="Payment" class="fa fa-wallet text-primary m-2">
+                                </i>
+                                <span>
+                                    Payment
+                                </span>
+                            </a>
+                        </li>
+                        <!---->
+                        <!---->
+                        <!---->
+                        <!---->
+                        <li class="nav-item mt-2">
+                            <a href="#/appointment-setting" class="nav-link" target="_self">
+                                <i title="Appointment Setting" class="fas fa-calendar-week text-primary m-2">
+                                </i>
+                                <span>
+                                    Appointment Setting
+                                </span>
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/permission-setting" class="nav-link" target="_self">
+                                <i title=" Permission Setting " class="fas fa-lock text-primary m-2">
+                                </i>
+                                <span>
+                                    Permission Setting
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                        <li title="" class="nav-item mt-2">
+                            <a href="#/dashboard-sidebar-setting" class="nav-link" target="_self">
+                                <i title="Sidebar Setting" class="fa fa-bars text-primary m-2">
+                                </i>
+                                <span>
+                                    Sidebar Setting
+                                </span>
+                                <!---->
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all nav-link elements inside the navbar
+        const navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+
+        // Loop through each link and add the click event listener
+        navLinks.forEach(link => {
+            link.addEventListener("click", function () {
+                // Remove 'active' class from all nav-link elements
+                navLinks.forEach(nav => {
+                    nav.classList.remove("active");
+                });
+
+                // Add 'active' class to the clicked nav-link
+                this.classList.add("active");
+            });
+        });
+    });
+</script>
+

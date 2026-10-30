@@ -1,0 +1,722 @@
+﻿@model BVG_Wellness_Center_Promotion.Areas.Admin.Models.Master
+
+@{
+    ViewBag.Title = "RoomTypeMaster";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+
+
+<link href="~/assets/css/CustomeAlertCSS/customAlert.css" rel="stylesheet" />
+<script src="~/assets/js/CustomeAlert/customAlert.js"></script>
+<script src="~/assets/dist/js/xlsx.full.min.js"></script>
+
+
+<div class="container-fluid" style="padding-left:15px !important;">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card p-0 shadow">
+                <!---->
+                <header class="card-header">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-8 col-lg-8">
+                            <h3 class="mb-0">
+                                Room Type  List
+                            </h3>
+                        </div>
+                        <div class="col-sm-12 col-md-4 col-lg-4">
+                            <div class="d-flex justify-content-end">
+                                @*<button class="btn btn-sm btn-primary" id="btnExport">
+                                        <i class="fa fa-file-excel">
+                                        </i>Export To Excel
+                                    </button>*@
+                                @*<button class="float-right btn btn-sm btn-primary rtl-left">
+                                    <i class="fas fa-file-import">
+                                    </i>
+                                    Import data
+                                </button>*@
+                                <button class="btn btn-sm btn-primary" id="addService">
+                                    <i class="fa fa-plus">
+                                    </i>
+                                    Add Room
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="card-body p-0">
+                    <!---->
+                    <!---->
+                    <div data-v-9bd3ed50="">
+                        <!---->
+                    </div>
+                    <div id="static-data-add-tab" style="display:none;">
+                        <div class="row">
+                            @if (TempData["Message"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        var message = '@TempData["Message"]';
+                                        var alertType = '@TempData["Icon"]';
+                                        var imageUrl = '@Url.Content("~/assets/images/check-circle.gif")';
+                                        showCustomAlert(message, alertType, imageUrl);
+                                    };
+                                </script>
+
+                            }
+
+
+
+                            <div class="col-sm-12">
+                                <form action="/Admin/Masters/SaveRoomType" id="Roomtype" name="Roomtype" novalidate="novalidate" method="post" data-parsley-validate="true" enctype="multipart/form-data">
+                                    <div class="card p-0 shadow">
+                                        <!---->
+                                        <!---->
+                                        <div class="card-body">
+                                            <!---->
+                                            <!---->
+                                            <div class="row">
+                                                @*@Html.HiddenFor(m => m.Fid)*@
+                                                @Html.HiddenFor(m => m.RoomID)
+                                                @*@Html.HiddenFor(m => m.ServiceId_Encrypted)*@
+                                                <div class="col-md-9">
+                                                    <div class="row">
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="name" class="form-control-label">
+                                                                    Room  Name
+                                                                    <span class="text-danger">
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                                @*@Html.TextBoxFor(m => m.FormID, new { @class = "form-control", id = "FormID", type = "text" })*@
+                                                                @Html.TextBoxFor(m => m.RoomName, new { @class = "form-control", id = "RoomName", type = "text" })
+
+
+                                                                <!---->
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="name" class="form-control-label">
+                                                                    Room Occupancy
+                                                                    <span class="text-danger">
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                                @Html.TextBoxFor(m => m.RoomOccupancy, new { @class = "form-control", id = "RoomOccupancy", type = "Number" })
+                                                                <!---->
+                                                            </div>
+                                                        </div>
+
+
+
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="name" class="form-control-label">
+                                                                    Rate (Per Patient)
+                                                                    <span class="text-danger">
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                                @Html.TextBoxFor(m => m.Rate, new { @class = "form-control", id = "Rate", type = "Number" })
+                                                                <!---->
+                                                            </div>
+                                                        </div>
+
+
+                                                    </div>
+
+
+                                                    <div class="row">
+
+                                                        <div class="col-md-4">
+
+
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-12 p-0">
+                                                    <div class="d-flex justify-content-end">
+                                                        <button type="submit" class="btn btn-primary rtl-ml-2">
+                                                            <i class="fa fa-save">
+                                                            </i>
+                                                            Save
+                                                        </button>
+                                                        <button type="button" class="btn btn-outline-primary" id="btnCancel">
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                        <!---->
+                                    </div>
+                                </form>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                    <div id="static-data-edit-tab" class="mt-2 collapse" style="display: none;">
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="page-loader-section" style="display: none;">
+                                <div class="text-center loader-2-container">
+                                    <div tabindex="0" aria-busy="true" aria-label="Loading" class="vld-overlay is-active">
+                                        <div class="vld-background" style="backdrop-filter: blur(2px);">
+                                        </div>
+                                        <div class="vld-icon">
+                                            <svg viewBox="0 0 38 38" xmlns="http://www.w3.org/2000/svg" width="64"
+                                                 height="64" stroke="var(--primary)">
+                                                <g fill="none" fill-rule="evenodd">
+                                                    <g transform="translate(1 1)" stroke-width="2">
+                                                        <circle stroke-opacity=".25" cx="18" cy="18" r="18">
+                                                        </circle>
+                                                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                                                            <animateTransform attributeName="transform" type="rotate" from="0 18 18"
+                                                                              to="360 18 18" dur="0.8s" repeatCount="indefinite">
+                                                            </animateTransform>
+                                                        </path>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="vgt-wrap ">
+                                    <!---->
+                                    <div class="vgt-inner-wrap">
+                                        <!---->
+                                        <div class="vgt-global-search vgt-clearfix">
+                                            <div class="vgt-global-search__input vgt-pull-left">
+                                                <form role="search">
+                                                    <label for="vgt-search-1309953020420">
+                                                        <span aria-hidden="true" class="input__icon">
+                                                            <div class="magnifying-glass">
+                                                            </div>
+                                                        </span>
+                                                        <span class="sr-only">
+                                                            Search
+                                                        </span>
+                                                    </label>
+                                                    <input id="SearchInput" type="text" placeholder="Search services data by id, doctor, name, category, price  and status(0 or 1)"
+                                                           class="vgt-input vgt-pull-left">
+                                                </form>
+                                            </div>
+                                            <div class="vgt-global-search__actions vgt-pull-right">
+                                                <div>
+                                                    <div class="row">
+                                                        <div id="export_1734776919833">
+                                                            <button title="Export CSV" class="btn btn-sm">
+                                                                <i class="fas fa-file-csv">
+                                                                </i>
+                                                            </button>
+                                                        </div>
+                                                        <button title="Export Excel" class="btn btn-sm mr-0" id="btnExport">
+                                                            <i class="fa fa-file-excel">
+                                                            </i>
+                                                        </button>
+                                                        <button title="Export PDF" class="btn btn-sm">
+                                                            <i class="fa fa-file-pdf">
+                                                            </i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!---->
+                                        <div class="vgt-fixed-header">
+                                            <!---->
+                                        </div>
+                                        <div class="vgt-responsive">
+                                            <table id="tblServiceList" class="vgt-table striped vgt-compact">
+                                                <thead>
+                                                    <tr>
+                                                        <!---->
+                                                        @*<th scope="col" class="vgt-checkbox-col">
+                                                                <input type="checkbox">
+                                                            </th>
+                                                            <th scope="col" aria-sort="descending" aria-controls="col-0" class="vgt-left-align sortable"
+                                                                style="min-width: 100px; max-width: 100px; width: 100px;">
+                                                                <span>
+                                                                    ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-9" class="vgt-left-align"
+                                                            style="width: auto;">
+                                                            <span>
+                                                                Action
+                                                            </span>
+                                                            <!---->
+                                                        </th>
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-1" class="vgt-left-align sortable"
+                                                                style="min-width: 120px; max-width: 120px; width: 120px;">
+                                                                <span>
+                                                                    Service ID
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Service ID in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                            @*style="min-width: 150px; max-width: 150px; width: 150px;"*@>
+                                                            <span>
+                                                                Id
+                                                            </span>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-2" class="vgt-left-align sortable"
+                                                            @*style="min-width: 150px; max-width: 150px; width: 150px;"*@>
+                                                            <span>
+                                                                RoomName
+                                                            </span>
+                                                        </th>
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                            @*style="min-width: 150px; max-width: 150px; width: 150px;"*@>
+                                                            <span>
+                                                                RoomOccupancy 
+                                                            </span>
+                                                        </th>
+
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-3" class="vgt-left-align sortable"
+                                                            @*style="min-width: 150px; max-width: 150px; width: 150px;"*@>
+                                                            <span>
+                                                                Rate (Per Patinet)
+                                                            </span>
+                                                        </th>
+
+                                                        <th scope="col" aria-sort="descending" aria-controls="col-5" class="vgt-left-align sortable"
+                                                            @*style="min-width: 150px; max-width: 150px; width: 150px;"*@>
+                                                            <span>
+                                                              Status
+                                                            </span>
+                                                        </th>
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-6" class="vgt-left-align sortable"
+                                                                style="min-width: 150px; max-width: 150px; width: 150px;">
+                                                                <span>
+                                                                    Duration
+                                                                </span>
+                                                                <button>
+                                                                    <span class="sr-only">
+                                                                        Sort table by Duration in descending order
+                                                                    </span>
+                                                                </button>
+                                                            </th>*@
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-7" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Category
+                                                                </span>
+                                                            </th>*@
+                                                        @*<th scope="col" aria-sort="descending" aria-controls="col-8" class="vgt-left-align sortable"
+                                                                style="min-width: auto; width: auto;">
+                                                                <span>
+                                                                    Status
+                                                                </span>
+                                                            </th>*@
+
+                                                    </tr>
+
+                                                </thead>
+                                                <tbody>
+                                                    <!---->
+                                                    @if (ViewBag.RoomTypeList != null)
+                                                    {
+                                                        foreach (var item in ViewBag.RoomTypeList)
+                                                        {
+                                                            <tr class="">
+                                                                <!---->
+                                                                @*<th class="vgt-checkbox-col">
+                                                                        <input type="checkbox">
+                                                                    </th>
+                                                                    <td data-label="ID" class="vgt-left-align">
+                                                                        <div>
+                                                                            @count
+                                                                        </div>
+                                                                    </td>*@
+                                                                <td data-label="Action" class="vgt-left-align">
+                                                                    <div class="btn-group">
+                                                                        <a href="@Url.Action("RoomTypeMaster", "Masters", new { RoomID = @item.RoomID })" class="btn btn-sm btn-outline-primary"
+                                                                           title="Edit">
+                                                                            <i class="fa fa-pen-alt">
+                                                                            </i>
+                                                                        </a>
+                                                                        <button title="Delete" id="deleteDoctorSession" class="btn btn-outline-danger btn-sm" onclick="DeleteService('@item.RoomID')">
+                                                                            <i class="fa fa-trash">
+                                                                            </i>
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Service ID" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.RoomID
+                                                                    </div>
+                                                                </td>
+                                                                @*<td data-label=" Name" class="vgt-left-align">
+                                                                        <div class="d-flex align-items-center position-relative">
+                                                                            <span class="b-avatar mr-3 badge-primary rounded-circle" style="width: 45px; height: 45px;">
+                                                                                <span class="b-avatar-text" style="font-size: calc(18px);">
+                                                                                    <span>
+                                                                                        T
+                                                                                    </span>
+                                                                                </span>
+                                                                                <!---->
+                                                                            </span>
+                                                                            @item.ServiceName
+                                                                            <!---->
+                                                                        </div>
+                                                                    </td>*@
+                                                                <td data-label="Medicine Name" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.RoomName
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Clinic Name" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.RoomOccupancy
+                                                                    </div>
+                                                                </td>
+                                                                <td data-label="Clinic Name" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.Rate
+                                                                    </div>
+                                                                </td>
+
+                                                                <td data-label="Charges" class="vgt-left-align">
+                                                                    <div>
+                                                                        @item.IsActive
+                                                                    </div>
+                                                                </td>
+
+
+                                                                @*<td data-label="Category" class="vgt-left-align">
+                                                                        <div>
+                                                                            @item.Servicecategory
+                                                                        </div>
+                                                                    </td>*@
+                                                                @*<td data-label="Status" class="vgt-left-align">
+                                                                        <div class="d-flex justify-content-start align-items-center">
+                                                                            <div class="custom-control custom-switch b-custom-control-lg">
+                                                                                @if (@item.Status == "Active")
+                                                                                {
+                                                                                    <input id="status_change_@item.ServiceFid" type="checkbox" name="check-button" class="custom-control-input" checked onclick="toggleStatus(this,'@item.ServiceId_Encrypted')">
+                                                                                    <label for="status_change_@item.ServiceFid" class="custom-control-label">
+                                                                                    </label>
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    <input id="status_change_@item.ServiceFid" type="checkbox" name="check-button" class="custom-control-input" onclick="toggleStatus(this,'@item.ServiceId_Encrypted')">
+                                                                                    <label for="status_change_@item.ServiceFid" class="custom-control-label">
+                                                                                    </label>
+                                                                                }
+                                                                            </div>
+                                                                            @if (@item.Status == "Active")
+                                                                            {
+                                                                                <span class="badge badge-success">
+                                                                                    @item.Status
+                                                                                </span>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span class="badge badge-danger">
+                                                                                    @item.Status
+                                                                                </span>
+                                                                            }
+                                                                        </div>
+                                                                    </td>*@
+
+                                                            </tr>
+                                                        }
+                                                    }
+
+                                                    <!---->
+                                                </tbody>
+                                                <!---->
+                                            </table>
+                                        </div>
+                                        <!---->
+                                        <div class="vgt-wrap__footer vgt-clearfix">
+                                            <div class="footer__row-count vgt-pull-left">
+                                                <form>
+                                                    <label for="vgt-select-rpp-615145967849" class="footer__row-count__label">Rows per page:</label>
+                                                    <select id="PageOption" autocomplete="off" name="perPageSelect" aria-controls="vgt-table" class="footer__row-count__select">
+                                                        <option value="10">10</option>
+                                                        <option value="20">20</option>
+                                                        <option value="30">30</option>
+                                                        <option value="40">40</option>
+                                                        <option value="50">50</option>
+                                                        <option value="-1">ALL</option>
+                                                    </select>
+                                                </form>
+                                            </div>
+                                            <div class="footer__navigation vgt-pull-right">
+                                                <div class="footer__navigation__page-info">
+                                                    <form>
+                                                        <label for="vgt-page-input-1699165486119" class="page-info__label">
+                                                            <span>Page</span>
+                                                            <input id="InputPage" type="text" class="footer__navigation__page-info__current-entry">
+                                                            <span>of <span id="total-pages">1</span></span>
+                                                        </label>
+                                                    </form>
+                                                </div>
+                                                <button id="prev-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                    <span class="chevron left"></span><span>Prev</span>
+                                                </button>
+                                                <button id="next-btn" type="button" class="footer__navigation__page-btn disabled">
+                                                    <span>Next</span><span class="chevron right"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!---->
+                <!---->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        debugger;
+
+        $("#addService").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#static-data-add-tab").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#static-data-add-tab").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#addService").html('<i class="fa fa-times"></i> Close Form');
+
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#addService").html('<i class="fa fa-plus"></i> Add Service');
+                }
+            });
+        });
+
+        $("#btnCancel").click(function () {
+            // Toggle the visibility of the bill item add form
+            $("#static-data-add-tab").slideToggle(function () {
+                // Change button text based on the updated state of the form
+                if ($("#static-data-add-tab").is(":visible")) {
+                    // If the form is visible, change the button text to "Close"
+                    $("#addService").html('<i class="fa fa-times"></i> Close Form');
+                    var url = '@Url.Action("AddMedicine", "Services")'; // Ensure server-side helper is properly rendered
+                    window.location.href = url; // Navigate to the new URL
+                } else {
+                    // If the form is hidden, change the button text back to "Add Bill Item"
+                    $("#addService").html('<i class="fa fa-plus"></i> Add Service');
+                    var url = '@Url.Action("AddMedicine", "Services")'; // Ensure server-side helper is properly rendered
+                    window.location.href = url; // Navigate to the new URL
+                }
+            });
+        });
+
+        var CheckUpdate = @Html.Raw(Json.Encode(ViewBag.Update));
+        if(CheckUpdate!=null)
+        {
+            $("#static-data-add-tab").show();
+            $("#addService").html('<i class="fa fa-times"></i> Close Form');
+
+        }
+
+
+        $("#btnExport").click(function () {
+            debugger;
+
+            // Clone the table to avoid modifying the original
+            var tableClone = $("#tblServiceList").clone();
+
+            // Remove the 'Action' column (both header and data)
+            tableClone.find("th:contains('Action')").remove();
+            tableClone.find("td:nth-child(" + ($("th:contains('Action')").index() + 1) + ")").remove();
+
+            // Convert the modified table to Excel
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.table_to_sheet(tableClone[0]);
+
+            XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+            // Save the file
+            XLSX.writeFile(wb, "MedicineList.xlsx");
+        });
+    });
+</script>
+
+
+
+@*===================================Filter Table =================================*@
+<script>
+    // Reusable function for filtering
+    function filterTable(inputId, tableId) {
+        document.getElementById(inputId).addEventListener('input', function () {
+            const filterText = this.value.trim().toLowerCase(); // Get input text
+            const table = document.getElementById(tableId);
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td'); // Get all cells in the row
+                // Check if any cell contains the filter text
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(filterText));
+                row.style.display = match ? '' : 'none'; // Show or hide the row
+            });
+        });
+    }
+
+
+    filterTable('SearchInput', 'tblServiceList'); //Type any for filter
+
+
+
+    document.getElementById('FilterByStatus').addEventListener('change', function () {
+        debugger;
+        const selectedValue = this.value; // Get the selected value from the dropdown
+        const table = document.getElementById('tblServiceList'); // Get the table by ID
+        const rows = table.querySelectorAll('tbody tr'); // Get all table rows
+
+
+        rows.forEach(row => {
+            const statusCell = row.querySelector('td:nth-child(7)'); // Assuming status is in the 8th column (Status column)
+
+            // Get the text content of the badge (either "Active" or "Inactive")
+            const statusValue = statusCell ? statusCell.querySelector('span').textContent.trim() : "";
+
+            // Show row if the selected value matches the status value or if no value is selected
+            if (selectedValue === "" || statusValue.toLowerCase() === selectedValue.toLowerCase()) {
+                row.style.display = ''; // Show the row
+            } else {
+                row.style.display = 'none'; // Hide the row
+            }
+        });
+    });
+
+</script>
+@*===================================Filter Table end=================================*@
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const rowsPerPageSelect = document.getElementById('PageOption');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const currentPageInput = document.getElementById('InputPage');
+        const totalPagesElement = document.getElementById('total-pages');
+        const table = document.getElementById('tblServiceList');
+        const rows = table.querySelectorAll('tbody tr');
+
+        let currentPage = 1;
+        let rowsPerPage = parseInt(rowsPerPageSelect.value, 10) || 10; // Default to 10 rows per page
+
+        // Function to update the table display based on page and rows per page
+        function updateTable() {
+            // If "All" is selected, display all rows
+            if (rowsPerPage === -1) {
+                rows.forEach(row => {
+                    row.style.display = ''; // Show all rows
+                });
+                currentPageInput.value = 1;
+                totalPagesElement.textContent = 1; // Only 1 page when all rows are shown
+                updateButtonStates();
+            } else {
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+
+                // Show rows for the current page
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = ''; // Show the row
+                    } else {
+                        row.style.display = 'none'; // Hide the row
+                    }
+                });
+
+                // Update page info
+                currentPageInput.value = currentPage;
+                totalPagesElement.textContent = Math.ceil(rows.length / rowsPerPage);
+                updateButtonStates();
+            }
+        }
+
+        // Function to update the state of the Prev/Next buttons
+        function updateButtonStates() {
+            prevButton.classList.toggle('disabled', currentPage <= 1);
+            nextButton.classList.toggle('disabled', currentPage >= Math.ceil(rows.length / rowsPerPage));
+        }
+
+        // Event listener for Rows per Page change
+        rowsPerPageSelect.addEventListener('change', function () {
+            rowsPerPage = parseInt(this.value, 10);
+            currentPage = 1; // Reset to the first page
+            updateTable();
+        });
+
+        // Event listener for Prev button
+        prevButton.addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        });
+
+        // Event listener for Next button
+        nextButton.addEventListener('click', function () {
+            if (currentPage < Math.ceil(rows.length / rowsPerPage)) {
+                currentPage++;
+                updateTable();
+            }
+        });
+
+        // Initial call to display the table correctly
+        updateTable();
+    });
+
+</script>
+<script>
+    function DeleteService(roomId) {
+        Swal.fire({
+            title: 'Are You Sure!',
+            text: "Are you sure you want to delete this room?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f44336',
+            cancelButtonColor: '#4caf50',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            customClass: { popup: 'fullscreen-popup' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Admin/Masters/DeleteRoomType?RoomID=' + roomId;
+            }
+        });
+    }
+</script>
